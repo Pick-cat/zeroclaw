@@ -1,9 +1,25 @@
 {
-  "stable": null,
+  "stable": "stable",
   "versions": [
     {
       "label": "Development (master)",
       "tag": "master"
+    },
+    {
+      "label": "Stable",
+      "tag": "stable"
+    },
+    {
+      "label": "v0.8.0",
+      "tag": "v0.8.0"
+    },
+    {
+      "label": "v0.8.0-beta-2",
+      "tag": "v0.8.0-beta-2"
+    },
+    {
+      "label": "v0.8.0-beta-1",
+      "tag": "v0.8.0-beta-1"
     }
   ]
 }
