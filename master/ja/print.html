@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-d15e6eb2.js";
+            window.path_to_searchindex_js = "searchindex-7409740e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e2df50e.js"></script>
@@ -12942,17 +12942,54 @@ zeroclaw channel start
 
 </details>
 <details class="cfg-field">
-<summary><code>password</code>* <span class="cfg-field-meta"><code>string</code> · default <code>—</code></span></summary>
+<summary><code>oauth2</code> <span class="cfg-field-meta"><code>EmailOAuth2Config</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
 <h4 id="ゲートウェイダッシュボード-10-9"><a class="header" href="#ゲートウェイダッシュボード-10-9">ゲートウェイダッシュボード</a></h4>
-<p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて <code>channels.email.&lt;alias&gt;.password</code> フィールドを設定してください。</p>
+<p>Open <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> and set the <code>channels.email.&lt;alias&gt;.oauth2</code> field.</p>
 <h4 id="zerocode-10-9"><a class="header" href="#zerocode-10-9">zerocode</a></h4>
-<p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.password</code> フィールドを設定します。</p>
+<p>In the <strong>Config</strong> pane, set the <code>channels.email.&lt;alias&gt;.oauth2</code> field.</p>
 <h4 id="zeroclaw-config-9-9"><a class="header" href="#zeroclaw-config-9-9">zeroclaw config</a></h4>
-<pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password &lt;value&gt;
+<pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.oauth2 &lt;value&gt;
 </code></pre>
 <h4 id="環境変数-9-9"><a class="header" href="#環境変数-9-9">環境変数</a></h4>
+<p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
+<pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__oauth2=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
+<summary><code>observer_mode</code> <span class="cfg-field-meta"><code>bool</code> · default <code>false</code></span></summary>
+<p>When <code>true</code>, the daemon never modifies any IMAP flag: not on startup, not on message receipt, not ever. It only processes emails that arrive after startup (UID &gt;= uid_next at connect time). Existing unread mail stays unread; no <code>\Seen</code> is set implicitly via RFC822 or explicitly via STORE. Think of it as a PA who reads your messages aloud but never touches the read/unread indicator. When <code>false</code> (default), the daemon behaves as an active mailbox owner: it drains UNSEEN messages on startup (RFC822 fetch, which implicitly sets <code>\Seen</code>) and processes all new mail as it arrives.</p>
+<p><strong>任意のサーフェスに設定する場合:</strong></p>
+<div class="os-tabs-src">
+<h4 id="ゲートウェイダッシュボード-11-9"><a class="header" href="#ゲートウェイダッシュボード-11-9">ゲートウェイダッシュボード</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> and set the <code>channels.email.&lt;alias&gt;.observer_mode</code> field.</p>
+<h4 id="zerocode-11-9"><a class="header" href="#zerocode-11-9">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>channels.email.&lt;alias&gt;.observer_mode</code> field.</p>
+<h4 id="zeroclaw-config-10-9"><a class="header" href="#zeroclaw-config-10-9">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.observer_mode &lt;value&gt;
+</code></pre>
+<h4 id="環境変数-10-9"><a class="header" href="#環境変数-10-9">環境変数</a></h4>
+<p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
+<pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__observer_mode=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
+<summary><code>password</code>* <span class="cfg-field-meta"><code>string</code> · default <code>—</code></span></summary>
+<p><strong>任意のサーフェスに設定する場合:</strong></p>
+<div class="os-tabs-src">
+<h4 id="ゲートウェイダッシュボード-12-9"><a class="header" href="#ゲートウェイダッシュボード-12-9">ゲートウェイダッシュボード</a></h4>
+<p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて <code>channels.email.&lt;alias&gt;.password</code> フィールドを設定してください。</p>
+<h4 id="zerocode-12-9"><a class="header" href="#zerocode-12-9">zerocode</a></h4>
+<p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.password</code> フィールドを設定します。</p>
+<h4 id="zeroclaw-config-11-8"><a class="header" href="#zeroclaw-config-11-8">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password &lt;value&gt;
+</code></pre>
+<h4 id="環境変数-11-8"><a class="header" href="#環境変数-11-8">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__password=
 </code></pre>
@@ -12964,14 +13001,14 @@ zeroclaw channel start
 <p>IMAPサーバーがIDLE機能（RFC 2177）をアドバタイズしない場合に使用されるポーリング間隔。IDLEが利用可能な場合は無視されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-11-9"><a class="header" href="#ゲートウェイダッシュボード-11-9">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-13-8"><a class="header" href="#ゲートウェイダッシュボード-13-8">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて、<code>channels.email.&lt;alias&gt;.poll_interval_secs</code> フィールドを設定します。</p>
-<h4 id="zerocode-11-9"><a class="header" href="#zerocode-11-9">zerocode</a></h4>
+<h4 id="zerocode-13-8"><a class="header" href="#zerocode-13-8">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.poll_interval_secs</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-10-9"><a class="header" href="#zeroclaw-config-10-9">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12-8"><a class="header" href="#zeroclaw-config-12-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.poll_interval_secs &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-10-9"><a class="header" href="#環境変数-10-9">環境変数</a></h4>
+<h4 id="環境変数-12-8"><a class="header" href="#環境変数-12-8">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__poll_interval_secs=
 </code></pre>
@@ -12982,14 +13019,14 @@ zeroclaw channel start
 <summary><code>smtp_host</code>* <span class="cfg-field-meta"><code>string</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-12-9"><a class="header" href="#ゲートウェイダッシュボード-12-9">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-14-8"><a class="header" href="#ゲートウェイダッシュボード-14-8">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて、<code>channels.email.&lt;alias&gt;.smtp_host</code> フィールドを設定してください。</p>
-<h4 id="zerocode-12-9"><a class="header" href="#zerocode-12-9">zerocode</a></h4>
+<h4 id="zerocode-14-8"><a class="header" href="#zerocode-14-8">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.email.&lt;alias&gt;.smtp_host</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-11-8"><a class="header" href="#zeroclaw-config-11-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13-8"><a class="header" href="#zeroclaw-config-13-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_host &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-11-8"><a class="header" href="#環境変数-11-8">環境変数</a></h4>
+<h4 id="環境変数-13-8"><a class="header" href="#環境変数-13-8">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_host=
 </code></pre>
@@ -13000,14 +13037,14 @@ zeroclaw channel start
 <summary><code>smtp_password</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-13-8"><a class="header" href="#ゲートウェイダッシュボード-13-8">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-15-8"><a class="header" href="#ゲートウェイダッシュボード-15-8">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.smtp_password</code> フィールドを設定します。</p>
-<h4 id="zerocode-13-8"><a class="header" href="#zerocode-13-8">zerocode</a></h4>
+<h4 id="zerocode-15-8"><a class="header" href="#zerocode-15-8">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.smtp_password</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-12-8"><a class="header" href="#zeroclaw-config-12-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14-8"><a class="header" href="#zeroclaw-config-14-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_password &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-12-8"><a class="header" href="#環境変数-12-8">環境変数</a></h4>
+<h4 id="環境変数-14-7"><a class="header" href="#環境変数-14-7">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_password=
 </code></pre>
@@ -13018,14 +13055,14 @@ zeroclaw channel start
 <summary><code>smtp_port</code> <span class="cfg-field-meta"><code>integer</code> · default <code>465</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-14-8"><a class="header" href="#ゲートウェイダッシュボード-14-8">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-16-8"><a class="header" href="#ゲートウェイダッシュボード-16-8">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.smtp_port</code> フィールドを設定します。</p>
-<h4 id="zerocode-14-8"><a class="header" href="#zerocode-14-8">zerocode</a></h4>
+<h4 id="zerocode-16-8"><a class="header" href="#zerocode-16-8">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.smtp_port</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-13-8"><a class="header" href="#zeroclaw-config-13-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15-8"><a class="header" href="#zeroclaw-config-15-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_port &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-13-8"><a class="header" href="#環境変数-13-8">環境変数</a></h4>
+<h4 id="環境変数-15-7"><a class="header" href="#環境変数-15-7">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_port=
 </code></pre>
@@ -13036,14 +13073,14 @@ zeroclaw channel start
 <summary><code>smtp_tls</code> <span class="cfg-field-meta"><code>bool</code> · default <code>true</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-15-8"><a class="header" href="#ゲートウェイダッシュボード-15-8">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-17-6"><a class="header" href="#ゲートウェイダッシュボード-17-6">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.smtp_tls</code> フィールドを設定してください。</p>
-<h4 id="zerocode-15-8"><a class="header" href="#zerocode-15-8">zerocode</a></h4>
+<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.smtp_tls</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-14-8"><a class="header" href="#zeroclaw-config-14-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-14-7"><a class="header" href="#環境変数-14-7">環境変数</a></h4>
+<h4 id="環境変数-16-4"><a class="header" href="#環境変数-16-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13054,14 +13091,14 @@ zeroclaw channel start
 <summary><code>smtp_username</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-16-8"><a class="header" href="#ゲートウェイダッシュボード-16-8">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-5"><a class="header" href="#ゲートウェイダッシュボード-18-5">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて、<code>channels.email.&lt;alias&gt;.smtp_username</code> フィールドを設定します。</p>
-<h4 id="zerocode-16-8"><a class="header" href="#zerocode-16-8">zerocode</a></h4>
+<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.smtp_username</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-15-8"><a class="header" href="#zeroclaw-config-15-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_username &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-15-7"><a class="header" href="#環境変数-15-7">環境変数</a></h4>
+<h4 id="環境変数-17-4"><a class="header" href="#環境変数-17-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_username=
 </code></pre>
@@ -13072,14 +13109,14 @@ zeroclaw channel start
 <summary><code>username</code>* <span class="cfg-field-meta"><code>string</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-17-6"><a class="header" href="#ゲートウェイダッシュボード-17-6">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-19-5"><a class="header" href="#ゲートウェイダッシュボード-19-5">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
-<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
+<h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16-4"><a class="header" href="#環境変数-16-4">環境変数</a></h4>
+<h4 id="環境変数-18-2"><a class="header" href="#環境変数-18-2">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__username=
 </code></pre>
@@ -13093,11 +13130,11 @@ zeroclaw channel start
 <p><strong><code>channels.email.&lt;alias&gt;.password</code> はシークレットです。</strong> 暗号化されて保存され、平文の <code>config.toml</code> には決して保存されません。書き込み時に暗号化する以下のいずれかの方法で設定してください。</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-5"><a class="header" href="#ゲートウェイダッシュボード-18-5">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-4"><a class="header" href="#ゲートウェイダッシュボード-20-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、そこで <code>channels.email.&lt;alias&gt;.password</code> フィールドを設定してください。</p>
-<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
+<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.password</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-19-3"><a class="header" href="#zeroclaw-config-19-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -13114,11 +13151,11 @@ zeroclaw channel start
 <p><strong><code>channels.email.&lt;alias&gt;.password</code> はシークレットです。</strong> 暗号化されて保存され、平文の <code>config.toml</code> には決して保存されません。書き込み時に暗号化する以下のいずれかの方法で設定してください。</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-19-5"><a class="header" href="#ゲートウェイダッシュボード-19-5">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-21-3"><a class="header" href="#ゲートウェイダッシュボード-21-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、そこで <code>channels.email.&lt;alias&gt;.password</code> フィールドを設定してください。</p>
-<h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
+<h4 id="zerocode-21-3"><a class="header" href="#zerocode-21-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.password</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-20-3"><a class="header" href="#zeroclaw-config-20-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -13131,14 +13168,14 @@ zeroclaw channel start
 <p>このチャネルのツール仕様から除外されるツールです。設定すると、これらのツールはこのチャネル経由で応答する際にモデルに公開されません。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20-4"><a class="header" href="#ゲートウェイダッシュボード-20-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-22-3"><a class="header" href="#ゲートウェイダッシュボード-22-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開き、<code>channels.gmail_push.&lt;alias&gt;.excluded_tools</code> フィールドを設定します。</p>
-<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
+<h4 id="zerocode-22-3"><a class="header" href="#zerocode-22-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.excluded_tools</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-19-3"><a class="header" href="#zeroclaw-config-19-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-21-3"><a class="header" href="#zeroclaw-config-21-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.excluded_tools &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-17-4"><a class="header" href="#環境変数-17-4">環境変数</a></h4>
+<h4 id="環境変数-19-2"><a class="header" href="#環境変数-19-2">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__excluded_tools=
 </code></pre>
@@ -13149,14 +13186,14 @@ zeroclaw channel start
 <summary><code>label_filter</code> <span class="cfg-field-meta"><code>string[]</code> · default <code>["INBOX"]</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-21-3"><a class="header" href="#ゲートウェイダッシュボード-21-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-23-3"><a class="header" href="#ゲートウェイダッシュボード-23-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開いて <code>channels.gmail_push.&lt;alias&gt;.label_filter</code> フィールドを設定します。</p>
-<h4 id="zerocode-21-3"><a class="header" href="#zerocode-21-3">zerocode</a></h4>
+<h4 id="zerocode-23-3"><a class="header" href="#zerocode-23-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.label_filter</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-20-3"><a class="header" href="#zeroclaw-config-20-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-22-2"><a class="header" href="#zeroclaw-config-22-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.label_filter &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-18-2"><a class="header" href="#環境変数-18-2">環境変数</a></h4>
+<h4 id="環境変数-20-2"><a class="header" href="#環境変数-20-2">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__label_filter=
 </code></pre>
@@ -13167,14 +13204,14 @@ zeroclaw channel start
 <summary><code>oauth_token</code> <span class="cfg-field-meta"><code>string</code> · default <code>""</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-22-3"><a class="header" href="#ゲートウェイダッシュボード-22-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-24-2"><a class="header" href="#ゲートウェイダッシュボード-24-2">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開き、<code>channels.gmail_push.&lt;alias&gt;.oauth_token</code> フィールドを設定します。</p>
-<h4 id="zerocode-22-3"><a class="header" href="#zerocode-22-3">zerocode</a></h4>
+<h4 id="zerocode-24-2"><a class="header" href="#zerocode-24-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.oauth_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-21-3"><a class="header" href="#zeroclaw-config-21-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-23-1"><a class="header" href="#zeroclaw-config-23-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.oauth_token &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-19-2"><a class="header" href="#環境変数-19-2">環境変数</a></h4>
+<h4 id="環境変数-21-1"><a class="header" href="#環境変数-21-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__oauth_token=
 </code></pre>
@@ -13185,14 +13222,14 @@ zeroclaw channel start
 <summary><code>topic</code>* <span class="cfg-field-meta"><code>string</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-23-3"><a class="header" href="#ゲートウェイダッシュボード-23-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-25-1"><a class="header" href="#ゲートウェイダッシュボード-25-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開き、<code>channels.gmail_push.&lt;alias&gt;.topic</code> フィールドを設定します。</p>
-<h4 id="zerocode-23-3"><a class="header" href="#zerocode-23-3">zerocode</a></h4>
+<h4 id="zerocode-25-1"><a class="header" href="#zerocode-25-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.topic</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-22-2"><a class="header" href="#zeroclaw-config-22-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-24-1"><a class="header" href="#zeroclaw-config-24-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.topic &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-20-2"><a class="header" href="#環境変数-20-2">環境変数</a></h4>
+<h4 id="環境変数-22-1"><a class="header" href="#環境変数-22-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__topic=
 </code></pre>
@@ -13203,14 +13240,14 @@ zeroclaw channel start
 <summary><code>webhook_secret</code> <span class="cfg-field-meta"><code>string</code> · default <code>""</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-24-2"><a class="header" href="#ゲートウェイダッシュボード-24-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-26-1"><a class="header" href="#ゲートウェイダッシュボード-26-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開いて、<code>channels.gmail_push.&lt;alias&gt;.webhook_secret</code> フィールドを設定してください。</p>
-<h4 id="zerocode-24-2"><a class="header" href="#zerocode-24-2">zerocode</a></h4>
+<h4 id="zerocode-26-1"><a class="header" href="#zerocode-26-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.webhook_secret</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-23-1"><a class="header" href="#zeroclaw-config-23-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-25-1"><a class="header" href="#zeroclaw-config-25-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.webhook_secret &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-21-1"><a class="header" href="#環境変数-21-1">環境変数</a></h4>
+<h4 id="環境変数-23-1"><a class="header" href="#環境変数-23-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__webhook_secret=
 </code></pre>
@@ -13221,14 +13258,14 @@ zeroclaw channel start
 <summary><code>webhook_url</code> <span class="cfg-field-meta"><code>string</code> · default <code>""</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-25-1"><a class="header" href="#ゲートウェイダッシュボード-25-1">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-27-1"><a class="header" href="#ゲートウェイダッシュボード-27-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開き、<code>channels.gmail_push.&lt;alias&gt;.webhook_url</code> フィールドを設定します。</p>
-<h4 id="zerocode-25-1"><a class="header" href="#zerocode-25-1">zerocode</a></h4>
+<h4 id="zerocode-27-1"><a class="header" href="#zerocode-27-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.webhook_url</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-24-1"><a class="header" href="#zeroclaw-config-24-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-26-1"><a class="header" href="#zeroclaw-config-26-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.webhook_url &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-22-1"><a class="header" href="#環境変数-22-1">環境変数</a></h4>
+<h4 id="環境変数-24-1"><a class="header" href="#環境変数-24-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__gmail_push__&lt;alias&gt;__webhook_url=
 </code></pre>
@@ -13242,11 +13279,11 @@ zeroclaw channel start
 <p><strong><code>channels.gmail_push.&lt;alias&gt;.oauth_token</code> はシークレットです。</strong> 暗号化して保存され、平文の <code>config.toml</code> には保存されません。書き込み時に暗号化される以下のいずれかの方法で設定してください:</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-26-1"><a class="header" href="#ゲートウェイダッシュボード-26-1">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-28-1"><a class="header" href="#ゲートウェイダッシュボード-28-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/gmail_push"><code>/config/channels/gmail_push</code></a> を開いて、そこで <code>channels.gmail_push.&lt;alias&gt;.oauth_token</code> フィールドを設定してください。</p>
-<h4 id="zerocode-26-1"><a class="header" href="#zerocode-26-1">zerocode</a></h4>
+<h4 id="zerocode-28-1"><a class="header" href="#zerocode-28-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.gmail_push.&lt;alias&gt;.oauth_token</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-25-1"><a class="header" href="#zeroclaw-config-25-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-27-1"><a class="header" href="#zeroclaw-config-27-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.gmail_push.&lt;alias&gt;.oauth_token    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
