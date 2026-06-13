@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-7409740e.js";
+            window.path_to_searchindex_js = "searchindex-f586d1b2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e2df50e.js"></script>
@@ -3054,7 +3054,7 @@ zeroclaw daemon
 <p><strong>使用方法:</strong> <code>zeroclaw [OPTIONS] &lt;COMMAND&gt;</code></p>
 <p><strong>サブコマンド:</strong></p>
 <ul>
-<li><code>quickstart</code> — クイックスタート — 動作するエージェントを1つ、エンドツーエンドで作成します。セクションごとのオンボーディングフローを、プリセット主導の単一パスに置き換えます。このビルドでは非対話的に動作し、リスク/ランタイム/メモリのバランスの取れたデフォルト値を書き込み、次のステップの手順を表示します</li>
+<li><code>quickstart</code> — Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</li>
 <li><code>onboard</code> — 非推奨です。<code>zeroclaw quickstart</code> を使用してください。すべてのフラグはエラーになります</li>
 <li><code>agent</code> — AIエージェントループを開始します</li>
 <li><code>gateway</code> — ゲートウェイサーバーを開始/管理します (ウェブフック、ウェブソケット)</li>
@@ -3098,7 +3098,7 @@ zeroclaw daemon
 </li>
 </ul>
 <h2 id="zeroclaw-quickstart"><a class="header" href="#zeroclaw-quickstart"><code>zeroclaw quickstart</code></a></h2>
-<p>クイックスタート — 動作するエージェントを1つ、エンドツーエンドで作成します。セクションごとのオンボーディングフローを、単一のプリセット駆動のパスに置き換えます。このビルドでは非対話的に動作します。リスク／ランタイム／メモリのバランスの取れたデフォルト値を書き込み、次のステップの手順を表示します</p>
+<p>Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</p>
 <p><strong>使用法:</strong> <code>zeroclaw quickstart [OPTIONS]</code></p>
 <p><strong>オプション:</strong></p>
 <ul>
@@ -10304,18 +10304,37 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 
 </details>
 <details class="cfg-field">
+<summary><code>intents_mask</code> <span class="cfg-field-meta"><code>integer?</code> · default <code>null</code></span></summary>
+<p>Raw gateway intent mask override. When set, this exact value is sent in IDENTIFY instead of the derived mask: an operator escape hatch for downstream deployments that consume gateway events through custom builds or forks. The operator owns the consequences: privileged bits still need their Developer Portal toggles, and dropping baseline bits silences message handling (a warning is logged). Unset (default) = derive the mask from the channel’s feature config.</p>
+<p><strong>任意のサーフェスに設定する場合:</strong></p>
+<div class="os-tabs-src">
+<h4 id="ゲートウェイダッシュボード-10-4"><a class="header" href="#ゲートウェイダッシュボード-10-4">ゲートウェイダッシュボード</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.intents_mask &lt;value&gt;
+</code></pre>
+<h4 id="環境変数-7-5"><a class="header" href="#環境変数-7-5">環境変数</a></h4>
+<p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
+<pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__intents_mask=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>interrupt_on_new_message</code> <span class="cfg-field-meta"><code>bool</code> · default <code>false</code></span></summary>
 <p>trueの場合、同じチャンネル内の同じ送信者からの新しいDiscordメッセージが処理中のリクエストをキャンセルし、履歴を保持したまま新しいレスポンスを開始します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-10-4"><a class="header" href="#ゲートウェイダッシュボード-10-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-11-4"><a class="header" href="#ゲートウェイダッシュボード-11-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開いて、<code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code> フィールドを設定してください。</p>
-<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.interrupt_on_new_message &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-7-5"><a class="header" href="#環境変数-7-5">環境変数</a></h4>
+<h4 id="環境変数-8-4"><a class="header" href="#環境変数-8-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__interrupt_on_new_message=
 </code></pre>
@@ -10327,14 +10346,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>trueの場合、他のボットからのメッセージも処理します（人間からのメッセージだけではありません）。ボットはフィードバックループを防ぐため、自身のメッセージは引き続き無視します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-11-4"><a class="header" href="#ゲートウェイダッシュボード-11-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-12-4"><a class="header" href="#ゲートウェイダッシュボード-12-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.listen_to_bots</code> フィールドを設定します。</p>
-<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
+<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.listen_to_bots</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.listen_to_bots &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-8-4"><a class="header" href="#環境変数-8-4">環境変数</a></h4>
+<h4 id="環境変数-9-4"><a class="header" href="#環境変数-9-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__listen_to_bots=
 </code></pre>
@@ -10346,14 +10365,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>true の場合、ボットを @ メンションするメッセージにのみ応答します。ギルド内の他のメッセージは通知なしで無視されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-12-4"><a class="header" href="#ゲートウェイダッシュボード-12-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-13-4"><a class="header" href="#ゲートウェイダッシュボード-13-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開いて、<code>channels.discord.&lt;alias&gt;.mention_only</code> フィールドを設定してください。</p>
-<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
+<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.mention_only</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.mention_only &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-9-4"><a class="header" href="#環境変数-9-4">環境変数</a></h4>
+<h4 id="環境変数-10-4"><a class="header" href="#環境変数-10-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__mention_only=
 </code></pre>
@@ -10365,14 +10384,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>マルチメッセージモードで各メッセージチャンクを送信する間の遅延（ミリ秒）。<code>stream_mode = "multi_message"</code> の場合のみ使用されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-13-4"><a class="header" href="#ゲートウェイダッシュボード-13-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-14-4"><a class="header" href="#ゲートウェイダッシュボード-14-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開いて、<code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code> フィールドを設定します。</p>
-<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
+<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.multi_message_delay_ms &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-10-4"><a class="header" href="#環境変数-10-4">環境変数</a></h4>
+<h4 id="環境変数-11-4"><a class="header" href="#環境変数-11-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__multi_message_delay_ms=
 </code></pre>
@@ -10384,14 +10403,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>チャンネルごとのプロキシURL（http、https、socks5、socks5h）。このチャンネルに対してのみ、グローバルな <code>[proxy]</code> 設定を上書きします。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-14-4"><a class="header" href="#ゲートウェイダッシュボード-14-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-15-4"><a class="header" href="#ゲートウェイダッシュボード-15-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.proxy_url</code> フィールドを設定します。</p>
-<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
+<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.proxy_url</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.proxy_url &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-11-4"><a class="header" href="#環境変数-11-4">環境変数</a></h4>
+<h4 id="環境変数-12-4"><a class="header" href="#環境変数-12-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__proxy_url=
 </code></pre>
@@ -10403,14 +10422,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>チャンネルと受信者の組み合わせごとの送信ペーシングの下限値（秒）。範囲: <code>0..=REPLY_MIN_INTERVAL_MAX_SECS</code>（0 で無効化）。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-15-4"><a class="header" href="#ゲートウェイダッシュボード-15-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-16-4"><a class="header" href="#ゲートウェイダッシュボード-16-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開いて、<code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code> フィールドを設定してください。</p>
-<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
+<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_min_interval_secs &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-12-4"><a class="header" href="#環境変数-12-4">環境変数</a></h4>
+<h4 id="環境変数-13-4"><a class="header" href="#環境変数-13-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_min_interval_secs=
 </code></pre>
@@ -10422,14 +10441,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>(チャネル, 受信者)単位の送信ペーシングキューの深さ。範囲: <code>0..=REPLY_QUEUE_DEPTH_CEILING</code>。<code>reply_min_interval_secs &gt; 0</code> かつこの値が <code>0</code> の場合、ペーシングラッパーは <code>DEFAULT_REPLY_QUEUE_DEPTH</code> (16) で代替します。キューが満杯の場合、最新の送信が破棄され、<code>WARN</code> がログに記録されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-16-4"><a class="header" href="#ゲートウェイダッシュボード-16-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-17-3"><a class="header" href="#ゲートウェイダッシュボード-17-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> フィールドを設定してください。</p>
-<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
+<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-13-4"><a class="header" href="#環境変数-13-4">環境変数</a></h4>
+<h4 id="環境変数-14-4"><a class="header" href="#環境変数-14-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -10441,14 +10460,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>ストールウォッチドッグのタイムアウト（秒）。0以外の場合、この時間内に進行がなければボットは中止して再試行します。0 = 無効。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-17-3"><a class="header" href="#ゲートウェイダッシュボード-17-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-2"><a class="header" href="#ゲートウェイダッシュボード-18-2">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> フィールドを設定します。</p>
-<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-14-4"><a class="header" href="#環境変数-14-4">環境変数</a></h4>
+<h4 id="環境変数-15-4"><a class="header" href="#環境変数-15-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stall_timeout_secs=
 </code></pre>
@@ -10460,14 +10479,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>プログレッシブなレスポンス配信のためのストリーミングモード。<code>off</code>（デフォルト）：単一メッセージ。<code>partial</code>：編集可能なドラフトの更新。<code>multi_message</code>：段落の境界でレスポンスを別々のメッセージに分割。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-2"><a class="header" href="#ゲートウェイダッシュボード-18-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-19-2"><a class="header" href="#ゲートウェイダッシュボード-19-2">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-15-4"><a class="header" href="#環境変数-15-4">環境変数</a></h4>
+<h4 id="環境変数-16-3"><a class="header" href="#環境変数-16-3">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -10501,11 +10520,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 </ul>
 <p>任意のサーフェスに設定します:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-19-2"><a class="header" href="#ゲートウェイダッシュボード-19-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-2"><a class="header" href="#ゲートウェイダッシュボード-20-2">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
-<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
+<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
 </div>
@@ -10944,11 +10963,11 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 </ul>
 <p>任意のサーフェスに設定します:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20-2"><a class="header" href="#ゲートウェイダッシュボード-20-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-3"><a class="header" href="#ゲートウェイダッシュボード-20-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> を開いて、<code>channels.slack.&lt;alias&gt;.stream_drafts</code> フィールドを設定してください。</p>
-<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
+<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.slack.&lt;alias&gt;.stream_drafts</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.stream_drafts &lt;value&gt;
 </code></pre>
 </div>
@@ -12528,7 +12547,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16-3"><a class="header" href="#環境変数-16-3">環境変数</a></h4>
+<h4 id="環境変数-16-4"><a class="header" href="#環境変数-16-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -12563,7 +12582,7 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> を開いて、<code>channels.whatsapp.&lt;alias&gt;.session_path</code> フィールドを設定します。</p>
 <h4 id="zerocode-19-4"><a class="header" href="#zerocode-19-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.whatsapp.&lt;alias&gt;.session_path</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.session_path &lt;value&gt;
 </code></pre>
 <h4 id="環境変数-18-1"><a class="header" href="#環境変数-18-1">環境変数</a></h4>
@@ -12578,9 +12597,9 @@ zeroclaw channel start
 <p>Webhook検証トークン（自分で定義し、Metaが検証のために返送します）Cloud APIモードでのみ使用されます</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20-3"><a class="header" href="#ゲートウェイダッシュボード-20-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-4"><a class="header" href="#ゲートウェイダッシュボード-20-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> を開いて、<code>channels.whatsapp.&lt;alias&gt;.verify_token</code> フィールドを設定します。</p>
-<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
+<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.whatsapp.&lt;alias&gt;.verify_token</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-19-2"><a class="header" href="#zeroclaw-config-19-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.verify_token    # マスクされた入力、暗号化して保存
@@ -13080,7 +13099,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16-4"><a class="header" href="#環境変数-16-4">環境変数</a></h4>
+<h4 id="環境変数-16-5"><a class="header" href="#環境変数-16-5">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13113,7 +13132,7 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
 <h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
 <h4 id="環境変数-18-2"><a class="header" href="#環境変数-18-2">環境変数</a></h4>
@@ -13130,9 +13149,9 @@ zeroclaw channel start
 <p><strong><code>channels.email.&lt;alias&gt;.password</code> はシークレットです。</strong> 暗号化されて保存され、平文の <code>config.toml</code> には決して保存されません。書き込み時に暗号化する以下のいずれかの方法で設定してください。</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20-4"><a class="header" href="#ゲートウェイダッシュボード-20-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-5"><a class="header" href="#ゲートウェイダッシュボード-20-5">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、そこで <code>channels.email.&lt;alias&gt;.password</code> フィールドを設定してください。</p>
-<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
+<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.password</code> フィールドを設定します（入力はマスクされます）。</p>
 <h4 id="zeroclaw-config-19-3"><a class="header" href="#zeroclaw-config-19-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password    # マスク入力のプロンプトを表示し、暗号化して保存
@@ -13641,7 +13660,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_port &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16-5"><a class="header" href="#環境変数-16-5">環境変数</a></h4>
+<h4 id="環境変数-16-6"><a class="header" href="#環境変数-16-6">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_call__&lt;alias&gt;__webhook_port=
 </code></pre>
@@ -13668,7 +13687,7 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> を開き、<code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> フィールドを設定します。</p>
 <h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
 <h4 id="環境変数-17-5"><a class="header" href="#環境変数-17-5">環境変数</a></h4>
@@ -13702,9 +13721,9 @@ zeroclaw channel start
 <p>文字起こしを強制するまでの最大キャプチャ時間（秒単位）。デフォルト: <code>30</code>。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20-5"><a class="header" href="#ゲートウェイダッシュボード-20-5">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20-6"><a class="header" href="#ゲートウェイダッシュボード-20-6">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> を開き、<code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code> フィールドを設定します。</p>
-<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
+<h4 id="zerocode-20-6"><a class="header" href="#zerocode-20-6">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-20-4"><a class="header" href="#zeroclaw-config-20-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.max_capture_secs &lt;value&gt;

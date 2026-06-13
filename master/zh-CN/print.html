@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-e64453d3.js";
+            window.path_to_searchindex_js = "searchindex-6ce3900a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-9364d956.js"></script>
@@ -3056,7 +3056,7 @@ zeroclaw daemon
 <p><strong>用法：</strong> <code>zeroclaw [OPTIONS] &lt;COMMAND&gt;</code></p>
 <p><strong>子命令：</strong></p>
 <ul>
-<li><code>quickstart</code> — 快速开始 — 端到端创建一个可用的智能体。以单一的预设驱动路径取代逐节引导流程。在此构建中为非交互式：为风险/运行时/内存写入均衡的默认值，并打印后续步骤说明</li>
+<li><code>quickstart</code> — Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</li>
 <li><code>onboard</code> — 已弃用。请使用 <code>zeroclaw quickstart</code>。任何标志都将报错</li>
 <li><code>agent</code> — 启动 AI 代理循环</li>
 <li><code>gateway</code> — 启动/管理网关服务器（webhooks、websockets）</li>
@@ -3100,7 +3100,7 @@ zeroclaw daemon
 </li>
 </ul>
 <h2 id="zeroclaw-quickstart"><a class="header" href="#zeroclaw-quickstart"><code>zeroclaw quickstart</code></a></h2>
-<p>快速入门 — 端到端创建一个可用的智能体。用单一的预设驱动流程取代逐节式的引导流程。在本版本中为非交互式：为风险/运行时/内存写入均衡的默认值，并打印后续步骤说明</p>
+<p>Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</p>
 <p><strong>用法：</strong> <code>zeroclaw quickstart [OPTIONS]</code></p>
 <p><strong>选项：</strong></p>
 <ul>
@@ -10309,18 +10309,37 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 
 </details>
 <details class="cfg-field">
+<summary><code>intents_mask</code> <span class="cfg-field-meta"><code>integer?</code> · default <code>null</code></span></summary>
+<p>Raw gateway intent mask override. When set, this exact value is sent in IDENTIFY instead of the derived mask: an operator escape hatch for downstream deployments that consume gateway events through custom builds or forks. The operator owns the consequences: privileged bits still need their Developer Portal toggles, and dropping baseline bits silences message handling (a warning is logged). Unset (default) = derive the mask from the channel’s feature config.</p>
+<p><strong>将它放置在任何表面上：</strong></p>
+<div class="os-tabs-src">
+<h4 id="网关仪表板-10-4"><a class="header" href="#网关仪表板-10-4">网关仪表板</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.intents_mask &lt;value&gt;
+</code></pre>
+<h4 id="环境变量-7-5"><a class="header" href="#环境变量-7-5">环境变量</a></h4>
+<p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
+<pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__intents_mask=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>interrupt_on_new_message</code> <span class="cfg-field-meta"><code>bool</code> · default <code>false</code></span></summary>
 <p>为 true 时，来自同一频道中同一发送者的较新 Discord 消息会取消正在处理的请求，并在保留历史记录的情况下重新开始响应。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-10-4"><a class="header" href="#网关仪表板-10-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-11-4"><a class="header" href="#网关仪表板-11-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code> 字段。</p>
-<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code> 字段。</p>
-<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.interrupt_on_new_message &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-7-5"><a class="header" href="#环境变量-7-5">环境变量</a></h4>
+<h4 id="环境变量-8-4"><a class="header" href="#环境变量-8-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__interrupt_on_new_message=
 </code></pre>
@@ -10332,14 +10351,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>为 true 时，处理来自其他机器人的消息（而不仅仅是人类的消息）。机器人仍会忽略自己的消息，以防止反馈循环。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-11-4"><a class="header" href="#网关仪表板-11-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-12-4"><a class="header" href="#网关仪表板-12-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.listen_to_bots</code> 字段。</p>
-<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
+<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.listen_to_bots</code> 字段。</p>
-<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.listen_to_bots &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-8-4"><a class="header" href="#环境变量-8-4">环境变量</a></h4>
+<h4 id="环境变量-9-4"><a class="header" href="#环境变量-9-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__listen_to_bots=
 </code></pre>
@@ -10351,14 +10370,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>为 true 时，仅响应 @ 提及该机器人的消息。服务器中的其他消息将被静默忽略。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-12-4"><a class="header" href="#网关仪表板-12-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-13-4"><a class="header" href="#网关仪表板-13-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.mention_only</code> 字段。</p>
-<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
+<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.mention_only</code> 字段。</p>
-<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.mention_only &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-9-4"><a class="header" href="#环境变量-9-4">环境变量</a></h4>
+<h4 id="环境变量-10-4"><a class="header" href="#环境变量-10-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__mention_only=
 </code></pre>
@@ -10370,14 +10389,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>多消息模式下，发送每个消息块之间的延迟（毫秒）。仅在 <code>stream_mode = "multi_message"</code> 时使用。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-13-4"><a class="header" href="#网关仪表板-13-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-14-4"><a class="header" href="#网关仪表板-14-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code> 字段。</p>
-<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
+<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code> 字段。</p>
-<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.multi_message_delay_ms &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-10-4"><a class="header" href="#环境变量-10-4">环境变量</a></h4>
+<h4 id="环境变量-11-4"><a class="header" href="#环境变量-11-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__multi_message_delay_ms=
 </code></pre>
@@ -10389,14 +10408,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>每个通道的代理 URL（http、https、socks5、socks5h）。仅为此通道覆盖全局 <code>[proxy]</code> 设置。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-14-4"><a class="header" href="#网关仪表板-14-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-15-4"><a class="header" href="#网关仪表板-15-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.proxy_url</code> 字段。</p>
-<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
+<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.proxy_url</code> 字段。</p>
-<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.proxy_url &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-11-4"><a class="header" href="#环境变量-11-4">环境变量</a></h4>
+<h4 id="环境变量-12-4"><a class="header" href="#环境变量-12-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__proxy_url=
 </code></pre>
@@ -10408,14 +10427,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>每个（通道，接收方）出站节流下限（秒）。范围：<code>0..=REPLY_MIN_INTERVAL_MAX_SECS</code>（0 表示禁用）。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-15-4"><a class="header" href="#网关仪表板-15-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-16-4"><a class="header" href="#网关仪表板-16-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code> 字段。</p>
-<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
+<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code> 字段。</p>
-<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_min_interval_secs &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-12-4"><a class="header" href="#环境变量-12-4">环境变量</a></h4>
+<h4 id="环境变量-13-4"><a class="header" href="#环境变量-13-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_min_interval_secs=
 </code></pre>
@@ -10427,14 +10446,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>每个（channel, recipient）出站节流队列的深度。取值范围：<code>0..=REPLY_QUEUE_DEPTH_CEILING</code>。当 <code>reply_min_interval_secs &gt; 0</code> 且此值为 <code>0</code> 时，节流封装器会使用 <code>DEFAULT_REPLY_QUEUE_DEPTH</code>（16）作为替代值。当队列已满时，最新的发送会被丢弃，并记录一条 <code>WARN</code> 日志。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-16-4"><a class="header" href="#网关仪表板-16-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-3"><a class="header" href="#网关仪表板-17-3">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
-<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
+<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
-<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-13-4"><a class="header" href="#环境变量-13-4">环境变量</a></h4>
+<h4 id="环境变量-14-4"><a class="header" href="#环境变量-14-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -10446,14 +10465,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>停滞监视器超时时间（秒）。当值非零时，如果在此时间内没有进展，机器人将中止并重试。0 = 禁用。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-3"><a class="header" href="#网关仪表板-17-3">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-2"><a class="header" href="#网关仪表板-18-2">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> 字段。</p>
-<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> 字段。</p>
-<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-14-4"><a class="header" href="#环境变量-14-4">环境变量</a></h4>
+<h4 id="环境变量-15-4"><a class="header" href="#环境变量-15-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stall_timeout_secs=
 </code></pre>
@@ -10465,14 +10484,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>流式模式，用于渐进式传递响应。<code>off</code>（默认）：单条消息。<code>partial</code>：可编辑的草稿更新。<code>multi_message</code>：在段落边界处将响应拆分为多条独立消息。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-2"><a class="header" href="#网关仪表板-18-2">网关仪表板</a></h4>
+<h4 id="网关仪表板-19-2"><a class="header" href="#网关仪表板-19-2">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-15-4"><a class="header" href="#环境变量-15-4">环境变量</a></h4>
+<h4 id="环境变量-16-3"><a class="header" href="#环境变量-16-3">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -10506,11 +10525,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 </ul>
 <p>将其放置在任何表面上：</p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-19-2"><a class="header" href="#网关仪表板-19-2">网关仪表板</a></h4>
+<h4 id="网关仪表板-20-2"><a class="header" href="#网关仪表板-20-2">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
+<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
 </div>
@@ -10953,11 +10972,11 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # 频�
 </ul>
 <p>将其放置在任何表面上：</p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-20-2"><a class="header" href="#网关仪表板-20-2">网关仪表板</a></h4>
+<h4 id="网关仪表板-20-3"><a class="header" href="#网关仪表板-20-3">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> 并设置 <code>channels.slack.&lt;alias&gt;.stream_drafts</code> 字段。</p>
-<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
+<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.slack.&lt;alias&gt;.stream_drafts</code> 字段。</p>
-<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.stream_drafts &lt;value&gt;
 </code></pre>
 </div>
@@ -12539,7 +12558,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-3"><a class="header" href="#环境变量-16-3">环境变量</a></h4>
+<h4 id="环境变量-16-4"><a class="header" href="#环境变量-16-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -12574,7 +12593,7 @@ zeroclaw channel start
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> 并设置 <code>channels.whatsapp.&lt;alias&gt;.session_path</code> 字段。</p>
 <h4 id="zerocode-19-4"><a class="header" href="#zerocode-19-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.whatsapp.&lt;alias&gt;.session_path</code> 字段。</p>
-<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.session_path &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-18-1"><a class="header" href="#环境变量-18-1">环境变量</a></h4>
@@ -12589,9 +12608,9 @@ zeroclaw channel start
 <p>Webhook 验证令牌（由你定义，Meta 会将其回传以进行验证），仅在 Cloud API 模式下使用</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-20-3"><a class="header" href="#网关仪表板-20-3">网关仪表板</a></h4>
+<h4 id="网关仪表板-20-4"><a class="header" href="#网关仪表板-20-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> 并设置 <code>channels.whatsapp.&lt;alias&gt;.verify_token</code> 字段。</p>
-<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
+<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.whatsapp.&lt;alias&gt;.verify_token</code> 字段。</p>
 <h4 id="zeroclaw-config-19-2"><a class="header" href="#zeroclaw-config-19-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.verify_token    # 掩码输入，加密存储
@@ -13091,7 +13110,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-4"><a class="header" href="#环境变量-16-4">环境变量</a></h4>
+<h4 id="环境变量-16-5"><a class="header" href="#环境变量-16-5">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13124,7 +13143,7 @@ zeroclaw channel start
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> 并设置 <code>channels.email.&lt;alias&gt;.username</code> 字段。</p>
 <h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.email.&lt;alias&gt;.username</code> 字段。</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-18-2"><a class="header" href="#环境变量-18-2">环境变量</a></h4>
@@ -13141,9 +13160,9 @@ zeroclaw channel start
 <p><strong><code>channels.email.&lt;alias&gt;.password</code> 是机密信息。</strong> 以加密形式存储，绝不会以明文形式出现在 <code>config.toml</code> 中。请通过以下方式之一进行设置，它们会在写入时加密：</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-20-4"><a class="header" href="#网关仪表板-20-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-20-5"><a class="header" href="#网关仪表板-20-5">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> 并在其中设置 <code>channels.email.&lt;alias&gt;.password</code> 字段。</p>
-<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
+<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.email.&lt;alias&gt;.password</code> 字段（输入内容会被掩码处理）。</p>
 <h4 id="zeroclaw-config-19-3"><a class="header" href="#zeroclaw-config-19-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password    # 提示输入掩码内容，以加密形式存储
@@ -13652,7 +13671,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_port &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-5"><a class="header" href="#环境变量-16-5">环境变量</a></h4>
+<h4 id="环境变量-16-6"><a class="header" href="#环境变量-16-6">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_call__&lt;alias&gt;__webhook_port=
 </code></pre>
@@ -13679,7 +13698,7 @@ zeroclaw channel start
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> 并设置 <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> 字段。</p>
 <h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> 字段。</p>
-<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-17-5"><a class="header" href="#环境变量-17-5">环境变量</a></h4>
@@ -13713,9 +13732,9 @@ zeroclaw channel start
 <p>强制转写前的最大捕获时长（秒）。默认值：<code>30</code>。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-20-5"><a class="header" href="#网关仪表板-20-5">网关仪表板</a></h4>
+<h4 id="网关仪表板-20-6"><a class="header" href="#网关仪表板-20-6">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> 并设置 <code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code> 字段。</p>
-<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
+<h4 id="zerocode-20-6"><a class="header" href="#zerocode-20-6">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code> 字段。</p>
 <h4 id="zeroclaw-config-20-4"><a class="header" href="#zeroclaw-config-20-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.max_capture_secs &lt;value&gt;

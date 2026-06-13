@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-a143fccd.js";
+            window.path_to_searchindex_js = "searchindex-a93908f2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-98474cc2.js"></script>
@@ -3054,7 +3054,7 @@ zeroclaw daemon
 <p><strong>Utilisation :</strong> <code>zeroclaw [OPTIONS] &lt;COMMAND&gt;</code></p>
 <p><strong>Sous-commandes :</strong></p>
 <ul>
-<li><code>quickstart</code> — Quickstart — créez un agent fonctionnel de bout en bout. Remplace le parcours d’intégration section par section par un chemin unique guidé par préréglages. Non interactif dans cette version : écrit des valeurs par défaut équilibrées pour risk/runtime/memory et affiche les instructions pour les étapes suivantes</li>
+<li><code>quickstart</code> — Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</li>
 <li><code>onboard</code> — Obsolète. Utilisez <code>zeroclaw quickstart</code>. Tout indicateur provoque une erreur</li>
 <li><code>agent</code> — Démarrer la boucle de l’agent IA</li>
 <li><code>gateway</code> — Démarrer/gérer le serveur gateway (webhooks, websockets)</li>
@@ -3098,7 +3098,7 @@ zeroclaw daemon
 </li>
 </ul>
 <h2 id="zeroclaw-quickstart"><a class="header" href="#zeroclaw-quickstart"><code>zeroclaw quickstart</code></a></h2>
-<p>Démarrage rapide — créez un agent fonctionnel de bout en bout. Remplace le parcours d’intégration section par section par un chemin unique basé sur des préréglages. Non interactif dans cette version : écrit des valeurs par défaut équilibrées pour le risque/l’exécution/la mémoire et affiche les instructions pour les étapes suivantes</p>
+<p>Quickstart — create one working agent end-to-end. Replaces the section-by-section onboarding flow with a single preset-driven path. Interactive: the flags below pre-seed checklist selectors but do not skip them; a terminal is required</p>
 <p><strong>Utilisation :</strong> <code>zeroclaw quickstart [OPTIONS]</code></p>
 <p><strong>Options :</strong></p>
 <ul>
@@ -10308,18 +10308,37 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 
 </details>
 <details class="cfg-field">
+<summary><code>intents_mask</code> <span class="cfg-field-meta"><code>integer?</code> · default <code>null</code></span></summary>
+<p>Raw gateway intent mask override. When set, this exact value is sent in IDENTIFY instead of the derived mask: an operator escape hatch for downstream deployments that consume gateway events through custom builds or forks. The operator owns the consequences: privileged bits still need their Developer Portal toggles, and dropping baseline bits silences message handling (a warning is logged). Unset (default) = derive the mask from the channel’s feature config.</p>
+<p><strong>Posez-le sur n’importe quelle surface :</strong></p>
+<div class="os-tabs-src">
+<h4 id="tableau-de-bord-de-la-passerelle-10-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-10-4">Tableau de bord de la passerelle</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.intents_mask</code> field.</p>
+<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.intents_mask &lt;value&gt;
+</code></pre>
+<h4 id="variable-denvironnement-7-5"><a class="header" href="#variable-denvironnement-7-5">Variable d’environnement</a></h4>
+<p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
+<pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__intents_mask=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>interrupt_on_new_message</code> <span class="cfg-field-meta"><code>bool</code> · default <code>false</code></span></summary>
 <p>Lorsque cette option est définie sur true, un message Discord plus récent du même expéditeur dans le même canal annule la requête en cours et démarre une nouvelle réponse en conservant l’historique.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-10-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-10-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-11-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-11-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code>.</p>
-<h4 id="zerocode-10-4"><a class="header" href="#zerocode-10-4">zerocode</a></h4>
+<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.interrupt_on_new_message</code>.</p>
-<h4 id="zeroclaw-config-8-4"><a class="header" href="#zeroclaw-config-8-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.interrupt_on_new_message &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-7-5"><a class="header" href="#variable-denvironnement-7-5">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-8-4"><a class="header" href="#variable-denvironnement-8-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__interrupt_on_new_message=
 </code></pre>
@@ -10331,14 +10350,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Lorsque la valeur est true, traite les messages provenant d’autres bots (et pas seulement des humains). Le bot ignore toujours ses propres messages afin d’éviter les boucles de rétroaction.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-11-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-11-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-12-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-12-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.listen_to_bots</code>.</p>
-<h4 id="zerocode-11-4"><a class="header" href="#zerocode-11-4">zerocode</a></h4>
+<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.listen_to_bots</code>.</p>
-<h4 id="zeroclaw-config-9-4"><a class="header" href="#zeroclaw-config-9-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.listen_to_bots &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-8-4"><a class="header" href="#variable-denvironnement-8-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-9-4"><a class="header" href="#variable-denvironnement-9-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__listen_to_bots=
 </code></pre>
@@ -10350,14 +10369,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Lorsque la valeur est true, ne répond qu’aux messages qui @-mentionnent le bot. Les autres messages du serveur sont silencieusement ignorés.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-12-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-12-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-13-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-13-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.mention_only</code>.</p>
-<h4 id="zerocode-12-4"><a class="header" href="#zerocode-12-4">zerocode</a></h4>
+<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.mention_only</code>.</p>
-<h4 id="zeroclaw-config-10-4"><a class="header" href="#zeroclaw-config-10-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.mention_only &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-9-4"><a class="header" href="#variable-denvironnement-9-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-10-4"><a class="header" href="#variable-denvironnement-10-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__mention_only=
 </code></pre>
@@ -10369,14 +10388,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Délai (ms) entre l’envoi de chaque fragment de message en mode multi-message. Utilisé uniquement lorsque <code>stream_mode = "multi_message"</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-13-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-13-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-14-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-14-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code>.</p>
-<h4 id="zerocode-13-4"><a class="header" href="#zerocode-13-4">zerocode</a></h4>
+<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.multi_message_delay_ms</code>.</p>
-<h4 id="zeroclaw-config-11-4"><a class="header" href="#zeroclaw-config-11-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.multi_message_delay_ms &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-10-4"><a class="header" href="#variable-denvironnement-10-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-11-4"><a class="header" href="#variable-denvironnement-11-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__multi_message_delay_ms=
 </code></pre>
@@ -10388,14 +10407,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>URL de proxy par canal (http, https, socks5, socks5h). Remplace le paramètre global <code>[proxy]</code> pour ce canal uniquement.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-14-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-14-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-15-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-15-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.proxy_url</code>.</p>
-<h4 id="zerocode-14-4"><a class="header" href="#zerocode-14-4">zerocode</a></h4>
+<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.proxy_url</code>.</p>
-<h4 id="zeroclaw-config-12-4"><a class="header" href="#zeroclaw-config-12-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.proxy_url &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-11-4"><a class="header" href="#variable-denvironnement-11-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-12-4"><a class="header" href="#variable-denvironnement-12-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__proxy_url=
 </code></pre>
@@ -10407,14 +10426,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Plancher de cadencement sortant par (canal, destinataire) en secondes. Plage : <code>0..=REPLY_MIN_INTERVAL_MAX_SECS</code> (0 désactive).</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-15-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-15-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-16-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-16-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code>.</p>
-<h4 id="zerocode-15-4"><a class="header" href="#zerocode-15-4">zerocode</a></h4>
+<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.reply_min_interval_secs</code>.</p>
-<h4 id="zeroclaw-config-13-4"><a class="header" href="#zeroclaw-config-13-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_min_interval_secs &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-12-4"><a class="header" href="#variable-denvironnement-12-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-13-4"><a class="header" href="#variable-denvironnement-13-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_min_interval_secs=
 </code></pre>
@@ -10426,14 +10445,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Profondeur de la file d’attente de régulation sortante par (canal, destinataire). Plage : <code>0..=REPLY_QUEUE_DEPTH_CEILING</code>. Lorsque <code>reply_min_interval_secs &gt; 0</code> et que cette valeur est <code>0</code>, le wrapper de régulation substitue <code>DEFAULT_REPLY_QUEUE_DEPTH</code> (16). Lorsque la file d’attente est pleine, l’envoi le plus récent est abandonné et un <code>WARN</code> est journalisé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-16-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-16-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-3">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
-<h4 id="zerocode-16-4"><a class="header" href="#zerocode-16-4">zerocode</a></h4>
+<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
-<h4 id="zeroclaw-config-14-4"><a class="header" href="#zeroclaw-config-14-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-13-4"><a class="header" href="#variable-denvironnement-13-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-14-4"><a class="header" href="#variable-denvironnement-14-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -10445,14 +10464,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Délai d’expiration du chien de garde anti-blocage en secondes. Lorsqu’il est différent de zéro, le bot abandonne et réessaie si aucune progression n’est constatée pendant cette durée. 0 = désactivé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-3">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-2">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code>.</p>
-<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code>.</p>
-<h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-14-4"><a class="header" href="#variable-denvironnement-14-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-15-4"><a class="header" href="#variable-denvironnement-15-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stall_timeout_secs=
 </code></pre>
@@ -10464,14 +10483,14 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Mode streaming pour la livraison progressive des réponses. <code>off</code> (par défaut) : message unique. <code>partial</code> : mises à jour de brouillon modifiables. <code>multi_message</code> : division de la réponse en messages séparés aux limites de paragraphes.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-2">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-19-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-19-2">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-15-4"><a class="header" href="#variable-denvironnement-15-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-3"><a class="header" href="#variable-denvironnement-16-3">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -10505,11 +10524,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 </ul>
 <p>Posez-le sur n’importe quelle surface :</p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-19-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-19-2">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-20-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-2">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
+<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
 </div>
@@ -10948,11 +10967,11 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # répo
 </ul>
 <p>Posez-le sur n’importe quelle surface :</p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-20-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-2">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-20-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-3">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> et définissez le champ <code>channels.slack.&lt;alias&gt;.stream_drafts</code>.</p>
-<h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
+<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.slack.&lt;alias&gt;.stream_drafts</code>.</p>
-<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.stream_drafts &lt;value&gt;
 </code></pre>
 </div>
@@ -12530,7 +12549,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-3"><a class="header" href="#variable-denvironnement-16-3">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-4"><a class="header" href="#variable-denvironnement-16-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -12565,7 +12584,7 @@ zeroclaw channel start
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> et définissez le champ <code>channels.whatsapp.&lt;alias&gt;.session_path</code>.</p>
 <h4 id="zerocode-19-4"><a class="header" href="#zerocode-19-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.whatsapp.&lt;alias&gt;.session_path</code>.</p>
-<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.session_path &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-18-1"><a class="header" href="#variable-denvironnement-18-1">Variable d’environnement</a></h4>
@@ -12580,9 +12599,9 @@ zeroclaw channel start
 <p>Jeton de vérification du webhook (vous le définissez, Meta le renvoie pour vérification) Utilisé uniquement en mode Cloud API</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-20-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-3">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-20-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> et définissez le champ <code>channels.whatsapp.&lt;alias&gt;.verify_token</code>.</p>
-<h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
+<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.whatsapp.&lt;alias&gt;.verify_token</code>.</p>
 <h4 id="zeroclaw-config-19-2"><a class="header" href="#zeroclaw-config-19-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.verify_token    # entrée masquée, stockée chiffrée
@@ -13082,7 +13101,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-4"><a class="header" href="#variable-denvironnement-16-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-5"><a class="header" href="#variable-denvironnement-16-5">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13115,7 +13134,7 @@ zeroclaw channel start
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> et définissez le champ <code>channels.email.&lt;alias&gt;.username</code>.</p>
 <h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.email.&lt;alias&gt;.username</code>.</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-18-2"><a class="header" href="#variable-denvironnement-18-2">Variable d’environnement</a></h4>
@@ -13132,9 +13151,9 @@ zeroclaw channel start
 <p><strong><code>channels.email.&lt;alias&gt;.password</code> est un secret.</strong> Stocké chiffré, jamais en clair dans <code>config.toml</code>. Définissez-le via l’une de ces méthodes, qui chiffrent à l’écriture :</p>
 </blockquote>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-20-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-20-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-5">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> et définissez-y le champ <code>channels.email.&lt;alias&gt;.password</code>.</p>
-<h4 id="zerocode-20-4"><a class="header" href="#zerocode-20-4">zerocode</a></h4>
+<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.email.&lt;alias&gt;.password</code> (la saisie est masquée).</p>
 <h4 id="zeroclaw-config-19-3"><a class="header" href="#zeroclaw-config-19-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.password    # demande une saisie masquée, stocke de manière chiffrée
@@ -13643,7 +13662,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_port &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-5"><a class="header" href="#variable-denvironnement-16-5">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-6"><a class="header" href="#variable-denvironnement-16-6">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_call__&lt;alias&gt;__webhook_port=
 </code></pre>
@@ -13670,7 +13689,7 @@ zeroclaw channel start
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> et définissez le champ <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code>.</p>
 <h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code>.</p>
-<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-17-5"><a class="header" href="#variable-denvironnement-17-5">Variable d’environnement</a></h4>
@@ -13704,9 +13723,9 @@ zeroclaw channel start
 <p>Durée maximale de capture en secondes avant de forcer la transcription. Par défaut : <code>30</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-20-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-5">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-20-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-20-6">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> et définissez le champ <code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code>.</p>
-<h4 id="zerocode-20-5"><a class="header" href="#zerocode-20-5">zerocode</a></h4>
+<h4 id="zerocode-20-6"><a class="header" href="#zerocode-20-6">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.voice_wake.&lt;alias&gt;.max_capture_secs</code>.</p>
 <h4 id="zeroclaw-config-20-4"><a class="header" href="#zeroclaw-config-20-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.max_capture_secs &lt;value&gt;
