@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CostOptimizedStrategy","Route","RouterModelProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["CostOptimizedStrategy","Route","RouterProvider"]};

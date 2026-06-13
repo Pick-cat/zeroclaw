@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AnthropicModelProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["AnthropicProvider"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["BedrockModelProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["BedrockProvider"]};
