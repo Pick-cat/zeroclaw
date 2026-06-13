@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CopilotProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["CopilotModelProvider"]};

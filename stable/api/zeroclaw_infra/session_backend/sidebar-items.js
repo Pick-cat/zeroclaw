@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["SessionMetadata","SessionQuery","SessionState"],"trait":["SessionBackend"]};
+window.SIDEBAR_ITEMS = {"struct":["SessionContext","SessionMetadata","SessionQuery","SessionState","TimestampedMessage"],"trait":["SessionBackend"]};

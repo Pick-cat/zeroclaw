@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AzureOpenAiProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["AzureOpenAiModelProvider"]};

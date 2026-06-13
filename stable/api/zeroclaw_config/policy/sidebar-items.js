@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["CommandRiskLevel","ToolOperation"],"struct":["ActionTracker","PerSenderTracker","SecurityPolicy"]};
+window.SIDEBAR_ITEMS = {"enum":["CommandRiskLevel","EscalationViolation","ToolOperation"],"struct":["ActionTracker","PerSenderTracker","SecurityPolicy"]};

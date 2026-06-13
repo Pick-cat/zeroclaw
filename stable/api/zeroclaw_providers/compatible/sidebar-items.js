@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AuthStyle"],"struct":["OpenAiCompatibleProvider"]};
+window.SIDEBAR_ITEMS = {"enum":["AuthStyle"],"struct":["OpenAiCompatibleModelProvider"]};

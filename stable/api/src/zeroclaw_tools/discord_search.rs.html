@@ -155,7 +155,7 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#153 id=153 data-nosnippet>153</a>
 <a href=#154 id=154 data-nosnippet>154</a>    <span class="kw">fn </span>seeded_discord_mem() -&gt; (TempDir, Arc&lt;<span class="kw">dyn </span>Memory&gt;) {
 <a href=#155 id=155 data-nosnippet>155</a>        <span class="kw">let </span>tmp = TempDir::new().unwrap();
-<a href=#156 id=156 data-nosnippet>156</a>        <span class="kw">let </span>mem = SqliteMemory::new_named(tmp.path(), <span class="string">"discord"</span>).unwrap();
+<a href=#156 id=156 data-nosnippet>156</a>        <span class="kw">let </span>mem = SqliteMemory::new_named(<span class="string">"test"</span>, tmp.path(), <span class="string">"discord"</span>).unwrap();
 <a href=#157 id=157 data-nosnippet>157</a>        (tmp, Arc::new(mem))
 <a href=#158 id=158 data-nosnippet>158</a>    }
 <a href=#159 id=159 data-nosnippet>159</a>

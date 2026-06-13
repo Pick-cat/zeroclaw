@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GeminiProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["GeminiModelProvider"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["GEMINI_CLI_PATH_ENV"],"struct":["GeminiCliProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["GeminiCliModelProvider"]};

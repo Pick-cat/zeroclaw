@@ -202,7 +202,7 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#200 id=200 data-nosnippet>200</a>                <span class="string">"GPIO {} registered as {} on {}"</span>,
 <a href=#201 id=201 data-nosnippet>201</a>                req.pin, component, req.device
 <a href=#202 id=202 data-nosnippet>202</a>            );
-<a href=#203 id=203 data-nosnippet>203</a>            <span class="macro">tracing::info!</span>(device = %req.device, pin = req.pin, component = %component, <span class="string">"{}"</span>, message);
+<a href=#203 id=203 data-nosnippet>203</a>            <span class="macro">::zeroclaw_log::record!</span>(INFO, ::zeroclaw_log::Event::new(<span class="macro">module_path!</span>(), ::zeroclaw_log::Action::Note).with_attrs(<span class="macro">::serde_json::json!</span>({<span class="string">"device"</span>: req.device, <span class="string">"pin"</span>: req.pin, <span class="string">"component"</span>: component})), <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}"</span>, message));
 <a href=#204 id=204 data-nosnippet>204</a>            (
 <a href=#205 id=205 data-nosnippet>205</a>                StatusCode::OK,
 <a href=#206 id=206 data-nosnippet>206</a>                Json(<span class="macro">serde_json::json!</span>({ <span class="string">"ok"</span>: <span class="bool-val">true</span>, <span class="string">"message"</span>: message })),
@@ -306,128 +306,137 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#304 id=304 data-nosnippet>304</a>
 <a href=#305 id=305 data-nosnippet>305</a>    <span class="kw">match </span>append_to_file(<span class="kw-2">&amp;</span>device_path, <span class="kw-2">&amp;</span>content).<span class="kw">await </span>{
 <a href=#306 id=306 data-nosnippet>306</a>        <span class="prelude-val">Ok</span>(()) =&gt; {
-<a href=#307 id=307 data-nosnippet>307</a>            <span class="macro">tracing::info!</span>(device = %req.device, bytes = content.len(), <span class="string">"Hardware context appended"</span>);
-<a href=#308 id=308 data-nosnippet>308</a>            (StatusCode::OK, Json(<span class="macro">serde_json::json!</span>({ <span class="string">"ok"</span>: <span class="bool-val">true </span>}))).into_response()
-<a href=#309 id=309 data-nosnippet>309</a>        }
-<a href=#310 id=310 data-nosnippet>310</a>        <span class="prelude-val">Err</span>(e) =&gt; (
-<a href=#311 id=311 data-nosnippet>311</a>            StatusCode::INTERNAL_SERVER_ERROR,
-<a href=#312 id=312 data-nosnippet>312</a>            Json(<span class="macro">serde_json::json!</span>({ <span class="string">"error"</span>: <span class="macro">format!</span>(<span class="string">"Failed to write: {e}"</span>) })),
-<a href=#313 id=313 data-nosnippet>313</a>        )
-<a href=#314 id=314 data-nosnippet>314</a>            .into_response(),
-<a href=#315 id=315 data-nosnippet>315</a>    }
-<a href=#316 id=316 data-nosnippet>316</a>}
-<a href=#317 id=317 data-nosnippet>317</a>
-<a href=#318 id=318 data-nosnippet>318</a><span class="comment">// ── GET /api/hardware/context ─────────────────────────────────────────────────
-<a href=#319 id=319 data-nosnippet>319</a>
-<a href=#320 id=320 data-nosnippet>320</a></span><span class="attr">#[derive(Debug, Serialize)]
-<a href=#321 id=321 data-nosnippet>321</a></span><span class="kw">struct </span>HardwareContextResponse {
-<a href=#322 id=322 data-nosnippet>322</a>    hardware_md: String,
-<a href=#323 id=323 data-nosnippet>323</a>    devices: std::collections::HashMap&lt;String, String&gt;,
-<a href=#324 id=324 data-nosnippet>324</a>}
-<a href=#325 id=325 data-nosnippet>325</a>
-<a href=#326 id=326 data-nosnippet>326</a><span class="doccomment">/// `GET /api/hardware/context` — return all current hardware context file contents.
-<a href=#327 id=327 data-nosnippet>327</a></span><span class="kw">pub async fn </span>handle_hardware_context_get(
-<a href=#328 id=328 data-nosnippet>328</a>    State(state): State&lt;AppState&gt;,
-<a href=#329 id=329 data-nosnippet>329</a>    headers: HeaderMap,
-<a href=#330 id=330 data-nosnippet>330</a>) -&gt; <span class="kw">impl </span>IntoResponse {
-<a href=#331 id=331 data-nosnippet>331</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = require_auth(<span class="kw-2">&amp;</span>state, <span class="kw-2">&amp;</span>headers) {
-<a href=#332 id=332 data-nosnippet>332</a>        <span class="kw">return </span>e.into_response();
-<a href=#333 id=333 data-nosnippet>333</a>    }
-<a href=#334 id=334 data-nosnippet>334</a>
-<a href=#335 id=335 data-nosnippet>335</a>    <span class="kw">let </span>hw_dir = <span class="kw">match </span>hardware_dir() {
-<a href=#336 id=336 data-nosnippet>336</a>        <span class="prelude-val">Ok</span>(d) =&gt; d,
-<a href=#337 id=337 data-nosnippet>337</a>        <span class="prelude-val">Err</span>(e) =&gt; {
-<a href=#338 id=338 data-nosnippet>338</a>            <span class="kw">return </span>(
-<a href=#339 id=339 data-nosnippet>339</a>                StatusCode::INTERNAL_SERVER_ERROR,
-<a href=#340 id=340 data-nosnippet>340</a>                Json(<span class="macro">serde_json::json!</span>({ <span class="string">"error"</span>: e })),
-<a href=#341 id=341 data-nosnippet>341</a>            )
-<a href=#342 id=342 data-nosnippet>342</a>                .into_response();
-<a href=#343 id=343 data-nosnippet>343</a>        }
-<a href=#344 id=344 data-nosnippet>344</a>    };
-<a href=#345 id=345 data-nosnippet>345</a>
-<a href=#346 id=346 data-nosnippet>346</a>    <span class="comment">// Read HARDWARE.md
-<a href=#347 id=347 data-nosnippet>347</a>    </span><span class="kw">let </span>hardware_md = fs::read_to_string(hw_dir.join(<span class="string">"HARDWARE.md"</span>))
-<a href=#348 id=348 data-nosnippet>348</a>        .<span class="kw">await
-<a href=#349 id=349 data-nosnippet>349</a>        </span>.unwrap_or_default();
-<a href=#350 id=350 data-nosnippet>350</a>
-<a href=#351 id=351 data-nosnippet>351</a>    <span class="comment">// Read all device files
-<a href=#352 id=352 data-nosnippet>352</a>    </span><span class="kw">let </span>devices_dir = hw_dir.join(<span class="string">"devices"</span>);
-<a href=#353 id=353 data-nosnippet>353</a>    <span class="kw">let </span><span class="kw-2">mut </span>devices = std::collections::HashMap::new();
-<a href=#354 id=354 data-nosnippet>354</a>    <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>entries) = fs::read_dir(<span class="kw-2">&amp;</span>devices_dir).<span class="kw">await </span>{
-<a href=#355 id=355 data-nosnippet>355</a>        <span class="kw">while let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(entry)) = entries.next_entry().<span class="kw">await </span>{
-<a href=#356 id=356 data-nosnippet>356</a>            <span class="kw">let </span>path = entry.path();
-<a href=#357 id=357 data-nosnippet>357</a>            <span class="kw">if </span>path.extension().and_then(|e| e.to_str()) == <span class="prelude-val">Some</span>(<span class="string">"md"</span>) {
-<a href=#358 id=358 data-nosnippet>358</a>                <span class="kw">let </span>alias = path
-<a href=#359 id=359 data-nosnippet>359</a>                    .file_stem()
-<a href=#360 id=360 data-nosnippet>360</a>                    .and_then(|s| s.to_str())
-<a href=#361 id=361 data-nosnippet>361</a>                    .unwrap_or(<span class="string">""</span>)
-<a href=#362 id=362 data-nosnippet>362</a>                    .to_string();
-<a href=#363 id=363 data-nosnippet>363</a>                <span class="kw">if </span>!alias.is_empty() {
-<a href=#364 id=364 data-nosnippet>364</a>                    <span class="kw">let </span>content = fs::read_to_string(<span class="kw-2">&amp;</span>path).<span class="kw">await</span>.unwrap_or_default();
-<a href=#365 id=365 data-nosnippet>365</a>                    devices.insert(alias, content);
-<a href=#366 id=366 data-nosnippet>366</a>                }
-<a href=#367 id=367 data-nosnippet>367</a>            }
-<a href=#368 id=368 data-nosnippet>368</a>        }
-<a href=#369 id=369 data-nosnippet>369</a>    }
-<a href=#370 id=370 data-nosnippet>370</a>
-<a href=#371 id=371 data-nosnippet>371</a>    <span class="kw">let </span>resp = HardwareContextResponse {
-<a href=#372 id=372 data-nosnippet>372</a>        hardware_md,
-<a href=#373 id=373 data-nosnippet>373</a>        devices,
-<a href=#374 id=374 data-nosnippet>374</a>    };
-<a href=#375 id=375 data-nosnippet>375</a>    (StatusCode::OK, Json(resp)).into_response()
-<a href=#376 id=376 data-nosnippet>376</a>}
+<a href=#307 id=307 data-nosnippet>307</a>            <span class="macro">::zeroclaw_log::record!</span>(
+<a href=#308 id=308 data-nosnippet>308</a>                INFO,
+<a href=#309 id=309 data-nosnippet>309</a>                ::zeroclaw_log::Event::new(<span class="macro">module_path!</span>(), ::zeroclaw_log::Action::Note)
+<a href=#310 id=310 data-nosnippet>310</a>                    .with_attrs(
+<a href=#311 id=311 data-nosnippet>311</a>                        <span class="macro">::serde_json::json!</span>({<span class="string">"device"</span>: req.device, <span class="string">"bytes"</span>: content.len()})
+<a href=#312 id=312 data-nosnippet>312</a>                    ),
+<a href=#313 id=313 data-nosnippet>313</a>                <span class="string">"Hardware context appended"
+<a href=#314 id=314 data-nosnippet>314</a>            </span>);
+<a href=#315 id=315 data-nosnippet>315</a>            (StatusCode::OK, Json(<span class="macro">serde_json::json!</span>({ <span class="string">"ok"</span>: <span class="bool-val">true </span>}))).into_response()
+<a href=#316 id=316 data-nosnippet>316</a>        }
+<a href=#317 id=317 data-nosnippet>317</a>        <span class="prelude-val">Err</span>(e) =&gt; (
+<a href=#318 id=318 data-nosnippet>318</a>            StatusCode::INTERNAL_SERVER_ERROR,
+<a href=#319 id=319 data-nosnippet>319</a>            Json(<span class="macro">serde_json::json!</span>({ <span class="string">"error"</span>: <span class="macro">format!</span>(<span class="string">"Failed to write: {e}"</span>) })),
+<a href=#320 id=320 data-nosnippet>320</a>        )
+<a href=#321 id=321 data-nosnippet>321</a>            .into_response(),
+<a href=#322 id=322 data-nosnippet>322</a>    }
+<a href=#323 id=323 data-nosnippet>323</a>}
+<a href=#324 id=324 data-nosnippet>324</a>
+<a href=#325 id=325 data-nosnippet>325</a><span class="comment">// ── GET /api/hardware/context ─────────────────────────────────────────────────
+<a href=#326 id=326 data-nosnippet>326</a>
+<a href=#327 id=327 data-nosnippet>327</a></span><span class="attr">#[derive(Debug, Serialize)]
+<a href=#328 id=328 data-nosnippet>328</a></span><span class="kw">struct </span>HardwareContextResponse {
+<a href=#329 id=329 data-nosnippet>329</a>    hardware_md: String,
+<a href=#330 id=330 data-nosnippet>330</a>    devices: std::collections::HashMap&lt;String, String&gt;,
+<a href=#331 id=331 data-nosnippet>331</a>}
+<a href=#332 id=332 data-nosnippet>332</a>
+<a href=#333 id=333 data-nosnippet>333</a><span class="doccomment">/// `GET /api/hardware/context` — return all current hardware context file contents.
+<a href=#334 id=334 data-nosnippet>334</a></span><span class="kw">pub async fn </span>handle_hardware_context_get(
+<a href=#335 id=335 data-nosnippet>335</a>    State(state): State&lt;AppState&gt;,
+<a href=#336 id=336 data-nosnippet>336</a>    headers: HeaderMap,
+<a href=#337 id=337 data-nosnippet>337</a>) -&gt; <span class="kw">impl </span>IntoResponse {
+<a href=#338 id=338 data-nosnippet>338</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = require_auth(<span class="kw-2">&amp;</span>state, <span class="kw-2">&amp;</span>headers) {
+<a href=#339 id=339 data-nosnippet>339</a>        <span class="kw">return </span>e.into_response();
+<a href=#340 id=340 data-nosnippet>340</a>    }
+<a href=#341 id=341 data-nosnippet>341</a>
+<a href=#342 id=342 data-nosnippet>342</a>    <span class="kw">let </span>hw_dir = <span class="kw">match </span>hardware_dir() {
+<a href=#343 id=343 data-nosnippet>343</a>        <span class="prelude-val">Ok</span>(d) =&gt; d,
+<a href=#344 id=344 data-nosnippet>344</a>        <span class="prelude-val">Err</span>(e) =&gt; {
+<a href=#345 id=345 data-nosnippet>345</a>            <span class="kw">return </span>(
+<a href=#346 id=346 data-nosnippet>346</a>                StatusCode::INTERNAL_SERVER_ERROR,
+<a href=#347 id=347 data-nosnippet>347</a>                Json(<span class="macro">serde_json::json!</span>({ <span class="string">"error"</span>: e })),
+<a href=#348 id=348 data-nosnippet>348</a>            )
+<a href=#349 id=349 data-nosnippet>349</a>                .into_response();
+<a href=#350 id=350 data-nosnippet>350</a>        }
+<a href=#351 id=351 data-nosnippet>351</a>    };
+<a href=#352 id=352 data-nosnippet>352</a>
+<a href=#353 id=353 data-nosnippet>353</a>    <span class="comment">// Read HARDWARE.md
+<a href=#354 id=354 data-nosnippet>354</a>    </span><span class="kw">let </span>hardware_md = fs::read_to_string(hw_dir.join(<span class="string">"HARDWARE.md"</span>))
+<a href=#355 id=355 data-nosnippet>355</a>        .<span class="kw">await
+<a href=#356 id=356 data-nosnippet>356</a>        </span>.unwrap_or_default();
+<a href=#357 id=357 data-nosnippet>357</a>
+<a href=#358 id=358 data-nosnippet>358</a>    <span class="comment">// Read all device files
+<a href=#359 id=359 data-nosnippet>359</a>    </span><span class="kw">let </span>devices_dir = hw_dir.join(<span class="string">"devices"</span>);
+<a href=#360 id=360 data-nosnippet>360</a>    <span class="kw">let </span><span class="kw-2">mut </span>devices = std::collections::HashMap::new();
+<a href=#361 id=361 data-nosnippet>361</a>    <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>entries) = fs::read_dir(<span class="kw-2">&amp;</span>devices_dir).<span class="kw">await </span>{
+<a href=#362 id=362 data-nosnippet>362</a>        <span class="kw">while let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(entry)) = entries.next_entry().<span class="kw">await </span>{
+<a href=#363 id=363 data-nosnippet>363</a>            <span class="kw">let </span>path = entry.path();
+<a href=#364 id=364 data-nosnippet>364</a>            <span class="kw">if </span>path.extension().and_then(|e| e.to_str()) == <span class="prelude-val">Some</span>(<span class="string">"md"</span>) {
+<a href=#365 id=365 data-nosnippet>365</a>                <span class="kw">let </span>alias = path
+<a href=#366 id=366 data-nosnippet>366</a>                    .file_stem()
+<a href=#367 id=367 data-nosnippet>367</a>                    .and_then(|s| s.to_str())
+<a href=#368 id=368 data-nosnippet>368</a>                    .unwrap_or(<span class="string">""</span>)
+<a href=#369 id=369 data-nosnippet>369</a>                    .to_string();
+<a href=#370 id=370 data-nosnippet>370</a>                <span class="kw">if </span>!alias.is_empty() {
+<a href=#371 id=371 data-nosnippet>371</a>                    <span class="kw">let </span>content = fs::read_to_string(<span class="kw-2">&amp;</span>path).<span class="kw">await</span>.unwrap_or_default();
+<a href=#372 id=372 data-nosnippet>372</a>                    devices.insert(alias, content);
+<a href=#373 id=373 data-nosnippet>373</a>                }
+<a href=#374 id=374 data-nosnippet>374</a>            }
+<a href=#375 id=375 data-nosnippet>375</a>        }
+<a href=#376 id=376 data-nosnippet>376</a>    }
 <a href=#377 id=377 data-nosnippet>377</a>
-<a href=#378 id=378 data-nosnippet>378</a><span class="comment">// ── POST /api/hardware/reload ─────────────────────────────────────────────────
-<a href=#379 id=379 data-nosnippet>379</a>
-<a href=#380 id=380 data-nosnippet>380</a></span><span class="doccomment">/// `POST /api/hardware/reload` — verify on-disk hardware context and report what  
-<a href=#381 id=381 data-nosnippet>381</a>/// will be loaded on the next chat request.
-<a href=#382 id=382 data-nosnippet>382</a>///
-<a href=#383 id=383 data-nosnippet>383</a>/// Since [`zeroclaw_hardware::boot`] re-reads from disk on every agent invocation,
-<a href=#384 id=384 data-nosnippet>384</a>/// writing to the hardware files via the other endpoints already takes effect on
-<a href=#385 id=385 data-nosnippet>385</a>/// the next `/api/chat` call.  This endpoint reads the same files and reports
-<a href=#386 id=386 data-nosnippet>386</a>/// the current state so callers can confirm the update landed.
-<a href=#387 id=387 data-nosnippet>387</a></span><span class="kw">pub async fn </span>handle_hardware_reload(
-<a href=#388 id=388 data-nosnippet>388</a>    State(state): State&lt;AppState&gt;,
-<a href=#389 id=389 data-nosnippet>389</a>    headers: HeaderMap,
-<a href=#390 id=390 data-nosnippet>390</a>) -&gt; <span class="kw">impl </span>IntoResponse {
-<a href=#391 id=391 data-nosnippet>391</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = require_auth(<span class="kw-2">&amp;</span>state, <span class="kw-2">&amp;</span>headers) {
-<a href=#392 id=392 data-nosnippet>392</a>        <span class="kw">return </span>e.into_response();
-<a href=#393 id=393 data-nosnippet>393</a>    }
-<a href=#394 id=394 data-nosnippet>394</a>
-<a href=#395 id=395 data-nosnippet>395</a>    <span class="comment">// Count currently-registered tools in the gateway state
-<a href=#396 id=396 data-nosnippet>396</a>    </span><span class="kw">let </span>tool_count = state.tools_registry.len();
-<a href=#397 id=397 data-nosnippet>397</a>
-<a href=#398 id=398 data-nosnippet>398</a>    <span class="comment">// Reload hardware context from disk (same function used by the agent loop)
-<a href=#399 id=399 data-nosnippet>399</a>    </span><span class="kw">let </span>context = zeroclaw_hardware::load_hardware_context_prompt(<span class="kw-2">&amp;</span>[]);
-<a href=#400 id=400 data-nosnippet>400</a>    <span class="kw">let </span>context_length = context.len();
+<a href=#378 id=378 data-nosnippet>378</a>    <span class="kw">let </span>resp = HardwareContextResponse {
+<a href=#379 id=379 data-nosnippet>379</a>        hardware_md,
+<a href=#380 id=380 data-nosnippet>380</a>        devices,
+<a href=#381 id=381 data-nosnippet>381</a>    };
+<a href=#382 id=382 data-nosnippet>382</a>    (StatusCode::OK, Json(resp)).into_response()
+<a href=#383 id=383 data-nosnippet>383</a>}
+<a href=#384 id=384 data-nosnippet>384</a>
+<a href=#385 id=385 data-nosnippet>385</a><span class="comment">// ── POST /api/hardware/reload ─────────────────────────────────────────────────
+<a href=#386 id=386 data-nosnippet>386</a>
+<a href=#387 id=387 data-nosnippet>387</a></span><span class="doccomment">/// `POST /api/hardware/reload` — verify on-disk hardware context and report what  
+<a href=#388 id=388 data-nosnippet>388</a>/// will be loaded on the next chat request.
+<a href=#389 id=389 data-nosnippet>389</a>///
+<a href=#390 id=390 data-nosnippet>390</a>/// Since [`zeroclaw_hardware::boot`] re-reads from disk on every agent invocation,
+<a href=#391 id=391 data-nosnippet>391</a>/// writing to the hardware files via the other endpoints already takes effect on
+<a href=#392 id=392 data-nosnippet>392</a>/// the next `/api/chat` call.  This endpoint reads the same files and reports
+<a href=#393 id=393 data-nosnippet>393</a>/// the current state so callers can confirm the update landed.
+<a href=#394 id=394 data-nosnippet>394</a></span><span class="kw">pub async fn </span>handle_hardware_reload(
+<a href=#395 id=395 data-nosnippet>395</a>    State(state): State&lt;AppState&gt;,
+<a href=#396 id=396 data-nosnippet>396</a>    headers: HeaderMap,
+<a href=#397 id=397 data-nosnippet>397</a>) -&gt; <span class="kw">impl </span>IntoResponse {
+<a href=#398 id=398 data-nosnippet>398</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = require_auth(<span class="kw-2">&amp;</span>state, <span class="kw-2">&amp;</span>headers) {
+<a href=#399 id=399 data-nosnippet>399</a>        <span class="kw">return </span>e.into_response();
+<a href=#400 id=400 data-nosnippet>400</a>    }
 <a href=#401 id=401 data-nosnippet>401</a>
-<a href=#402 id=402 data-nosnippet>402</a>    <span class="macro">tracing::info!</span>(
-<a href=#403 id=403 data-nosnippet>403</a>        context_length,
-<a href=#404 id=404 data-nosnippet>404</a>        tool_count,
-<a href=#405 id=405 data-nosnippet>405</a>        <span class="string">"Hardware context reloaded (on-disk read)"
-<a href=#406 id=406 data-nosnippet>406</a>    </span>);
-<a href=#407 id=407 data-nosnippet>407</a>
-<a href=#408 id=408 data-nosnippet>408</a>    (
-<a href=#409 id=409 data-nosnippet>409</a>        StatusCode::OK,
-<a href=#410 id=410 data-nosnippet>410</a>        Json(<span class="macro">serde_json::json!</span>({
-<a href=#411 id=411 data-nosnippet>411</a>            <span class="string">"ok"</span>: <span class="bool-val">true</span>,
-<a href=#412 id=412 data-nosnippet>412</a>            <span class="string">"tools"</span>: tool_count,
-<a href=#413 id=413 data-nosnippet>413</a>            <span class="string">"context_length"</span>: context_length,
-<a href=#414 id=414 data-nosnippet>414</a>        })),
-<a href=#415 id=415 data-nosnippet>415</a>    )
-<a href=#416 id=416 data-nosnippet>416</a>        .into_response()
-<a href=#417 id=417 data-nosnippet>417</a>}
-<a href=#418 id=418 data-nosnippet>418</a>
-<a href=#419 id=419 data-nosnippet>419</a><span class="comment">// ── File I/O helper ───────────────────────────────────────────────────────────
-<a href=#420 id=420 data-nosnippet>420</a>
-<a href=#421 id=421 data-nosnippet>421</a></span><span class="kw">async fn </span>append_to_file(path: <span class="kw-2">&amp;</span>std::path::Path, content: <span class="kw-2">&amp;</span>str) -&gt; std::io::Result&lt;()&gt; {
-<a href=#422 id=422 data-nosnippet>422</a>    <span class="kw">let </span><span class="kw-2">mut </span>file = tokio::fs::OpenOptions::new()
-<a href=#423 id=423 data-nosnippet>423</a>        .create(<span class="bool-val">true</span>)
-<a href=#424 id=424 data-nosnippet>424</a>        .append(<span class="bool-val">true</span>)
-<a href=#425 id=425 data-nosnippet>425</a>        .open(path)
-<a href=#426 id=426 data-nosnippet>426</a>        .<span class="kw">await</span><span class="question-mark">?</span>;
-<a href=#427 id=427 data-nosnippet>427</a>    file.write_all(content.as_bytes()).<span class="kw">await</span><span class="question-mark">?</span>;
-<a href=#428 id=428 data-nosnippet>428</a>    file.flush().<span class="kw">await</span><span class="question-mark">?</span>;
-<a href=#429 id=429 data-nosnippet>429</a>    <span class="prelude-val">Ok</span>(())
-<a href=#430 id=430 data-nosnippet>430</a>}
+<a href=#402 id=402 data-nosnippet>402</a>    <span class="comment">// Count currently-registered tools in the gateway state
+<a href=#403 id=403 data-nosnippet>403</a>    </span><span class="kw">let </span>tool_count = state.tools_registry.len();
+<a href=#404 id=404 data-nosnippet>404</a>
+<a href=#405 id=405 data-nosnippet>405</a>    <span class="comment">// Reload hardware context from disk (same function used by the agent loop)
+<a href=#406 id=406 data-nosnippet>406</a>    </span><span class="kw">let </span>context = zeroclaw_hardware::load_hardware_context_prompt(<span class="kw-2">&amp;</span>[]);
+<a href=#407 id=407 data-nosnippet>407</a>    <span class="kw">let </span>context_length = context.len();
+<a href=#408 id=408 data-nosnippet>408</a>
+<a href=#409 id=409 data-nosnippet>409</a>    <span class="macro">::zeroclaw_log::record!</span>(
+<a href=#410 id=410 data-nosnippet>410</a>        INFO,
+<a href=#411 id=411 data-nosnippet>411</a>        ::zeroclaw_log::Event::new(<span class="macro">module_path!</span>(), ::zeroclaw_log::Action::Note).with_attrs(
+<a href=#412 id=412 data-nosnippet>412</a>            <span class="macro">::serde_json::json!</span>({<span class="string">"context_length"</span>: context_length, <span class="string">"tool_count"</span>: tool_count})
+<a href=#413 id=413 data-nosnippet>413</a>        ),
+<a href=#414 id=414 data-nosnippet>414</a>        <span class="string">"Hardware context reloaded (on-disk read)"
+<a href=#415 id=415 data-nosnippet>415</a>    </span>);
+<a href=#416 id=416 data-nosnippet>416</a>
+<a href=#417 id=417 data-nosnippet>417</a>    (
+<a href=#418 id=418 data-nosnippet>418</a>        StatusCode::OK,
+<a href=#419 id=419 data-nosnippet>419</a>        Json(<span class="macro">serde_json::json!</span>({
+<a href=#420 id=420 data-nosnippet>420</a>            <span class="string">"ok"</span>: <span class="bool-val">true</span>,
+<a href=#421 id=421 data-nosnippet>421</a>            <span class="string">"tools"</span>: tool_count,
+<a href=#422 id=422 data-nosnippet>422</a>            <span class="string">"context_length"</span>: context_length,
+<a href=#423 id=423 data-nosnippet>423</a>        })),
+<a href=#424 id=424 data-nosnippet>424</a>    )
+<a href=#425 id=425 data-nosnippet>425</a>        .into_response()
+<a href=#426 id=426 data-nosnippet>426</a>}
+<a href=#427 id=427 data-nosnippet>427</a>
+<a href=#428 id=428 data-nosnippet>428</a><span class="comment">// ── File I/O helper ───────────────────────────────────────────────────────────
+<a href=#429 id=429 data-nosnippet>429</a>
+<a href=#430 id=430 data-nosnippet>430</a></span><span class="kw">async fn </span>append_to_file(path: <span class="kw-2">&amp;</span>std::path::Path, content: <span class="kw-2">&amp;</span>str) -&gt; std::io::Result&lt;()&gt; {
+<a href=#431 id=431 data-nosnippet>431</a>    <span class="kw">let </span><span class="kw-2">mut </span>file = tokio::fs::OpenOptions::new()
+<a href=#432 id=432 data-nosnippet>432</a>        .create(<span class="bool-val">true</span>)
+<a href=#433 id=433 data-nosnippet>433</a>        .append(<span class="bool-val">true</span>)
+<a href=#434 id=434 data-nosnippet>434</a>        .open(path)
+<a href=#435 id=435 data-nosnippet>435</a>        .<span class="kw">await</span><span class="question-mark">?</span>;
+<a href=#436 id=436 data-nosnippet>436</a>    file.write_all(content.as_bytes()).<span class="kw">await</span><span class="question-mark">?</span>;
+<a href=#437 id=437 data-nosnippet>437</a>    file.flush().<span class="kw">await</span><span class="question-mark">?</span>;
+<a href=#438 id=438 data-nosnippet>438</a>    <span class="prelude-val">Ok</span>(())
+<a href=#439 id=439 data-nosnippet>439</a>}
 </code></pre></div></section></main></body></html>

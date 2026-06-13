@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ToolSearchTool"]};
+window.SIDEBAR_ITEMS = {"struct":["ToolAccessPolicy","ToolSearchTool"]};

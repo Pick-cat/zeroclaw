@@ -52,20 +52,22 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../../" d
 <a href=#50 id=50 data-nosnippet>50</a>            namespace: <span class="string">"default"</span>.into(),
 <a href=#51 id=51 data-nosnippet>51</a>            importance: <span class="prelude-val">Some</span>(<span class="number">0.7</span>),
 <a href=#52 id=52 data-nosnippet>52</a>            superseded_by: <span class="prelude-val">None</span>,
-<a href=#53 id=53 data-nosnippet>53</a>        };
-<a href=#54 id=54 data-nosnippet>54</a>
-<a href=#55 id=55 data-nosnippet>55</a>        <span class="kw">let </span>json = serde_json::to_string(<span class="kw-2">&amp;</span>entry).unwrap();
-<a href=#56 id=56 data-nosnippet>56</a>        <span class="kw">let </span>parsed: MemoryEntry = serde_json::from_str(<span class="kw-2">&amp;</span>json).unwrap();
-<a href=#57 id=57 data-nosnippet>57</a>
-<a href=#58 id=58 data-nosnippet>58</a>        <span class="macro">assert_eq!</span>(parsed.id, <span class="string">"id-1"</span>);
-<a href=#59 id=59 data-nosnippet>59</a>        <span class="macro">assert_eq!</span>(parsed.key, <span class="string">"favorite_language"</span>);
-<a href=#60 id=60 data-nosnippet>60</a>        <span class="macro">assert_eq!</span>(parsed.content, <span class="string">"Rust"</span>);
-<a href=#61 id=61 data-nosnippet>61</a>        <span class="macro">assert_eq!</span>(parsed.category, MemoryCategory::Core);
-<a href=#62 id=62 data-nosnippet>62</a>        <span class="macro">assert_eq!</span>(parsed.session_id.as_deref(), <span class="prelude-val">Some</span>(<span class="string">"session-abc"</span>));
-<a href=#63 id=63 data-nosnippet>63</a>        <span class="macro">assert_eq!</span>(parsed.score, <span class="prelude-val">Some</span>(<span class="number">0.98</span>));
-<a href=#64 id=64 data-nosnippet>64</a>        <span class="macro">assert_eq!</span>(parsed.namespace, <span class="string">"default"</span>);
-<a href=#65 id=65 data-nosnippet>65</a>        <span class="macro">assert_eq!</span>(parsed.importance, <span class="prelude-val">Some</span>(<span class="number">0.7</span>));
-<a href=#66 id=66 data-nosnippet>66</a>        <span class="macro">assert!</span>(parsed.superseded_by.is_none());
-<a href=#67 id=67 data-nosnippet>67</a>    }
-<a href=#68 id=68 data-nosnippet>68</a>}
+<a href=#53 id=53 data-nosnippet>53</a>            agent_alias: <span class="prelude-val">None</span>,
+<a href=#54 id=54 data-nosnippet>54</a>            agent_id: <span class="prelude-val">None</span>,
+<a href=#55 id=55 data-nosnippet>55</a>        };
+<a href=#56 id=56 data-nosnippet>56</a>
+<a href=#57 id=57 data-nosnippet>57</a>        <span class="kw">let </span>json = serde_json::to_string(<span class="kw-2">&amp;</span>entry).unwrap();
+<a href=#58 id=58 data-nosnippet>58</a>        <span class="kw">let </span>parsed: MemoryEntry = serde_json::from_str(<span class="kw-2">&amp;</span>json).unwrap();
+<a href=#59 id=59 data-nosnippet>59</a>
+<a href=#60 id=60 data-nosnippet>60</a>        <span class="macro">assert_eq!</span>(parsed.id, <span class="string">"id-1"</span>);
+<a href=#61 id=61 data-nosnippet>61</a>        <span class="macro">assert_eq!</span>(parsed.key, <span class="string">"favorite_language"</span>);
+<a href=#62 id=62 data-nosnippet>62</a>        <span class="macro">assert_eq!</span>(parsed.content, <span class="string">"Rust"</span>);
+<a href=#63 id=63 data-nosnippet>63</a>        <span class="macro">assert_eq!</span>(parsed.category, MemoryCategory::Core);
+<a href=#64 id=64 data-nosnippet>64</a>        <span class="macro">assert_eq!</span>(parsed.session_id.as_deref(), <span class="prelude-val">Some</span>(<span class="string">"session-abc"</span>));
+<a href=#65 id=65 data-nosnippet>65</a>        <span class="macro">assert_eq!</span>(parsed.score, <span class="prelude-val">Some</span>(<span class="number">0.98</span>));
+<a href=#66 id=66 data-nosnippet>66</a>        <span class="macro">assert_eq!</span>(parsed.namespace, <span class="string">"default"</span>);
+<a href=#67 id=67 data-nosnippet>67</a>        <span class="macro">assert_eq!</span>(parsed.importance, <span class="prelude-val">Some</span>(<span class="number">0.7</span>));
+<a href=#68 id=68 data-nosnippet>68</a>        <span class="macro">assert!</span>(parsed.superseded_by.is_none());
+<a href=#69 id=69 data-nosnippet>69</a>    }
+<a href=#70 id=70 data-nosnippet>70</a>}
 </code></pre></div></section></main></body></html>

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["handle_events_history","handle_sse_events"],"struct":["BroadcastObserver","EventBuffer"]};
+window.SIDEBAR_ITEMS = {"fn":["handle_events_history","handle_sse_events"],"struct":["EventBuffer"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["OpenRouterProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["OpenRouterModelProvider"]};

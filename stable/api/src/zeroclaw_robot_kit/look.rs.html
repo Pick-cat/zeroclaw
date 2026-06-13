@@ -158,7 +158,7 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#156 id=156 data-nosnippet>156</a>    <span class="kw">async fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>, args: Value) -&gt; <span class="prelude-ty">Result</span>&lt;ToolResult&gt; {
 <a href=#157 id=157 data-nosnippet>157</a>        <span class="kw">let </span>action = args[<span class="string">"action"</span>]
 <a href=#158 id=158 data-nosnippet>158</a>            .as_str()
-<a href=#159 id=159 data-nosnippet>159</a>            .ok_or_else(|| <span class="macro">anyhow::anyhow!</span>(<span class="string">"Missing 'action' parameter"</span>))<span class="question-mark">?</span>;
+<a href=#159 id=159 data-nosnippet>159</a>            .ok_or_else(|| anyhow::Error::msg(<span class="string">"Missing 'action' parameter"</span>))<span class="question-mark">?</span>;
 <a href=#160 id=160 data-nosnippet>160</a>
 <a href=#161 id=161 data-nosnippet>161</a>        <span class="comment">// Capture image
 <a href=#162 id=162 data-nosnippet>162</a>        </span><span class="kw">let </span>image_path = <span class="kw">match </span><span class="self">self</span>.capture_image().<span class="kw">await </span>{
@@ -201,7 +201,7 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#199 id=199 data-nosnippet>199</a>            }
 <a href=#200 id=200 data-nosnippet>200</a>            <span class="string">"find" </span>=&gt; {
 <a href=#201 id=201 data-nosnippet>201</a>                <span class="kw">let </span>target = args[<span class="string">"prompt"</span>].as_str().ok_or_else(|| {
-<a href=#202 id=202 data-nosnippet>202</a>                    <span class="macro">anyhow::anyhow!</span>(<span class="string">"'find' action requires 'prompt' specifying what to find"</span>)
+<a href=#202 id=202 data-nosnippet>202</a>                    anyhow::Error::msg(<span class="string">"'find' action requires 'prompt' specifying what to find"</span>)
 <a href=#203 id=203 data-nosnippet>203</a>                })<span class="question-mark">?</span>;
 <a href=#204 id=204 data-nosnippet>204</a>
 <a href=#205 id=205 data-nosnippet>205</a>                <span class="kw">let </span>prompt = <span class="macro">format!</span>(

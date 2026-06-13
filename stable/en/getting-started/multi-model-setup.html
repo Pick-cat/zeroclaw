@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu sidebar-visible" dir="ltr">
+<html lang="en" class="default-dark sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -12,11 +12,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon-0c90d4b5.svg">
-        <link rel="shortcut icon" href="../favicon-53763955.png">
+        <link rel="icon" href="../../../_shared/favicon.svg">
+        <link rel="shortcut icon" href="../../../_shared/favicon.png">
         <link rel="stylesheet" href="../css/variables-8adf115d.css">
         <link rel="stylesheet" href="../css/general-2459343d.css">
-        <link rel="stylesheet" href="../css/chrome-9dfbd86b.css">
+        <link rel="stylesheet" href="../../../_shared/css/chrome.css">
         <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -27,19 +27,94 @@
         <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
-        <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../theme/custom-a6e9ac27.css">
+        <!-- Custom theme stylesheets (pc-themes.css generated; ordered first) -->
+        <link rel="stylesheet" href="../../../_shared/theme/pc-themes.css">
+        <link rel="stylesheet" href="../../../_shared/theme/custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../";
-            const default_light_theme = "ayu";
-            const default_dark_theme = "ayu";
-            window.path_to_searchindex_js = "../searchindex-556da8fb.js";
+            const default_light_theme = "default-dark";
+            const default_dark_theme = "default-dark";
+            window.path_to_searchindex_js = "../searchindex-c0b8ba70.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-425f4b80.js"></script>
+        <script src="../toc-8b3eb20a.js"></script>
+        <script>
+            // Persist sidebar fold state across navigations. mdBook's toc.js
+            // expands only the active page's ancestor chain on every load,
+            // collapsing every other section the reader opened. Wrap the
+            // scrollbox element's connectedCallback so saved state is applied
+            // synchronously at the end of its own render — same paint, no
+            // flicker — and record state whenever a fold is toggled.
+            (function () {
+                var KEY = 'pc-sidebar-folds';
+                var proto = window.MDBookSidebarScrollbox
+                    && window.MDBookSidebarScrollbox.prototype;
+                var ce = window.customElements
+                    && window.customElements.get('mdbook-sidebar-scrollbox');
+                proto = (ce && ce.prototype) || proto;
+                if (!proto || proto.__pcFolds) { return; }
+                proto.__pcFolds = true;
+
+                function read() {
+                    try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+                    catch (e) { return {}; }
+                }
+                function write(s) {
+                    try { localStorage.setItem(KEY, JSON.stringify(s)); }
+                    catch (e) { /* storage unavailable */ }
+                }
+                function foldables(box) {
+                    return Array.prototype.filter.call(
+                        box.querySelectorAll('li.chapter-item'),
+                        function (li) {
+                            return li.querySelector(':scope > .chapter-link-wrapper > a.chapter-fold-toggle');
+                        }
+                    );
+                }
+                function keyFor(li) {
+                    var wrap = li.querySelector(':scope > .chapter-link-wrapper');
+                    if (!wrap) { return null; }
+                    var link = wrap.querySelector(':scope > a[href]');
+                    if (link) { return 'h:' + link.getAttribute('href'); }
+                    var strong = wrap.querySelector(':scope > span strong, :scope > a strong');
+                    return strong ? 'n:' + strong.textContent.trim() : null;
+                }
+                function applyState(box) {
+                    var state = read();
+                    foldables(box).forEach(function (li) {
+                        var k = keyFor(li);
+                        if (k == null || !(k in state)) { return; }
+                        // Never collapse the section holding the active page.
+                        if (!state[k] && li.querySelector('a.active')) { return; }
+                        li.classList.toggle('expanded', !!state[k]);
+                    });
+                }
+                function recordState(box) {
+                    var s = read();
+                    foldables(box).forEach(function (li) {
+                        var k = keyFor(li);
+                        if (k != null) { s[k] = li.classList.contains('expanded'); }
+                    });
+                    write(s);
+                }
+
+                var origConnected = proto.connectedCallback;
+                proto.connectedCallback = function () {
+                    if (origConnected) { origConnected.call(this); }
+                    var box = this;
+                    applyState(box);
+                    box.addEventListener('click', function (e) {
+                        if (!e.target.closest('a.chapter-fold-toggle, .chapter-link-wrapper')) {
+                            return;
+                        }
+                        requestAnimationFrame(function () { recordState(box); });
+                    });
+                };
+            })();
+        </script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -77,27 +152,29 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('default-dark')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
 
         <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
-        <!-- Hide / unhide sidebar before it is displayed -->
+        <!-- Hide / unhide sidebar before it is displayed.
+             The user's saved preference (mdbook-sidebar) wins at every width so
+             navigating between pages never collapses an open sidebar. Only when
+             no preference is stored do we pick a width-based default, and only a
+             genuinely narrow (phone) viewport defaults to hidden. -->
         <script>
             let sidebar = null;
             const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
-            if (document.body.clientWidth >= 1080) {
-                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
-                sidebar = sidebar || 'visible';
-            } else {
-                sidebar = 'hidden';
-                sidebar_toggle.checked = false;
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+            if (sidebar !== 'visible' && sidebar !== 'hidden') {
+                sidebar = document.body.clientWidth >= 768 ? 'visible' : 'hidden';
             }
             if (sidebar === 'visible') {
                 sidebar_toggle.checked = true;
             } else {
+                sidebar_toggle.checked = false;
                 html.classList.remove('sidebar-visible');
             }
         </script>
@@ -127,11 +204,48 @@
                         </button>
                         <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                            <!-- PC_THEME_LIST_START: generated from themes.json by `cargo xtask mdbook themes`; do not edit between markers -->
+                            <li role="none" class="pc-theme-group">Dark</li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-ayu-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#0a0e14;--s1:#39bae6;--s2:#d2a6ff;--s3:#ffb454"></span><span class="pc-theme-name">Ayu Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-catppuccin-mocha"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1e1e2e;--s1:#89b4fa;--s2:#cba6f7;--s3:#f9e2af"></span><span class="pc-theme-name">Catppuccin Mocha</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-cobalt2"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#193549;--s1:#ffc600;--s2:#ff9d00;--s3:#80ffbb"></span><span class="pc-theme-name">Cobalt2</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-code-red"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#160a0a;--s1:#ff3b3b;--s2:#ff8a5c;--s3:#ffb454"></span><span class="pc-theme-name">Code Red</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-default-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1e1e24;--s1:#22d3ee;--s2:#a78bfa;--s3:#f59e0b"></span><span class="pc-theme-name">Default Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-icy-blue"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#080e18;--s1:#64c8ff;--s2:#b48cff;--s3:#ffdc50"></span><span class="pc-theme-name">Icy Blue</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-dracula"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282a36;--s1:#bd93f9;--s2:#ff79c6;--s3:#50fa7b"></span><span class="pc-theme-name">Dracula</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-everforest-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#2d353b;--s1:#a7c080;--s2:#83c092;--s3:#dbbc7f"></span><span class="pc-theme-name">Everforest Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-flexoki-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#100f0f;--s1:#ce5d97;--s2:#879a39;--s3:#da702c"></span><span class="pc-theme-name">Flexoki Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-gruvbox-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282828;--s1:#83a598;--s2:#d3869b;--s3:#fabd2f"></span><span class="pc-theme-name">Gruvbox Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-hacker-green"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#0a0e0a;--s1:#00ff41;--s2:#00cc33;--s3:#008f11"></span><span class="pc-theme-name">Hacker Green</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-hazard"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#16140a;--s1:#ffd60a;--s2:#ffb454;--s3:#ff8a5c"></span><span class="pc-theme-name">Hazard</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-high-contrast-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#000000;--s1:#ffffff;--s2:#ff00ff;--s3:#ffff00"></span><span class="pc-theme-name">High Contrast Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-dragon"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#181616;--s1:#8ba4b0;--s2:#a292a3;--s3:#c4b28a"></span><span class="pc-theme-name">Kanagawa Dragon</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-wave"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1f1f28;--s1:#7e9cd8;--s2:#957fb8;--s3:#e6c384"></span><span class="pc-theme-name">Kanagawa Wave</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-material-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#212121;--s1:#89ddff;--s2:#c792ea;--s3:#ffcb6b"></span><span class="pc-theme-name">Material Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-monokai"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#272822;--s1:#f92672;--s2:#a6e22e;--s3:#e6db74"></span><span class="pc-theme-name">Monokai</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-night-owl"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#011627;--s1:#82aaff;--s2:#c792ea;--s3:#addb67"></span><span class="pc-theme-name">Night Owl</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-nord-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#2e3440;--s1:#88c0d0;--s2:#81a1c1;--s3:#a3be8c"></span><span class="pc-theme-name">Nord Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-oled-black"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#000000;--s1:#22d3ee;--s2:#8b5cf6;--s3:#10b981"></span><span class="pc-theme-name">OLED Black</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-one-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282c34;--s1:#61afef;--s2:#c678dd;--s3:#e5c07b"></span><span class="pc-theme-name">One Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#191724;--s1:#ebbcba;--s2:#c4a7e7;--s3:#f6c177"></span><span class="pc-theme-name">Rosé Pine</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine-moon"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#232136;--s1:#ea9a97;--s2:#c4a7e7;--s3:#f6c177"></span><span class="pc-theme-name">Rosé Pine Moon</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-solarized-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#002b36;--s1:#268bd2;--s2:#2aa198;--s3:#b58900"></span><span class="pc-theme-name">Solarized Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-tokyo-night"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1a1b26;--s1:#7aa2f7;--s2:#bb9af7;--s3:#e0af68"></span><span class="pc-theme-name">Tokyo Night</span></button></li>
+                            <li role="none" class="pc-theme-group">Light</li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-catppuccin-latte"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#eff1f5;--s1:#1e66f5;--s2:#8839ef;--s3:#df8e1d"></span><span class="pc-theme-name">Catppuccin Latte</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-default-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#f4f4f5;--s1:#22d3ee;--s2:#8b5cf6;--s3:#f59e0b"></span><span class="pc-theme-name">Default Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-everforest-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fdf6e3;--s1:#8da101;--s2:#35a77c;--s3:#dfa000"></span><span class="pc-theme-name">Everforest Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-flexoki-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fffcf0;--s1:#ce5d97;--s2:#879a39;--s3:#da702c"></span><span class="pc-theme-name">Flexoki Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-gruvbox-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fbf1c7;--s1:#076678;--s2:#8f3f71;--s3:#b57614"></span><span class="pc-theme-name">Gruvbox Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-high-contrast-white"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#ffffff;--s1:#000000;--s2:#600080;--s3:#806000"></span><span class="pc-theme-name">High Contrast White</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-lotus"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#f2ecbc;--s1:#4d699b;--s2:#b35b79;--s3:#836f4a"></span><span class="pc-theme-name">Kanagawa Lotus</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-material-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fafafa;--s1:#6182b8;--s2:#7c4dff;--s3:#f76d47"></span><span class="pc-theme-name">Material Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-nord-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#eceff4;--s1:#5e81ac;--s2:#88c0d0;--s3:#a3be8c"></span><span class="pc-theme-name">Nord Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-one-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fafafa;--s1:#4078f2;--s2:#a626a4;--s3:#c18401"></span><span class="pc-theme-name">One Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine-dawn"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#faf4ed;--s1:#d7827e;--s2:#907aa9;--s3:#ea9d34"></span><span class="pc-theme-name">Rosé Pine Dawn</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-solarized-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fdf6e3;--s1:#268bd2;--s2:#2aa198;--s3:#b58900"></span><span class="pc-theme-name">Solarized Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-tokyo-night-day"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#e1e2e7;--s1:#2e7de9;--s2:#9854f1;--s3:#8c6c3e"></span><span class="pc-theme-name">Tokyo Night Day</span></button></li>
+                            <!-- PC_THEME_LIST_END -->
                         </ul>
                         <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
@@ -141,14 +255,11 @@
                     <h1 class="menu-title">ZeroClaw Docs</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
-                        </a>
                         <a href="https://github.com/zeroclaw-labs/zeroclaw" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/zeroclaw-labs/zeroclaw/edit/master/docs/book/src/getting-started/multi-model-setup.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
-                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        <a href="https://discord.gg/tQ88WUkPyJ" title="Join our Discord" aria-label="Join our Discord" rel="external noopener" target="_blank">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/></svg></span>
                         </a>
 
                     </div>
@@ -180,191 +291,124 @@
                 </script>
 
                 <div id="mdbook-content" class="content">
+                    <aside id="pc-page-toc" class="pc-page-toc" aria-label="On this page"></aside>
                     <main>
-                        <h1 id="multi-model-setup-and-fallback-chains"><a class="header" href="#multi-model-setup-and-fallback-chains">Multi-Model Setup and Fallback Chains</a></h1>
-<p>A walkthrough of the common patterns for using multiple model providers: cost optimisation, quality tiers, local-first with hosted fallback, API key rotation, and rate-limit resilience.</p>
+                        <h1 id="multi-model-setup"><a class="header" href="#multi-model-setup">Multi-Model Setup</a></h1>
+<p>A walkthrough of the common patterns for using multiple model providers: per-agent dispatch, cost tiering, local-first with hosted backup, API key rotation, and rate-limit handling.</p>
 <blockquote>
 <p><strong>Reference material</strong> for the provider system lives in:</p>
 <ul>
-<li><a href="../providers/overview.html">Model Providers → Overview</a> — what providers are, configuration shape</li>
-<li><a href="../providers/fallback-and-routing.html">Model Providers → Fallback &amp; routing</a> — <code>reliable</code> and <code>router</code> meta-providers</li>
-<li><a href="../providers/catalog.html">Model Providers → Catalog</a> — every provider’s config shape</li>
+<li><a href="../providers/overview.html">Model Providers → Overview</a>: what providers are, configuration shape</li>
+<li><a href="../providers/routing.html">Model Providers → Routing</a>: per-agent dispatch and OpenRouter</li>
+<li><a href="../providers/catalog.html">Model Providers → Catalog</a>: every provider’s config shape</li>
 </ul>
 </blockquote>
-<h2 id="when-to-use-multi-model-setup"><a class="header" href="#when-to-use-multi-model-setup">When to Use Multi-Model Setup</a></h2>
+<h2 id="when-to-use-multi-model-setup"><a class="header" href="#when-to-use-multi-model-setup">When to use multi-model setup</a></h2>
 <p>Multi-model configuration is useful for:</p>
-<ul>
-<li><strong>High reliability</strong>: Automatically fall back to alternative providers when the primary fails</li>
-<li><strong>Cost optimization</strong>: Route expensive models through fallback chains for rate-limited scenarios</li>
-<li><strong>Regional resilience</strong>: Use geographically distributed providers to handle region-specific outages</li>
-<li><strong>Capability flexibility</strong>: Try different models when one lacks required features (e.g., tool calling, vision)</li>
-<li><strong>Rate limit handling</strong>: Rotate through API keys on <code>429</code> (rate limit) responses</li>
-<li><strong>Development and testing</strong>: Switch between cloud and local models without code changes</li>
-</ul>
-<h2 id="core-concepts"><a class="header" href="#core-concepts">Core Concepts</a></h2>
-<h3 id="fallback-provider-chains"><a class="header" href="#fallback-provider-chains">Fallback Provider Chains</a></h3>
-<p>When a provider experiences a transient error (timeout, connection failure, auth issue), ZeroClaw automatically attempts fallback providers in the order specified.</p>
-<p><strong>Example</strong>: If your primary provider is <code>openai</code> but it’s temporarily unavailable, ZeroClaw can automatically fall back to <code>anthropic</code>, then <code>groq</code>.</p>
-<pre><code class="language-toml">[reliability]
-fallback_providers = ["anthropic", "groq", "openrouter"]
-</code></pre>
-<p>When the primary provider recovers, ZeroClaw resumes using it (no sticky failover).</p>
-<h3 id="model-level-fallbacks"><a class="header" href="#model-level-fallbacks">Model-Level Fallbacks</a></h3>
-<p>Some models may not be available in all regions, or you might want to use a faster model when a heavy model is rate-limited.</p>
-<pre><code class="language-toml">[reliability]
-model_fallbacks = { "claude-opus-4-7" = ["claude-sonnet-4-6", "gpt-4o"] }
-</code></pre>
-<p>If <code>claude-opus-4-7</code> fails or is unavailable, ZeroClaw tries the fallback models in order while staying within the same provider (unless a provider-level fallback is also configured).</p>
-<h3 id="api-key-rotation"><a class="header" href="#api-key-rotation">API Key Rotation</a></h3>
-<p>For providers that frequently encounter rate limits, you can supply additional API keys that ZeroClaw will rotate through on <code>429</code> responses.</p>
-<pre><code class="language-toml">[reliability]
-api_keys = ["sk-key-2", "sk-key-3", "sk-key-4"]
-</code></pre>
-<p>The primary <code>api_key</code> (configured globally or per-channel) is always tried first; these extras are rotated on rate-limit errors.</p>
-<h3 id="provider-retries"><a class="header" href="#provider-retries">Provider Retries</a></h3>
-<p>Each provider attempt includes configurable retries with exponential backoff before moving to the next fallback.</p>
-<pre><code class="language-toml">[reliability]
-provider_retries = 2          # Retry count per provider
-provider_backoff_ms = 500     # Initial backoff in milliseconds
-</code></pre>
-<h2 id="configuration-structure"><a class="header" href="#configuration-structure">Configuration Structure</a></h2>
-<p>All multi-model behavior lives under the <code>[reliability]</code> section of <code>config.toml</code>. See the <a href="../reference/config.html">Config reference</a> for the full field index and defaults.</p>
-<h2 id="example-configurations"><a class="header" href="#example-configurations">Example Configurations</a></h2>
-<h3 id="basic-fallback-chain"><a class="header" href="#basic-fallback-chain">Basic Fallback Chain</a></h3>
-<p>Set up a simple fallback from your primary provider to a backup:</p>
-<pre><code class="language-toml">default_provider = "openai"
-default_model = "gpt-4o"
-
-[reliability]
-fallback_providers = ["anthropic"]
-</code></pre>
-<p><strong>Behavior</strong>: If OpenAI times out or returns an error, ZeroClaw will retry twice with exponential backoff, then attempt the same request using Anthropic.</p>
-<h3 id="high-reliability-multi-provider-setup"><a class="header" href="#high-reliability-multi-provider-setup">High-Reliability Multi-Provider Setup</a></h3>
-<p>Combine provider fallbacks with model fallbacks and API key rotation:</p>
-<pre><code class="language-toml">default_provider = "openai"
-default_model = "gpt-4o"
-api_key = "sk-openai-primary"
-
-[reliability]
-fallback_providers = ["anthropic", "groq", "openrouter"]
-api_keys = ["sk-openai-backup-1", "sk-openai-backup-2"]
-
-[reliability.model_fallbacks]
-"gpt-4o" = ["gpt-4-turbo", "gpt-3.5-turbo"]
-"gpt-4-turbo" = ["gpt-3.5-turbo"]
-</code></pre>
-<p><strong>Behavior</strong>:</p>
 <ol>
-<li>Try OpenAI <code>gpt-4o</code> with primary key (2 retries)</li>
-<li>On rate-limit, rotate to backup API keys</li>
-<li>If OpenAI still fails, fall back to Anthropic with same model request (Anthropic will select available equivalent)</li>
-<li>If Anthropic unavailable, try Groq, then OpenRouter</li>
-<li>If model not available, try fallback models in order</li>
+<li><strong>Cost tiering</strong>: cheap model handles high-volume channels; reasoning model handles complex requests</li>
+<li><strong>Capability routing</strong>: vision-capable model for image-bearing channels, reasoning model for research workflows</li>
+<li><strong>Local-first development</strong>: local Ollama for development, hosted endpoint for production</li>
+<li><strong>Per-team isolation</strong>: different teams use different agents with different model_providers and credentials</li>
+<li><strong>Rate-limit handling</strong>: rotate through API keys on <code>429</code> (rate limit) responses</li>
 </ol>
-<h3 id="local-development-with-cloud-fallback"><a class="header" href="#local-development-with-cloud-fallback">Local Development with Cloud Fallback</a></h3>
-<p>Use a local Ollama instance as primary, fall back to cloud provider:</p>
-<pre><code class="language-toml">default_provider = "ollama"
-default_model = "llama2:70b"
-api_url = "http://localhost:11434"
+<h2 id="core-idea-per-agent-dispatch"><a class="header" href="#core-idea-per-agent-dispatch">Core idea: per-agent dispatch</a></h2>
+<p>Each <code>[agents.&lt;alias&gt;]</code> entry points at exactly one <code>[providers.models.&lt;type&gt;.&lt;alias&gt;]</code>. If the model goes down, the agent goes down; the operator routes affected channels to a different agent. See <a href="../providers/routing.html">Routing</a> for the full pattern.</p>
+<p>To run multiple models, run multiple agents, each binding to one model provider. Each channel binds to one agent at a time. To move a channel to a different agent, edit the <code>channels</code> list on the agent that should pick it up; <code>Config::validate()</code> makes sure references resolve at startup.</p>
+<h2 id="cross-vendor-reliability-use-openrouter"><a class="header" href="#cross-vendor-reliability-use-openrouter">Cross-vendor reliability: use OpenRouter</a></h2>
+<p>OpenRouter is treated as a single first-class provider. It handles vendor fan-out and uptime behind one endpoint. If your goal is “one provider goes down, automatically use another”, that’s OpenRouter’s job, not ZeroClaw’s. The runtime sees one provider; OpenRouter does the cross-vendor work upstream.</p>
+<h2 id="same-vendor-retry"><a class="header" href="#same-vendor-retry">Same-vendor retry</a></h2>
+<p>For transient errors (network blip, 503, timeout) against the <em>same</em> provider, ZeroClaw retries with exponential backoff, configurable globally under <code>reliability</code> (defaults: 2 retries, 500 ms initial backoff). These are inside-one-provider retries.</p>
+<h2 id="api-key-rotation"><a class="header" href="#api-key-rotation">API key rotation</a></h2>
+<p>For providers that frequently encounter rate limits, supply additional API keys on the provider entry that ZeroClaw rotates through on <code>429</code> responses. The primary <code>api_key</code> is always tried first; extras are rotated on rate-limit errors. All keys must belong to the same provider account class; this is rate-limit smoothing, not multi-tenant key juggling.</p>
+<h2 id="local-development-with-hosted-alternative"><a class="header" href="#local-development-with-hosted-alternative">Local development with hosted alternative</a></h2>
+<p>Run a local-Ollama agent and a hosted-provider agent side by side; route each channel to whichever you want it to use.</p>
+<p>The <code>dev</code> agent runs from the CLI (no channel binding required, <code>zeroclaw agent -a dev</code> is enough). When Ollama is down, the dev agent fails fast and surfaces the error. The prod channels are unaffected.</p>
+<h2 id="local-small-no-text-fallback-profile"><a class="header" href="#local-small-no-text-fallback-profile">Local-small no-text-fallback profile</a></h2>
+<p>Small local models usually need a runtime profile, not a provider-specific mode. Keep the Ollama provider focused on connection details, then use <code>[runtime_profiles.&lt;alias&gt;]</code> to tighten the prompt/tool loop behavior.</p>
+<pre><code class="language-toml">[providers.models.ollama.local]
+uri   = "http://localhost:11434"
+model = "qwen2.5-coder:7b"
 
-[reliability]
-fallback_providers = ["openrouter", "groq"]
-</code></pre>
-<p><strong>Behavior</strong>: If Ollama goes down or times out, automatically use OpenRouter or Groq instead without configuration changes.</p>
-<h3 id="cost-optimization-heavy-model-with-fast-fallback"><a class="header" href="#cost-optimization-heavy-model-with-fast-fallback">Cost Optimization: Heavy Model with Fast Fallback</a></h3>
-<p>Use an expensive reasoning model for complex tasks, but fall back to a faster model:</p>
-<pre><code class="language-toml">default_provider = "anthropic"
-default_model = "claude-opus-4-7"
+[agents.local]
+model_provider  = "ollama.local"
+risk_profile    = "supervised"
+runtime_profile = "local_small"
 
-[reliability]
-model_fallbacks = { "claude-opus-4-7" = ["claude-sonnet-4-6"] }
-</code></pre>
-<p><strong>Behavior</strong>: When Opus is rate-limited or slow, automatically use Sonnet (typically 2–3x faster and cheaper).</p>
-<h2 id="multi-region-setup"><a class="header" href="#multi-region-setup">Multi-Region Setup</a></h2>
-<p>For organizations with multi-region deployments:</p>
-<pre><code class="language-toml"># Primary US region
-default_provider = "anthropic"
-default_model = "claude-sonnet-4-6"
+[risk_profiles.supervised]
+level                            = "supervised"
+workspace_only                   = true
+require_approval_for_medium_risk = true
+block_high_risk_commands         = true
 
-[reliability]
-# Fall back to EU region provider if US Anthropic is down
-fallback_providers = ["bedrock"]  # AWS Bedrock in multiple regions
-provider_retries = 3
-provider_backoff_ms = 1000
+[runtime_profiles.local_small]
+compact_context          = true
+strict_tool_parsing      = true
+max_tool_iterations      = 4
+max_history_messages     = 20
+max_context_tokens       = 8000
+max_tool_result_chars    = 4000
+keep_tool_context_turns  = 1
 </code></pre>
-<p>Ensure each fallback provider has credentials in your environment:</p>
-<pre><code class="language-bash">export ANTHROPIC_API_KEY="..."
-export AWS_ACCESS_KEY_ID="..."
-export AWS_SECRET_ACCESS_KEY="..."
-</code></pre>
-<h2 id="hot-reload-behavior"><a class="header" href="#hot-reload-behavior">Hot Reload Behavior</a></h2>
-<p>The <code>[reliability]</code> section is hot-reloadable. While a channel or gateway is running, updates to <code>config.toml</code> take effect on the next inbound message without requiring a restart.</p>
-<h2 id="error-handling-and-fallback-triggers"><a class="header" href="#error-handling-and-fallback-triggers">Error Handling and Fallback Triggers</a></h2>
-<p>Fallback is triggered by:</p>
+<p>This profile composes existing primitives:</p>
 <ul>
-<li><strong>Timeout</strong>: Provider did not respond within the configured timeout</li>
-<li><strong>Connection error</strong>: Network/DNS failure</li>
-<li><strong>Auth error</strong>: Invalid credentials (retries only if transient auth service issues detected)</li>
-<li><strong>Rate limit (429)</strong>: HTTP 429; triggers API key rotation first, then provider fallback</li>
-<li><strong>Service unavailable (503)</strong>: Temporary service issue</li>
-<li><strong>Model not found</strong>: Triggers model fallback chain if configured</li>
+<li><code>compact_context</code> keeps startup context small.</li>
+<li><code>strict_tool_parsing</code> treats XML/JSON-looking fallback text as assistant text unless the provider returns native tool calls.</li>
+<li><code>max_tool_iterations</code>, <code>max_context_tokens</code>, and <code>max_tool_result_chars</code> bound runaway loops and oversized tool context.</li>
 </ul>
-<p>Fallback is <strong>not</strong> triggered by:</p>
-<ul>
-<li><strong>Invalid request (400)</strong>: Malformed input; retrying won’t help</li>
-<li><strong>Permanent auth failure</strong>: Invalid API key format</li>
-<li><strong>Model output errors</strong>: The model responded but returned an error</li>
-</ul>
-<h2 id="debugging-fallback-activity"><a class="header" href="#debugging-fallback-activity">Debugging Fallback Activity</a></h2>
-<p>Enable runtime traces to debug fallback behavior:</p>
-<pre><code class="language-toml">[observability]
-runtime_trace_mode = "rolling"
-runtime_trace_path = "state/runtime-trace.jsonl"
-</code></pre>
-<p>Then query traces:</p>
-<pre><code class="language-bash"># Show all fallback events
-zeroclaw doctor traces --contains "fallback"
-
-# Show provider retry details
-zeroclaw doctor traces --contains "provider"
-
-# Show rate-limit rotation
+<p>With Ollama, this is a no-text-fallback profile: authorized tools remain configured in <code>risk_profile</code>, but text-form tool markup from the model is not executed. Use it for chat-first local agents, or for providers that return native/structured tool calls. If a local model must use ZeroClaw’s text fallback tool syntax, set <code>strict_tool_parsing = false</code> and keep the other small-model limits.</p>
+<h2 id="cost-tiering-heavy-model-when-needed-fast-model-otherwise"><a class="header" href="#cost-tiering-heavy-model-when-needed-fast-model-otherwise">Cost tiering: heavy model when needed, fast model otherwise</a></h2>
+<p>Run two agents and route channels to the appropriate tier. The <code>delegate</code> tool lets one agent hand off to another mid-conversation. <a href="../agents/delegation.html">Delegation</a> is gated: the caller’s risk profile must set <code>delegation_policy mode = "allow"</code>, and <strong>both agents must share the same risk profile</strong> (delegation does not cross trust tiers). So the frontline and heavy agents below run on the <em>same</em> <code>trusted</code> risk profile, they differ in model and runtime profile (iteration budget), not in trust surface.</p>
+<p>The frontline agent handles every inbound message on Haiku. When it needs deeper reasoning, it calls the <code>delegate</code> tool with <code>agent = "heavy"</code>; because both agents share the <code>trusted</code> risk profile and that profile allows delegation, the heavier agent picks up the sub-task on Opus.</p>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error handling</a></h2>
+<p>Inside-one-provider retries trigger on:</p>
+<ol>
+<li><strong>Timeout</strong>: provider did not respond within the configured timeout</li>
+<li><strong>Connection error</strong>: network or DNS failure</li>
+<li><strong>Rate limit (429)</strong>: triggers API key rotation first; if all keys exhausted, fails up to the channel</li>
+<li><strong>Service unavailable (503)</strong>: temporary service issue</li>
+</ol>
+<p>Retries are NOT triggered by:</p>
+<ol>
+<li><strong>Invalid request (400)</strong>: malformed input; retrying won’t help</li>
+<li><strong>Permanent auth failure</strong>: invalid API key format</li>
+<li><strong>Model output errors</strong>: the model responded but returned an error payload</li>
+</ol>
+<p>When all retries are exhausted on a single provider, the failure surfaces to the calling channel. There is no automatic cross-provider retry, that’s the point of using OpenRouter or splitting traffic across multiple agents.</p>
+<h2 id="debugging"><a class="header" href="#debugging">Debugging</a></h2>
+<p>Persisted logs (<code>"rolling"</code> is the default) capture retry and key-rotation behaviour. Then query traces:</p>
+<div class="os-tabs-src">
+<h4 id="sh"><a class="header" href="#sh">sh</a></h4>
+<pre><code class="language-sh">zeroclaw doctor traces --contains "retry"
 zeroclaw doctor traces --contains "429"
+zeroclaw doctor traces --contains "model_provider"
 </code></pre>
-<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+</div>
+
+<h2 id="best-practices"><a class="header" href="#best-practices">Best practices</a></h2>
 <ol>
-<li><strong>Order by reliability</strong>: Put most reliable providers first in <code>fallback_providers</code></li>
-<li><strong>Test fallback chains</strong>: Verify fallback behavior before production use</li>
-<li><strong>Monitor API key rotation</strong>: Track rate-limit events to know when rotation is active</li>
-<li><strong>Keep model fallbacks semantically similar</strong>: Don’t fall back from a reasoning model to a chat model without intention</li>
-<li><strong>Use environment variables</strong>: Store sensitive API keys in env, not config</li>
-<li><strong>Document fallback intent</strong>: Add comments in config explaining why each fallback exists</li>
-<li><strong>Verify multi-model credentials</strong>: Ensure all fallback providers have valid credentials set</li>
+<li><strong>One agent per routing intent.</strong> If two channels need different model behavior, name two agents.</li>
+<li><strong>Use OpenRouter for cross-vendor reliability.</strong> Cross-vendor “if Claude fails, try OpenAI” is OpenRouter’s job; configure it as one provider and let its endpoint handle the fan-out.</li>
+<li><strong>Keep API key rotation pools homogeneous.</strong> All keys in <code>[reliability] api_keys</code> should be from the same provider account, this is rate-limit smoothing, not multi-tenancy.</li>
+<li><strong>Smoke-test each agent in isolation.</strong> <code>zeroclaw agent -a &lt;alias&gt;</code> runs an agent without channel plumbing in the way.</li>
+<li><strong>Document agent intent.</strong> Add <code># comment</code> lines explaining which channels each agent serves and why.</li>
+<li><strong>Inject secrets via env, not inline.</strong> <code>ZEROCLAW_providers__models__&lt;type&gt;__&lt;alias&gt;__api_key=...</code> sets <code>api_key</code> at startup; see <a href="../reference/env-vars.html">Environment variables</a>.</li>
+<li><strong>Separate dev and prod agents.</strong> Each environment gets its own <code>[agents.&lt;alias&gt;]</code> entry bound to its own channels.</li>
 </ol>
-<h2 id="credential-resolution"><a class="header" href="#credential-resolution">Credential Resolution</a></h2>
-<p>Each fallback provider resolves credentials independently using the standard resolution order:</p>
+<h2 id="credential-resolution"><a class="header" href="#credential-resolution">Credential resolution</a></h2>
+<p>Each provider entry resolves credentials in this order:</p>
 <ol>
-<li>Explicit credential from config/CLI</li>
-<li>Provider-specific environment variable</li>
-<li>Generic fallback: <code>ZEROCLAW_API_KEY</code>, then <code>API_KEY</code></li>
+<li><strong>Inline <code>api_key</code></strong> on the provider entry.</li>
+<li><strong>Secrets store</strong> at <code>~/.zeroclaw/secrets</code>.</li>
+<li><strong>Generic env override</strong>: <code>ZEROCLAW_providers__models__&lt;type&gt;__&lt;alias&gt;__api_key=...</code> at startup. See <a href="../reference/env-vars.html">Environment variables</a> for the full grammar.</li>
+<li><strong>Per-vendor env var</strong> when the family supports it (e.g. <code>ANTHROPIC_API_KEY</code> / <code>ANTHROPIC_OAUTH_TOKEN</code> for Anthropic; <code>OPENROUTER_API_KEY</code> for OpenRouter).</li>
 </ol>
-<p><strong>Important</strong>: The primary provider’s API key is not automatically reused by fallback providers. Set credentials for each provider separately.</p>
-<p>Example:</p>
-<pre><code class="language-bash">export OPENAI_API_KEY="sk-..."
-export ANTHROPIC_API_KEY="claude-..."
-export GROQ_API_KEY="gsk-..."
-</code></pre>
-<h2 id="limits-and-constraints"><a class="header" href="#limits-and-constraints">Limits and Constraints</a></h2>
-<ul>
-<li>Maximum fallback providers: Limited by configuration file size (typically 100+ chains are supported)</li>
-<li>Maximum model fallbacks per model: No hard limit</li>
-<li>API key rotation: All keys are tried before timing out</li>
-<li>Retry attempts: Configurable per provider with exponential backoff</li>
-<li>Total timeout budget: Cumulative across retries and fallbacks; channel-level timeout still applies</li>
-</ul>
+<p>Credentials are not shared between providers, set them per provider entry.</p>
 <h2 id="related-documentation"><a class="header" href="#related-documentation">Related Documentation</a></h2>
 <ul>
-<li><a href="../reference/config.html">Config reference</a> — generated config field index</li>
+<li><a href="../providers/overview.html">Model Providers → Overview</a></li>
+<li><a href="../providers/routing.html">Model Providers → Routing</a></li>
+<li><a href="../reference/env-vars.html">Environment variables</a></li>
 </ul>
 
                     </main>
@@ -375,7 +419,7 @@ export GROQ_API_KEY="gsk-..."
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../setup/linux.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../getting-started/zerocode.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -389,7 +433,7 @@ export GROQ_API_KEY="gsk-..."
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../setup/linux.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../getting-started/zerocode.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -411,6 +455,114 @@ export GROQ_API_KEY="gsk-..."
 
         <script src="../elasticlunr-ef4e11c1.min.js"></script>
         <script src="../mark-09e88c2c.min.js"></script>
+        <script>
+        (function () {
+            var root = typeof window !== 'undefined' ? window : this;
+            var elasticlunr = root.elasticlunr ||
+                (typeof globalThis !== 'undefined' && globalThis.elasticlunr);
+
+            if (!elasticlunr || !elasticlunr.Index) {
+                return;
+            }
+
+            var CJK_RE = /[\u3400-\u9fff\uf900-\ufaff]/;
+            var originalLoad = elasticlunr.Index.load;
+
+            function lower(value) {
+                return String(value || '').toLowerCase();
+            }
+
+            function queryTerms(query) {
+                return lower(query).split(/\s+/).filter(Boolean);
+            }
+
+            function fieldScore(text, terms, weight, requireAll) {
+                var haystack = lower(text);
+                var matched = 0;
+                var score = 0;
+
+                if (!haystack) {
+                    return 0;
+                }
+
+                terms.forEach(function (term) {
+                    var index = haystack.indexOf(term);
+                    if (index !== -1) {
+                        matched += 1;
+                        score += weight;
+                        if (index === 0) {
+                            score += weight / 2;
+                        }
+                    }
+                });
+
+                if (requireAll && matched !== terms.length) {
+                    return 0;
+                }
+
+                return score;
+            }
+
+            function fallbackResults(docs, query, options, existingRefs) {
+                var terms = queryTerms(query);
+                var requireAll = !options || options.bool !== 'OR';
+                var results = [];
+
+                if (!CJK_RE.test(query) || terms.length === 0) {
+                    return results;
+                }
+
+                Object.keys(docs).forEach(function (ref) {
+                    var doc = docs[ref];
+                    var score = 0;
+
+                    if (existingRefs[ref]) {
+                        return;
+                    }
+
+                    score += fieldScore(doc.title, terms, 12, requireAll);
+                    score += fieldScore(doc.breadcrumbs, terms, 6, requireAll);
+                    score += fieldScore(doc.body, terms, 2, requireAll);
+
+                    if (score > 0) {
+                        results.push({ ref: ref, doc: doc, score: score });
+                    }
+                });
+
+                results.sort(function (a, b) {
+                    if (b.score !== a.score) {
+                        return b.score - a.score;
+                    }
+
+                    return Number(a.ref) - Number(b.ref);
+                });
+
+                return results;
+            }
+
+            elasticlunr.Index.load = function (serialized) {
+                var index = originalLoad.call(this, serialized);
+                var originalSearch = index.search.bind(index);
+                var docs = serialized &&
+                    serialized.documentStore &&
+                    serialized.documentStore.docs ||
+                    {};
+
+                index.search = function (query, options) {
+                    var results = originalSearch(query, options);
+                    var existingRefs = {};
+
+                    results.forEach(function (result) {
+                        existingRefs[String(result.ref)] = true;
+                    });
+
+                    return results.concat(fallbackResults(docs, query, options, existingRefs));
+                };
+
+                return index;
+            };
+        }());
+        </script>
         <script src="../searcher-c2a407aa.js"></script>
 
         <script src="../clipboard-1626706a.min.js"></script>
@@ -418,13 +570,14 @@ export GROQ_API_KEY="gsk-..."
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../theme/lang-switcher-82c8c4bf.js"></script>
+        <script src="../../../_shared/theme/version-selector.js"></script>
+        <script src="../../../_shared/theme/lang-switcher.js"></script>
+        <script src="../../../_shared/theme/pc-enhance.js"></script>
         <script src="../mermaid-193ae996.min.js"></script>
-        <script src="../mermaid-init-94f7f342.js"></script>
+        <script src="../mermaid-init-d3ccd83c.js"></script>
 
 
 
     </div>
-        <script src="../../../_shared/theme/version-selector.js"></script>
     </body>
 </html>

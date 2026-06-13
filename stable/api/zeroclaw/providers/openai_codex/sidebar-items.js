@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["OpenAiCodexProvider"]};
+window.SIDEBAR_ITEMS = {"struct":["OpenAiCodexModelProvider"]};

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="fr" class="ayu sidebar-visible" dir="ltr">
+<html lang="fr" class="default-dark sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -12,11 +12,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon-0c90d4b5.svg">
-        <link rel="shortcut icon" href="../favicon-53763955.png">
+        <link rel="icon" href="../../../_shared/favicon.svg">
+        <link rel="shortcut icon" href="../../../_shared/favicon.png">
         <link rel="stylesheet" href="../css/variables-8adf115d.css">
         <link rel="stylesheet" href="../css/general-2459343d.css">
-        <link rel="stylesheet" href="../css/chrome-9dfbd86b.css">
+        <link rel="stylesheet" href="../../../_shared/css/chrome.css">
         <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -27,19 +27,94 @@
         <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
-        <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../theme/custom-a6e9ac27.css">
+        <!-- Custom theme stylesheets (pc-themes.css generated; ordered first) -->
+        <link rel="stylesheet" href="../../../_shared/theme/pc-themes.css">
+        <link rel="stylesheet" href="../../../_shared/theme/custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../";
-            const default_light_theme = "ayu";
-            const default_dark_theme = "ayu";
-            window.path_to_searchindex_js = "../searchindex-7c62812d.js";
+            const default_light_theme = "default-dark";
+            const default_dark_theme = "default-dark";
+            window.path_to_searchindex_js = "../searchindex-2221d51e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-4a111ca2.js"></script>
+        <script src="../toc-98474cc2.js"></script>
+        <script>
+            // Persist sidebar fold state across navigations. mdBook's toc.js
+            // expands only the active page's ancestor chain on every load,
+            // collapsing every other section the reader opened. Wrap the
+            // scrollbox element's connectedCallback so saved state is applied
+            // synchronously at the end of its own render — same paint, no
+            // flicker — and record state whenever a fold is toggled.
+            (function () {
+                var KEY = 'pc-sidebar-folds';
+                var proto = window.MDBookSidebarScrollbox
+                    && window.MDBookSidebarScrollbox.prototype;
+                var ce = window.customElements
+                    && window.customElements.get('mdbook-sidebar-scrollbox');
+                proto = (ce && ce.prototype) || proto;
+                if (!proto || proto.__pcFolds) { return; }
+                proto.__pcFolds = true;
+
+                function read() {
+                    try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+                    catch (e) { return {}; }
+                }
+                function write(s) {
+                    try { localStorage.setItem(KEY, JSON.stringify(s)); }
+                    catch (e) { /* storage unavailable */ }
+                }
+                function foldables(box) {
+                    return Array.prototype.filter.call(
+                        box.querySelectorAll('li.chapter-item'),
+                        function (li) {
+                            return li.querySelector(':scope > .chapter-link-wrapper > a.chapter-fold-toggle');
+                        }
+                    );
+                }
+                function keyFor(li) {
+                    var wrap = li.querySelector(':scope > .chapter-link-wrapper');
+                    if (!wrap) { return null; }
+                    var link = wrap.querySelector(':scope > a[href]');
+                    if (link) { return 'h:' + link.getAttribute('href'); }
+                    var strong = wrap.querySelector(':scope > span strong, :scope > a strong');
+                    return strong ? 'n:' + strong.textContent.trim() : null;
+                }
+                function applyState(box) {
+                    var state = read();
+                    foldables(box).forEach(function (li) {
+                        var k = keyFor(li);
+                        if (k == null || !(k in state)) { return; }
+                        // Never collapse the section holding the active page.
+                        if (!state[k] && li.querySelector('a.active')) { return; }
+                        li.classList.toggle('expanded', !!state[k]);
+                    });
+                }
+                function recordState(box) {
+                    var s = read();
+                    foldables(box).forEach(function (li) {
+                        var k = keyFor(li);
+                        if (k != null) { s[k] = li.classList.contains('expanded'); }
+                    });
+                    write(s);
+                }
+
+                var origConnected = proto.connectedCallback;
+                proto.connectedCallback = function () {
+                    if (origConnected) { origConnected.call(this); }
+                    var box = this;
+                    applyState(box);
+                    box.addEventListener('click', function (e) {
+                        if (!e.target.closest('a.chapter-fold-toggle, .chapter-link-wrapper')) {
+                            return;
+                        }
+                        requestAnimationFrame(function () { recordState(box); });
+                    });
+                };
+            })();
+        </script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -77,27 +152,29 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('default-dark')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
 
         <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
-        <!-- Hide / unhide sidebar before it is displayed -->
+        <!-- Hide / unhide sidebar before it is displayed.
+             The user's saved preference (mdbook-sidebar) wins at every width so
+             navigating between pages never collapses an open sidebar. Only when
+             no preference is stored do we pick a width-based default, and only a
+             genuinely narrow (phone) viewport defaults to hidden. -->
         <script>
             let sidebar = null;
             const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
-            if (document.body.clientWidth >= 1080) {
-                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
-                sidebar = sidebar || 'visible';
-            } else {
-                sidebar = 'hidden';
-                sidebar_toggle.checked = false;
+            try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+            if (sidebar !== 'visible' && sidebar !== 'hidden') {
+                sidebar = document.body.clientWidth >= 768 ? 'visible' : 'hidden';
             }
             if (sidebar === 'visible') {
                 sidebar_toggle.checked = true;
             } else {
+                sidebar_toggle.checked = false;
                 html.classList.remove('sidebar-visible');
             }
         </script>
@@ -127,11 +204,48 @@
                         </button>
                         <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                            <!-- PC_THEME_LIST_START: generated from themes.json by `cargo xtask mdbook themes`; do not edit between markers -->
+                            <li role="none" class="pc-theme-group">Dark</li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-ayu-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#0a0e14;--s1:#39bae6;--s2:#d2a6ff;--s3:#ffb454"></span><span class="pc-theme-name">Ayu Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-catppuccin-mocha"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1e1e2e;--s1:#89b4fa;--s2:#cba6f7;--s3:#f9e2af"></span><span class="pc-theme-name">Catppuccin Mocha</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-cobalt2"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#193549;--s1:#ffc600;--s2:#ff9d00;--s3:#80ffbb"></span><span class="pc-theme-name">Cobalt2</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-code-red"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#160a0a;--s1:#ff3b3b;--s2:#ff8a5c;--s3:#ffb454"></span><span class="pc-theme-name">Code Red</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-default-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1e1e24;--s1:#22d3ee;--s2:#a78bfa;--s3:#f59e0b"></span><span class="pc-theme-name">Default Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-icy-blue"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#080e18;--s1:#64c8ff;--s2:#b48cff;--s3:#ffdc50"></span><span class="pc-theme-name">Icy Blue</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-dracula"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282a36;--s1:#bd93f9;--s2:#ff79c6;--s3:#50fa7b"></span><span class="pc-theme-name">Dracula</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-everforest-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#2d353b;--s1:#a7c080;--s2:#83c092;--s3:#dbbc7f"></span><span class="pc-theme-name">Everforest Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-flexoki-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#100f0f;--s1:#ce5d97;--s2:#879a39;--s3:#da702c"></span><span class="pc-theme-name">Flexoki Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-gruvbox-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282828;--s1:#83a598;--s2:#d3869b;--s3:#fabd2f"></span><span class="pc-theme-name">Gruvbox Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-hacker-green"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#0a0e0a;--s1:#00ff41;--s2:#00cc33;--s3:#008f11"></span><span class="pc-theme-name">Hacker Green</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-hazard"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#16140a;--s1:#ffd60a;--s2:#ffb454;--s3:#ff8a5c"></span><span class="pc-theme-name">Hazard</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-high-contrast-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#000000;--s1:#ffffff;--s2:#ff00ff;--s3:#ffff00"></span><span class="pc-theme-name">High Contrast Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-dragon"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#181616;--s1:#8ba4b0;--s2:#a292a3;--s3:#c4b28a"></span><span class="pc-theme-name">Kanagawa Dragon</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-wave"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1f1f28;--s1:#7e9cd8;--s2:#957fb8;--s3:#e6c384"></span><span class="pc-theme-name">Kanagawa Wave</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-material-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#212121;--s1:#89ddff;--s2:#c792ea;--s3:#ffcb6b"></span><span class="pc-theme-name">Material Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-monokai"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#272822;--s1:#f92672;--s2:#a6e22e;--s3:#e6db74"></span><span class="pc-theme-name">Monokai</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-night-owl"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#011627;--s1:#82aaff;--s2:#c792ea;--s3:#addb67"></span><span class="pc-theme-name">Night Owl</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-nord-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#2e3440;--s1:#88c0d0;--s2:#81a1c1;--s3:#a3be8c"></span><span class="pc-theme-name">Nord Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-oled-black"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#000000;--s1:#22d3ee;--s2:#8b5cf6;--s3:#10b981"></span><span class="pc-theme-name">OLED Black</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-one-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#282c34;--s1:#61afef;--s2:#c678dd;--s3:#e5c07b"></span><span class="pc-theme-name">One Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#191724;--s1:#ebbcba;--s2:#c4a7e7;--s3:#f6c177"></span><span class="pc-theme-name">Rosé Pine</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine-moon"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#232136;--s1:#ea9a97;--s2:#c4a7e7;--s3:#f6c177"></span><span class="pc-theme-name">Rosé Pine Moon</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-solarized-dark"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#002b36;--s1:#268bd2;--s2:#2aa198;--s3:#b58900"></span><span class="pc-theme-name">Solarized Dark</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-tokyo-night"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#1a1b26;--s1:#7aa2f7;--s2:#bb9af7;--s3:#e0af68"></span><span class="pc-theme-name">Tokyo Night</span></button></li>
+                            <li role="none" class="pc-theme-group">Light</li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-catppuccin-latte"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#eff1f5;--s1:#1e66f5;--s2:#8839ef;--s3:#df8e1d"></span><span class="pc-theme-name">Catppuccin Latte</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-default-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#f4f4f5;--s1:#22d3ee;--s2:#8b5cf6;--s3:#f59e0b"></span><span class="pc-theme-name">Default Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-everforest-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fdf6e3;--s1:#8da101;--s2:#35a77c;--s3:#dfa000"></span><span class="pc-theme-name">Everforest Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-flexoki-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fffcf0;--s1:#ce5d97;--s2:#879a39;--s3:#da702c"></span><span class="pc-theme-name">Flexoki Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-gruvbox-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fbf1c7;--s1:#076678;--s2:#8f3f71;--s3:#b57614"></span><span class="pc-theme-name">Gruvbox Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-high-contrast-white"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#ffffff;--s1:#000000;--s2:#600080;--s3:#806000"></span><span class="pc-theme-name">High Contrast White</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-kanagawa-lotus"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#f2ecbc;--s1:#4d699b;--s2:#b35b79;--s3:#836f4a"></span><span class="pc-theme-name">Kanagawa Lotus</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-material-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fafafa;--s1:#6182b8;--s2:#7c4dff;--s3:#f76d47"></span><span class="pc-theme-name">Material Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-nord-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#eceff4;--s1:#5e81ac;--s2:#88c0d0;--s3:#a3be8c"></span><span class="pc-theme-name">Nord Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-one-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fafafa;--s1:#4078f2;--s2:#a626a4;--s3:#c18401"></span><span class="pc-theme-name">One Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-rose-pine-dawn"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#faf4ed;--s1:#d7827e;--s2:#907aa9;--s3:#ea9d34"></span><span class="pc-theme-name">Rosé Pine Dawn</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-solarized-light"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#fdf6e3;--s1:#268bd2;--s2:#2aa198;--s3:#b58900"></span><span class="pc-theme-name">Solarized Light</span></button></li>
+                            <li role="none" class="pc-theme-item"><button role="menuitem" class="theme" id="mdbook-theme-tokyo-night-day"><span class="pc-theme-swatch" aria-hidden="true" style="--s0:#e1e2e7;--s1:#2e7de9;--s2:#9854f1;--s3:#8c6c3e"></span><span class="pc-theme-name">Tokyo Night Day</span></button></li>
+                            <!-- PC_THEME_LIST_END -->
                         </ul>
                         <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
@@ -141,14 +255,11 @@
                     <h1 class="menu-title">ZeroClaw Docs</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
-                        </a>
                         <a href="https://github.com/zeroclaw-labs/zeroclaw" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/zeroclaw-labs/zeroclaw/edit/master/docs/book/src/ops/observability.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
-                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        <a href="https://discord.gg/tQ88WUkPyJ" title="Join our Discord" aria-label="Join our Discord" rel="external noopener" target="_blank">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/></svg></span>
                         </a>
 
                     </div>
@@ -180,167 +291,139 @@
                 </script>
 
                 <div id="mdbook-content" class="content">
+                    <aside id="pc-page-toc" class="pc-page-toc" aria-label="On this page"></aside>
                     <main>
                         <h1 id="journaux-et-observabilité"><a class="header" href="#journaux-et-observabilité">Journaux et observabilité</a></h1>
-<p>ZeroClaw émet des journaux structurés, des métriques Prometheus et des traces OpenTelemetry. Les trois sont activés par défaut dans une version de distribution.</p>
-<h2 id="journaux"><a class="header" href="#journaux">Journaux</a></h2>
-<h3 id="où-ils-vont"><a class="header" href="#où-ils-vont">Où ils vont</a></h3>
+<p>Chaque événement émis par ZeroClaw passe par une seule crate : <code>zeroclaw-log</code>. La crate possède le schéma JSONL sur disque, le flux de diffusion en cours de processus que le tableau de bord lit, le pont vers l’<code>Observer</code> typé (Prometheus / OTel) et les macros (<code>record!</code>, <code>scope!</code>, <code>spawn!</code>) que les sous-systèmes appellent.</p>
+<p>Cette page couvre ce dont un opérateur a besoin : la configuration, l’emplacement du journal, la structure des événements et la manière de les interroger.</p>
+<h2 id="configuration-observability"><a class="header" href="#configuration-observability">Configuration (<code>[observability]</code>)</a></h2>
+<p>Valeurs par défaut : <code>log_persistence = "rolling"</code>, <code>log_persistence_max_entries = 200</code>, <code>log_tool_io = "redacted"</code>, <code>log_tool_io_truncate_bytes = 40960</code>. Une installation neuve produit un fichier JSONL glissant de 200 événements dans <code>~/.zeroclaw/data/state/runtime-trace.jsonl</code>, et la page Logs du tableau de bord fonctionne sans configuration supplémentaire.</p>
+<p><code>log_persistence = "none"</code> désactive entièrement la persistance. Le flux de diffusion (SSE du tableau de bord) et le pont <code>Observer</code> typé continuent de recevoir les événements ; seul l’écrivain JSONL est restreint.</p>
+<h2 id="format-sur-disque"><a class="header" href="#format-sur-disque">Format sur disque</a></h2>
+<p>JSONL : un événement par ligne, UTF-8, permissions <code>0o600</code> sous Unix. Chaque ligne fait l’objet d’un <code>sync_data</code> après écriture ; la ligne est durable avant que le code émetteur ne retourne.</p>
+<p>La forme de la ligne reflète <code>zeroclaw_log::event::LogEvent</code>. Clés de premier niveau :</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Plateforme</th><th>Destination par défaut</th></tr>
+<tr><th>Clé</th><th>Type</th><th>Notes</th></tr>
 </thead>
 <tbody>
-<tr><td>Linux (systemd)</td><td>journald — <code>journalctl --user -u zeroclaw</code></td></tr>
-<tr><td>macOS (launchd)</td><td><code>~/Library/Logs/ZeroClaw/zeroclaw.log</code> (stdout), <code>zeroclaw.err</code> (stderr)</td></tr>
-<tr><td>Homebrew sur macOS</td><td><code>$HOMEBREW_PREFIX/var/log/zeroclaw.log</code></td></tr>
-<tr><td>Windows</td><td><code>%LOCALAPPDATA%\ZeroClaw\logs\zeroclaw.log</code></td></tr>
-<tr><td>Docker</td><td>sortie standard du conteneur — <code>docker logs zeroclaw</code></td></tr>
-<tr><td>Premier plan (<code>zeroclaw daemon</code> sans service)</td><td>stderr</td></tr>
+<tr><td><code>id</code></td><td>Chaîne UUID v4</td><td>ID d’événement persistant.</td></tr>
+<tr><td><code>@timestamp</code></td><td>RFC 3339 + ms, UTC</td><td>Triable lexicographiquement ; le lecteur effectue le tri sur ce champ.</td></tr>
+<tr><td><code>severity_number</code></td><td>u8</td><td>OTel : 1 TRACE, 5 DEBUG, 9 INFO, 13 WARN, 17 ERROR.</td></tr>
+<tr><td><code>severity_text</code></td><td>chaîne</td><td>Libellé du bucket pour <code>severity_number</code>.</td></tr>
+<tr><td><code>event.category</code></td><td>chaîne</td><td><code>agent</code>, <code>channel</code>, <code>cron</code>, <code>memory</code>, <code>tool</code>, <code>provider</code>, <code>session</code>, <code>system</code>, ou <code>internal</code>.</td></tr>
+<tr><td><code>event.action</code></td><td>chaîne</td><td>Identifiant stable (<code>llm_request</code>, <code>channel_message_inbound</code>, …).</td></tr>
+<tr><td><code>event.outcome</code></td><td>string | omitted</td><td><code>success</code>, <code>failure</code>, <code>unknown</code> (omis lorsque <code>unknown</code>).</td></tr>
+<tr><td><code>service.name</code></td><td>chaîne</td><td>Constant <code>"zeroclaw"</code>.</td></tr>
+<tr><td><code>service.version</code></td><td>chaîne</td><td>Version du crate du démon en cours d’exécution.</td></tr>
+<tr><td><code>trace_id</code></td><td>chaîne hexadécimale | omise</td><td>Corrélation par tour. Un tour d’agent = un trace_id.</td></tr>
+<tr><td><code>span_id</code></td><td>chaîne hexadécimale | omise</td><td>Sous-segment au sein d’un tour.</td></tr>
+<tr><td><code>zeroclaw.*</code></td><td>carte de chaînes plate</td><td>Attribution liée à l’alias (voir ci-dessous).</td></tr>
+<tr><td><code>message</code></td><td>string | omitted</td><td>Corps de ligne lisible par l’utilisateur.</td></tr>
+<tr><td><code>attributes</code></td><td>objet | omis</td><td>Charge utile par action en format libre.</td></tr>
+<tr><td><code>schema_version</code></td><td>u8</td><td>Actuellement <code>2</code>. Les lignes v1 migrent sur place au démarrage.</td></tr>
 </tbody>
 </table>
 </div>
-<h3 id="niveaux"><a class="header" href="#niveaux">Niveaux</a></h3>
-<p>Défini via la variable d’environnement <code>RUST_LOG</code>. Exemples :</p>
-<pre><code class="language-bash">RUST_LOG=zeroclaw=info                       # défaut — événements à haute pertinence
-RUST_LOG=zeroclaw=debug                      # verbeux — par appel d'outil, par appel de fournisseur
-RUST_LOG=zeroclaw::agent=trace               # très verbeux — uniquement la boucle de l'agent
-RUST_LOG=warn,zeroclaw::security=debug       # silencieux sauf pour le sous-système de sécurité
+<h3 id="attribution-zeroclaw"><a class="header" href="#attribution-zeroclaw">Attribution <code>zeroclaw.*</code></a></h3>
+<p>La source de vérité Rust est <code>ATTRIBUTION_FIELDS</code> + <code>COMPOSITE_PREFIXES</code> dans <code>crates/zeroclaw-log/src/event.rs</code>. La réponse <code>/api/logs</code> transporte la liste canonique en tant que <code>attribution_keys</code> ; récupérez-la au lieu de la coder en dur.</p>
+<p>Les champs simples (<code>ATTRIBUTION_FIELDS</code>) contiennent chacun une seule chaîne. Les préfixes composites obtiennent trois clés : <code>&lt;prefix&gt;</code>, <code>&lt;prefix&gt;_type</code>, <code>&lt;prefix&gt;_alias</code> (par ex. <code>channel = "discord.glados"</code>, <code>channel_type = "discord"</code>, <code>channel_alias = "glados"</code>). Les filtres peuvent correspondre de manière approximative ou précise.</p>
+<p>Lorsqu’un appel de traçage définit un champ à préfixe composite avec un type seul (sans <code>.</code>), seul l’emplacement <code>_type</code> est renseigné, de sorte qu’un appel <code>tracing::*!(model_provider = name, …)</code> à l’intérieur d’un span qui porte déjà le composite complet <code>&lt;type&gt;.&lt;alias&gt;</code> ne l’écrase pas lors de la fusion feuille→racine.</p>
+<h2 id="interrogation"><a class="header" href="#interrogation">Interrogation</a></h2>
+<p>La page Logs du tableau de bord est la surface principale. En dessous :</p>
+<pre><code>GET /api/logs
 </code></pre>
-<p>Pour des modifications persistantes, placez la valeur dans votre unité de service :</p>
-<pre><code class="language-ini"># ~/.config/systemd/user/zeroclaw.service.d/override.conf
-[Service]
-Environment=RUST_LOG=zeroclaw=info,zeroclaw::security=debug
+<p>Filtres de premier niveau (paramètres de requête) : <code>since_ts</code>, <code>until_ts</code>, <code>until_id</code>, <code>action</code>, <code>category</code>, <code>outcome</code>, <code>severity_min</code>, <code>trace_id</code>, <code>q</code> (sous-chaîne dans <code>message</code> + <code>attributes</code>), <code>hide_internal</code> (supprime <code>event.category = "internal"</code>), <code>limit</code>.</p>
+<p>Chaque autre <code>?&lt;key&gt;=&lt;value&gt;</code> est traité comme un filtre d’égalité par attribution, la passerelle valide la clé avec <code>is_attribution_field</code> et rejette les clés inconnues avec une erreur <code>400</code>. La réponse inclut <code>attribution_keys: string[]</code>, afin que les appelants n’aient pas à deviner.</p>
+<p>Exemples :</p>
+<div class="os-tabs-src">
+<h4 id="sh"><a class="header" href="#sh">sh</a></h4>
+<pre><code class="language-sh"># Tous les événements WARN+ depuis le démarrage du démon.
+curl $ZEROCLAW_GATEWAY/api/logs?severity_min=13
+
+# Événements d'un agent spécifique :
+curl "$ZEROCLAW_GATEWAY/api/logs?agent_alias=glados"
+
+# Trafic Discord pour un bot :
+curl "$ZEROCLAW_GATEWAY/api/logs?channel=discord.glados"
+
+# Un tour d'agent unique :
+curl "$ZEROCLAW_GATEWAY/api/logs?trace_id=&lt;value-from-a-prior-event&gt;"
 </code></pre>
-<h3 id="format"><a class="header" href="#format">Format</a></h3>
-<p>JSON par défaut en mode service (plus facile pour l’ingestion par Loki/ELK). Formatage lisible sur un TTY (pour <code>zeroclaw daemon</code> en mode interactif).</p>
-<p>Forcer l’un ou l’autre :</p>
-<pre><code class="language-toml">[observabilité]
-format_journal = "json"        # ou "pretty"
-</code></pre>
-<h3 id="quest-ce-qui-est-enregistré-au-niveau-info-"><a class="header" href="#quest-ce-qui-est-enregistré-au-niveau-info-">Qu’est-ce qui est enregistré au niveau <code>info</code> ?</a></h3>
-<ul>
-<li>Cycle de vie du service (démarrage, arrêt, rechargement de la configuration)</li>
-<li>Événements de connexion / déconnexion de canal</li>
-<li>Appels de fournisseur avec latence et compte de jetons</li>
-<li>Appels d’outils (nom, résultat — succès / bloqué / refusé) — <em>pas</em> les arguments ou les résultats, qui sont sensibles</li>
-<li>Demandes d’approbation, octrois, refus</li>
-</ul>
-<p>À <code>debug</code> :</p>
-<ul>
-<li>Arguments complets de l’outil et résultats (masqués — identifiants supprimés)</li>
-<li>Chaque chunk de streaming</li>
-<li>Scores de récupération de mémoire</li>
-<li>Détails d’évaluation de la politique de sécurité</li>
-</ul>
-<p>À <code>trace</code> :</p>
-<ul>
-<li>Construction de la fenêtre de contexte du modèle</li>
-<li>Événements de streaming par jeton</li>
-<li>Tous les en-têtes de requête/réponse HTTP (toujours masqués pour les informations d’identification)</li>
-</ul>
-<h3 id="masquage-des-identifiants"><a class="header" href="#masquage-des-identifiants">Masquage des identifiants</a></h3>
-<p>Le logger masque les motifs de secrets connus (<code>sk-*</code>, <code>ghp_*</code>, <code>xox[baprs]-*</code>, <code>ya29.*</code>, <code>AIza*</code>, etc.), quel que soit le niveau de journalisation. Le masquage est effectué au niveau du logger — vos fichiers de journalisation et le journal système ne les voient jamais.</p>
-<p>Auditez avec :</p>
-<pre><code class="language-bash">grep -E 'sk-|ghp_|xox[baprs]' /path/to/log/file | head
-# devrait retourner zéro résultat dans un exécution normale
-</code></pre>
-<p>Si vous voyez un secret non masqué, créez un ticket — la liste des éléments masqués se trouve dans <code>crates/zeroclaw-infra/src/redact.rs</code>.</p>
-<h2 id="métriques"><a class="header" href="#métriques">Métriques</a></h2>
-<p>Exposition Prometheus sur la passerelle :</p>
-<pre><code>curl -s http://localhost:42617/metrics
-</code></pre>
-<p>Métriques clés :</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Métrique</th><th>Étiquettes</th><th>Ce qu’il mesure</th></tr>
-</thead>
-<tbody>
-<tr><td><code>zeroclaw_provider_calls_total</code></td><td><code>provider</code>, <code>outcome</code></td><td>Appels par fournisseur selon le résultat (ok / timeout / error)</td></tr>
-<tr><td><code>zeroclaw_provider_latency_ms</code></td><td><code>provider</code></td><td>Histogramme de la latence des appels du fournisseur</td></tr>
-<tr><td><code>zeroclaw_tokens_total</code></td><td><code>provider</code>, <code>kind</code> (entrée/sortie)</td><td>Compteurs de jetons</td></tr>
-<tr><td><code>zeroclaw_tool_calls_total</code></td><td><code>outil</code>, <code>résultat</code></td><td>Appels d’outils par résultat</td></tr>
-<tr><td><code>zeroclaw_tool_duration_ms</code></td><td><code>outil</code></td><td>Histogramme d’exécution des outils</td></tr>
-<tr><td><code>zeroclaw_channel_events_total</code></td><td><code>channel</code>, <code>direction</code> (entrant/sortant)</td><td>Flux de messages</td></tr>
-<tr><td><code>zeroclaw_channel_errors_total</code></td><td><code>channel</code>, <code>kind</code></td><td>Déconnexions, limites de débit, échecs d’authentification</td></tr>
-<tr><td><code>zeroclaw_memory_searches_total</code></td><td></td><td>Appels de récupération de mémoire</td></tr>
-<tr><td><code>zeroclaw_policy_blocks_total</code></td><td><code>policy</code>, <code>tool</code></td><td>Rejets de la politique de sécurité</td></tr>
-</tbody>
-</table>
 </div>
-<p>Une configuration de scrape minimale pour Prometheus :</p>
+
+<p>La pagination utilise un curseur inversé. La réponse inclut <code>next_cursor: [timestamp, id] | null</code> ; renvoyez ces valeurs via <code>until_ts</code> + <code>until_id</code> pour charger les éléments plus anciens. <code>at_end: true</code> signifie que le lecteur a parcouru l’intégralité du fichier pour le filtre actuel.</p>
+<p>La réponse <code>/api/status</code> inclut <code>daemon_started_at: string</code> (RFC 3339), ce qui permet à un tableau de bord d’utiliser par défaut « depuis le démarrage du démon » sans aller-retour supplémentaire.</p>
+<h2 id="visionneuses-de-journaux-externes"><a class="header" href="#visionneuses-de-journaux-externes">Visionneuses de journaux externes</a></h2>
+<p>Le schéma JSONL est un hybride OTel-logs + ECS : <code>@timestamp</code>, <code>severity_number</code> + <code>severity_text</code>, <code>event.{category,action,outcome}</code>, <code>service.{name,version}</code>, <code>attributes</code>, ainsi que l’espace de noms fournisseur <code>zeroclaw.*</code>. La plupart des visionneuses de journaux l’ingèrent avec peu ou pas de transformation. Remplacez <code>&lt;install&gt;</code> par le chemin absolu de votre répertoire d’installation dans les exemples ci-dessous (généralement <code>~/.zeroclaw</code> développé).</p>
+<h3 id="grafana-loki"><a class="header" href="#grafana-loki">Grafana Loki</a></h3>
+<p>Les libellés Promtail extraient <code>agent_alias</code>, <code>channel</code> et <code>severity_text</code> afin qu’ils soient filtrables dans Grafana :</p>
 <pre><code class="language-yaml">scrape_configs:
   - nom_tâche: zeroclaw
     static_configs:
-      - cibles: ["localhost:42617"]
+      - cibles: [localhost]
+        étiquettes:
+          job: zeroclaw
+          __path__: /data/state/runtime-trace.jsonl
+    pipeline_stages:
+      - json:
+          expressions:
+            agent: zeroclaw.agent_alias
+            canal: zeroclaw.channel
+            niveau: severity_text
+      - étiquettes:
+          agent:
+          canal:
+          niveau:
+      - horodatage:
+          source: '@timestamp'
+          format: RFC3339
 </code></pre>
-<p>Le <a href="https://github.com/zeroclaw-labs/zeroclaw-templates/tree/master/grafana">tableau de bord Grafana</a> (dans le dépôt de modèles) visualise ce qui précède.</p>
-<h2 id="traces"><a class="header" href="#traces">Traces</a></h2>
-<p>OpenTelemetry via OTLP/HTTP. Désactivé par défaut — activez-le dans la configuration :</p>
-<pre><code class="language-toml">[observability.otel]
-enabled = true
-endpoint = "http://localhost:4318"
-service_name = "zeroclaw"
+<h3 id="opentelemetry-collector"><a class="header" href="#opentelemetry-collector">OpenTelemetry Collector</a></h3>
+<p>Le récepteur <code>filelog</code> mappe le schéma directement. Exportez ensuite vers n’importe quel collecteur OTel (Tempo, Honeycomb, Datadog, etc.) :</p>
+<pre><code class="language-yaml">destinataires:
+  filelog/zeroclaw:
+    include: [/data/state/runtime-trace.jsonl]
+    opérateurs:
+      - type: json_parser
+        horodatage:
+          parse_from: attributes["@timestamp"]
+          disposition: '%Y-%m-%dT%H:%M:%S.%LZ'
+        sévérité:
+          parse_from: attributes.severity_number
 </code></pre>
-<p>Les spans que vous verrez :</p>
+<h3 id="kibana--elastic"><a class="header" href="#kibana--elastic">Kibana / Elastic</a></h3>
+<p>L’ingestion fonctionne telle quelle. Les pipelines ECS stricts attendent <code>log.level</code> à la place de <code>severity_text</code>. Un pipeline d’ingestion Filebeat qui renomme <code>severity_text</code> en <code>log.level</code> (et <code>severity_number</code> en <code>log.syslog.severity.code</code>) comble cette lacune. <code>@timestamp</code> et <code>event.{category,action,outcome}</code> sont déjà aux positions canoniques.</p>
+<h3 id="vector--fluent-bit"><a class="header" href="#vector--fluent-bit">Vector / Fluent Bit</a></h3>
+<p>Les deux suivent en continu (<code>tail</code>) le JSONL avec une étape d’analyse JSON ; aucune transformation de schéma n’est nécessaire avant l’envoi vers n’importe quel backend.</p>
+<h2 id="format-du-terminal"><a class="header" href="#format-du-terminal">Format du terminal</a></h2>
+<p>Le formateur de stderr du daemon préfixe chaque ligne avec l’identité liée à l’alias englobante la plus proche :</p>
 <ul>
-<li><code>agent.loop</code> — un par message entrant, couvre l’ensemble du tour</li>
-<li><code>provider.chat</code> — un appel de fournisseur, avec des attributs pour le modèle, les comptes de jetons et le nombre de tentatives</li>
-<li><code>tool.invoke</code> — un appel d’outil, avec le résultat et la durée</li>
-<li><code>security.validate</code> — vérification de la politique avec décision</li>
-<li><code>memory.search</code> — récupération avec comptage des résultats et score maximal</li>
+<li>agent context → <code>[&lt;agent_alias&gt;]</code></li>
+<li>channel-only context (écouteur de canal, pas encore d’agent) → <code>[&lt;channel_composite&gt;]</code> (par ex. <code>[discord.glados]</code>)</li>
+<li>sinon → <code>[system]</code></li>
 </ul>
-<p>Associez-le à Jaeger ou Tempo pour la traçabilité distribuée si vous exécutez plusieurs instances de ZeroClaw ou si vous instrumentez des services en aval.</p>
-<h2 id="journal-daudit-des-reçus"><a class="header" href="#journal-daudit-des-reçus">Journal d’audit des reçus</a></h2>
-<p>Séparément des journaux généraux, les reçus des outils sont écrits dans :</p>
-<pre><code>&lt;workspace&gt;/receipts/&lt;yyyy-mm-dd&gt;.ndjson
-</code></pre>
-<p>Une ligne JSON par invocation d’outil. Consultable via grep, en append-only, persistant entre les redémarrages. Voir <a href="../security/tool-receipts.html">Reçus des outils</a>.</p>
-<h2 id="cost--token-tracking"><a class="header" href="#cost--token-tracking">Cost &amp; token tracking</a></h2>
-<p>Every gateway-served turn (WebSocket chat, channel webhook, simple webhook) records its token usage and computed cost to:</p>
-<pre><code>&lt;workspace&gt;/state/costs.jsonl
-</code></pre>
-<p>One JSON line per LLM call, with input/output token counts and cost in USD. The accumulator behind <code>GET /api/cost</code> reads from the same source — call it any time for a session, daily, and monthly summary.</p>
-<p>Per-model pricing comes from <code>[cost.prices]</code> in <code>config.toml</code>. Models without an entry record token counts with a zero cost; budget enforcement still works on the recorded counts. The WebSocket <code>done</code> frame echoes the same numbers so browser clients can show usage without a second round-trip:</p>
-<pre><code class="language-json">{
-  "type": "terminé",
-  "full_response": "...",
-  "jetons_d_entrée": 142,
-  "output_tokens": 87,
-  "tokens_used": 229,
-  "cost_usd": 0.000456,
-  "modèle": "claude-sonnet-4-20250514",
-  "presta: "anthropic"
-}
-</code></pre>
-<p>Token fields are <code>null</code> when the upstream provider does not surface usage in streaming responses (most OpenAI-compatible providers do; Anthropic streaming reports usage too, but only via its native event format — non-OpenAI-shaped providers may not).</p>
-<h2 id="points-de-contrôle-de-santé"><a class="header" href="#points-de-contrôle-de-santé">Points de contrôle de santé</a></h2>
-<p>La passerelle expose trois vues de santé :</p>
-<pre><code class="language-bash">curl -s http://localhost:42617/health              # { "status": "ok", "version": "0.7.5" }
-curl -s http://localhost:42617/health/channels     # statut par canal
-curl -s http://localhost:42617/health/providers    # statut par fournisseur + taux d'erreur
-</code></pre>
-<p>Pointez Uptime Kuma / votre moniteur vers <code>/health</code> pour une vérification de l’état de vie binaire.</p>
-<h2 id="conservation-des-journaux"><a class="header" href="#conservation-des-journaux">Conservation des journaux</a></h2>
-<p>ZeroClaw ne gère pas lui-même la rotation de ses journaux — c’est le système d’exploitation qui s’en charge :</p>
+<p>La chaîne de spans suit : <code>channel_listener{channel=discord.glados}: …</code>. Les champs de span sont visibles en ligne.</p>
+<h2 id="migration-de-schéma"><a class="header" href="#migration-de-schéma">Migration de schéma</a></h2>
+<p>Au démarrage, si <code>log_persistence</code> est activé et que le fichier existe, le writer fait transiter les lignes au schéma 1 par une migration sur place vers le schéma 2 avant le premier ajout. Streaming pur, avec une allocation limitée à une seule ligne quelle que soit la taille du fichier. Le fichier migré est renommé de manière atomique à son emplacement final. Les fichiers déjà en v2 restent intacts.</p>
+<p>Si la migration échoue, le démon journalise un <code>warn</code> et continue d’écrire les ajouts v2 ; les anciennes lignes v1 restent lisibles par les outils qui comprennent encore v1 mais ne passeront pas le désérialiseur du lecteur v2.</p>
+<h2 id="quest-ce-que-internal-"><a class="header" href="#quest-ce-que-internal-">Qu’est-ce que <code>internal</code> ?</a></h2>
+<p><code>event.category = "internal"</code> est la catégorie destinée au bruit opérationnel dont un opérateur n’a pas besoin sur le tableau de bord par défaut : signaux de pulsation (heartbeat), diffusions en attente, nouvelles tentatives de synchronisation avec perte, et autres. Le commutateur « Hide internal » du tableau de bord (activé par défaut) filtre ces éléments.</p>
+<p>Utilisez-le lorsque vous avez un événement à haute fréquence dont la présence importe pour l’analyse forensique mais dont l’absence est l’état normal. Ne l’utilisez pas comme régulateur de volume pour de véritables erreurs.</p>
+<h2 id="fichiers-dintérêt"><a class="header" href="#fichiers-dintérêt">Fichiers d’intérêt</a></h2>
 <ul>
-<li>systemd-journald effectue une rotation en fonction de la taille et de l’âge (<code>/etc/systemd/journald.conf</code>)</li>
-<li>launchd / macOS ASL effectue une rotation quotidienne par défaut</li>
-<li>Le pilote par défaut de Docker, <code>json-file</code>, effectue une rotation à 10 Mo avec 3 fichiers conservés ; configurez cela dans <code>daemon.json</code>.</li>
+<li><code>crates/zeroclaw-log/src/event.rs</code> : la structure canonique de <code>LogEvent</code>.</li>
+<li><code>crates/zeroclaw-log/src/layer.rs</code> : le Layer <code>tracing-subscriber</code> qui capture chaque appel <code>tracing::*</code> et alimente le pipeline.</li>
+<li><code>crates/zeroclaw-log/src/macro.rs</code>: <code>record!</code>, <code>scope!</code>, <code>spawn!</code>.</li>
+<li><code>crates/zeroclaw-log/src/writer.rs</code> : ajout + troncature glissante.</li>
+<li><code>crates/zeroclaw-log/src/reader.rs</code> : lecteur de <code>/api/logs</code>.</li>
+<li><code>crates/zeroclaw-log/src/config.rs</code>: <code>StoragePolicy</code>, <code>ToolIoPolicy</code>, <code>ResolvedPolicy</code>.</li>
+<li><code>crates/zeroclaw-log/src/migrate.rs</code> : migration en streaming de schema-1 → schema-2.</li>
+<li><code>crates/zeroclaw-log/src/observer_bridge.rs</code> : projection <code>Observer</code> typée pour les consommateurs Prometheus / OTel.</li>
+<li><code>crates/zeroclaw-gateway/src/api_logs.rs</code> : l’adaptateur HTTP.</li>
 </ul>
-<p>Pour le journal des reçus, effectuez une rotation manuelle ou via logrotate si le fichier grossit plus rapidement que ce que vous souhaitez conserver :</p>
-<pre><code>&lt;workspace&gt;/receipts/2026-04-25.ndjson
-&lt;workspace&gt;/receipts/2026-04-26.ndjson
-...
-</code></pre>
-<p>Le partitionnement par jour signifie que vous pouvez supprimer les anciens fichiers individuellement.</p>
-<h2 id="voir-aussi"><a class="header" href="#voir-aussi">Voir aussi</a></h2>
-<ul>
-<li><a href="./overview.html">Opérations → Aperçu</a></li>
-<li><a href="./troubleshooting.html">Dépannage</a></li>
-<li><a href="../security/tool-receipts.html">Sécurité → Reçus des outils</a></li>
-</ul>
+<p>Vérifiez la source avant de vous fier au texte de cette page.</p>
 
                     </main>
 
@@ -350,7 +433,7 @@ curl -s http://localhost:42617/health/providers    # statut par fournisseur + ta
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../ops/troubleshooting.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../ops/cost-tracking.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -364,7 +447,7 @@ curl -s http://localhost:42617/health/providers    # statut par fournisseur + ta
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../ops/troubleshooting.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../ops/cost-tracking.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -386,6 +469,114 @@ curl -s http://localhost:42617/health/providers    # statut par fournisseur + ta
 
         <script src="../elasticlunr-ef4e11c1.min.js"></script>
         <script src="../mark-09e88c2c.min.js"></script>
+        <script>
+        (function () {
+            var root = typeof window !== 'undefined' ? window : this;
+            var elasticlunr = root.elasticlunr ||
+                (typeof globalThis !== 'undefined' && globalThis.elasticlunr);
+
+            if (!elasticlunr || !elasticlunr.Index) {
+                return;
+            }
+
+            var CJK_RE = /[\u3400-\u9fff\uf900-\ufaff]/;
+            var originalLoad = elasticlunr.Index.load;
+
+            function lower(value) {
+                return String(value || '').toLowerCase();
+            }
+
+            function queryTerms(query) {
+                return lower(query).split(/\s+/).filter(Boolean);
+            }
+
+            function fieldScore(text, terms, weight, requireAll) {
+                var haystack = lower(text);
+                var matched = 0;
+                var score = 0;
+
+                if (!haystack) {
+                    return 0;
+                }
+
+                terms.forEach(function (term) {
+                    var index = haystack.indexOf(term);
+                    if (index !== -1) {
+                        matched += 1;
+                        score += weight;
+                        if (index === 0) {
+                            score += weight / 2;
+                        }
+                    }
+                });
+
+                if (requireAll && matched !== terms.length) {
+                    return 0;
+                }
+
+                return score;
+            }
+
+            function fallbackResults(docs, query, options, existingRefs) {
+                var terms = queryTerms(query);
+                var requireAll = !options || options.bool !== 'OR';
+                var results = [];
+
+                if (!CJK_RE.test(query) || terms.length === 0) {
+                    return results;
+                }
+
+                Object.keys(docs).forEach(function (ref) {
+                    var doc = docs[ref];
+                    var score = 0;
+
+                    if (existingRefs[ref]) {
+                        return;
+                    }
+
+                    score += fieldScore(doc.title, terms, 12, requireAll);
+                    score += fieldScore(doc.breadcrumbs, terms, 6, requireAll);
+                    score += fieldScore(doc.body, terms, 2, requireAll);
+
+                    if (score > 0) {
+                        results.push({ ref: ref, doc: doc, score: score });
+                    }
+                });
+
+                results.sort(function (a, b) {
+                    if (b.score !== a.score) {
+                        return b.score - a.score;
+                    }
+
+                    return Number(a.ref) - Number(b.ref);
+                });
+
+                return results;
+            }
+
+            elasticlunr.Index.load = function (serialized) {
+                var index = originalLoad.call(this, serialized);
+                var originalSearch = index.search.bind(index);
+                var docs = serialized &&
+                    serialized.documentStore &&
+                    serialized.documentStore.docs ||
+                    {};
+
+                index.search = function (query, options) {
+                    var results = originalSearch(query, options);
+                    var existingRefs = {};
+
+                    results.forEach(function (result) {
+                        existingRefs[String(result.ref)] = true;
+                    });
+
+                    return results.concat(fallbackResults(docs, query, options, existingRefs));
+                };
+
+                return index;
+            };
+        }());
+        </script>
         <script src="../searcher-c2a407aa.js"></script>
 
         <script src="../clipboard-1626706a.min.js"></script>
@@ -393,13 +584,14 @@ curl -s http://localhost:42617/health/providers    # statut par fournisseur + ta
         <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../theme/lang-switcher-82c8c4bf.js"></script>
+        <script src="../../../_shared/theme/version-selector.js"></script>
+        <script src="../../../_shared/theme/lang-switcher.js"></script>
+        <script src="../../../_shared/theme/pc-enhance.js"></script>
         <script src="../mermaid-193ae996.min.js"></script>
-        <script src="../mermaid-init-94f7f342.js"></script>
+        <script src="../mermaid-init-d3ccd83c.js"></script>
 
 
 
     </div>
-        <script src="../../../_shared/theme/version-selector.js"></script>
     </body>
 </html>

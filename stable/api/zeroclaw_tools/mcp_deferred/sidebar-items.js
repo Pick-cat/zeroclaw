@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["build_deferred_tools_section"],"struct":["ActivatedToolSet","DeferredMcpToolSet","DeferredMcpToolStub"]};
+window.SIDEBAR_ITEMS = {"fn":["build_deferred_tools_section","build_deferred_tools_section_filtered"],"struct":["ActivatedToolSet","DeferredMcpToolSet","DeferredMcpToolStub"]};
