@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "../searchindex-54cd2448.js";
+            window.path_to_searchindex_js = "../searchindex-1f374d03.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-f27dd488.js"></script>
@@ -1860,7 +1860,7 @@ api_key = "..."
 <tr><td><code>prompt_injection_mode</code></td><td>tabla</td><td><code>—</code></td><td>Configuración de carga de habilidades (sección <code>[skills]</code>).</td></tr>
 <tr><td><code>registry_url</code></td><td>string?</td><td><code>null</code></td><td>URL del repositorio del registro de habilidades para instalaciones con nombre base.</td></tr>
 <tr><td><code>skill_creation</code></td><td>objeto</td><td><code>—</code></td><td>Configuración de creación autónoma de habilidades (sección <code>[skills.skill_creation]</code>).</td></tr>
-<tr><td><code>skill_improvement</code></td><td>objeto</td><td><code>—</code></td><td>Configuración de auto-mejora de habilidades (<code>[skills.auto_improve]</code> sección).</td></tr>
+<tr><td><code>skill_improvement</code></td><td>objeto</td><td><code>—</code></td><td>Skill self-improvement configuration (<code>[skills.skill-improvement]</code> section).</td></tr>
 </tbody>
 </table>
 </div>
@@ -1891,15 +1891,18 @@ api_key = "..."
 </table>
 </div>
 <h3 id="skillsskill_improvement"><a class="header" href="#skillsskill_improvement"><code>skills.skill_improvement</code></a></h3>
-<p>Configuración de auto-mejora de habilidades (<code>[skills.auto_improve]</code> sección).</p>
+<p>Skill self-improvement configuration (<code>[skills.skill-improvement]</code> section).</p>
+<p>Controls the post-turn background review fork that may patch, expand, or archive skills based on what the conversation revealed. The fork runs in a restricted toolset (only <code>skills_list</code>, <code>skill_view</code>, <code>skill_manage</code>) and never touches the user-visible conversation.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Clave</th><th>Tipo</th><th>Predeterminado</th><th>Descripción</th></tr>
 </thead>
 <tbody>
-<tr><td><code>cooldown_secs</code></td><td>entero</td><td><code>3600</code></td><td>Intervalo mínimo (en segundos) entre las mejoras para la misma habilidad.</td></tr>
-<tr><td><code>enabled</code></td><td>bool</td><td><code>true</code></td><td>Habilitar la mejora automática de habilidades tras un uso exitoso.</td></tr>
+<tr><td><code>cooldown_secs</code></td><td>entero</td><td><code>3600</code></td><td>Minimum interval (in seconds) between reviews for the same skill.</td></tr>
+<tr><td><code>enabled</code></td><td>bool</td><td><code>false</code></td><td>Enable the background skill-review fork. Default: <code>false</code>.</td></tr>
+<tr><td><code>max_review_iterations</code></td><td>entero</td><td><code>8</code></td><td>Maximum tool-call iterations the review fork itself is allowed to make.</td></tr>
+<tr><td><code>nudge_interval_iterations</code></td><td>entero</td><td><code>10</code></td><td>Spawn a review fork once at least this many tool-call iterations have</td></tr>
 </tbody>
 </table>
 </div>

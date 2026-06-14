@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-28e5d8fd.js";
+            window.path_to_searchindex_js = "searchindex-81452d58.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e2df50e.js"></script>
@@ -5822,7 +5822,7 @@ api_key = "..."
 <tr><td><code>prompt_injection_mode</code></td><td>table</td><td>—</td><td>スキル読み込み設定 (<code>[skills]</code> セクション)。</td></tr>
 <tr><td><code>registry_url</code></td><td>string?</td><td><code>null</code></td><td>bare-name インストール用のスキルレジストリリポジトリの URL。</td></tr>
 <tr><td><code>skill_creation</code></td><td>オブジェクト</td><td>—</td><td>自動スキル作成設定 (<code>[skills.skill_creation]</code> セクション)。</td></tr>
-<tr><td><code>skill_improvement</code></td><td>オブジェクト</td><td>—</td><td>スキル自己改善設定 (<code>[skills.auto_improve]</code> セクション)。</td></tr>
+<tr><td><code>skill_improvement</code></td><td>オブジェクト</td><td>—</td><td>Skill self-improvement configuration (<code>[skills.skill-improvement]</code> section).</td></tr>
 </tbody>
 </table>
 </div>
@@ -5853,15 +5853,18 @@ api_key = "..."
 </table>
 </div>
 <h3 id="skillsskill_improvement"><a class="header" href="#skillsskill_improvement"><code>skills.skill_improvement</code></a></h3>
-<p>スキル自己改善設定 (<code>[skills.auto_improve]</code> セクション)。</p>
+<p>Skill self-improvement configuration (<code>[skills.skill-improvement]</code> section).</p>
+<p>Controls the post-turn background review fork that may patch, expand, or archive skills based on what the conversation revealed. The fork runs in a restricted toolset (only <code>skills_list</code>, <code>skill_view</code>, <code>skill_manage</code>) and never touches the user-visible conversation.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>キー</th><th>タイプ</th><th>デフォルト</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>cooldown_secs</code></td><td>整数</td><td><code>3600</code></td><td>同じスキルの改善間隔の最小値（秒）。</td></tr>
-<tr><td><code>enabled</code></td><td>ブール値</td><td><code>true</code></td><td>スキル使用成功後の自動スキル改善を有効にします。</td></tr>
+<tr><td><code>cooldown_secs</code></td><td>整数</td><td><code>3600</code></td><td>Minimum interval (in seconds) between reviews for the same skill.</td></tr>
+<tr><td><code>enabled</code></td><td>ブール値</td><td><code>false</code></td><td>Enable the background skill-review fork. Default: <code>false</code>.</td></tr>
+<tr><td><code>max_review_iterations</code></td><td>整数</td><td><code>8</code></td><td>Maximum tool-call iterations the review fork itself is allowed to make.</td></tr>
+<tr><td><code>nudge_interval_iterations</code></td><td>整数</td><td><code>10</code></td><td>Spawn a review fork once at least this many tool-call iterations have</td></tr>
 </tbody>
 </table>
 </div>
