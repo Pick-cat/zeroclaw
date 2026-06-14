@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-f586d1b2.js";
+            window.path_to_searchindex_js = "searchindex-28e5d8fd.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e2df50e.js"></script>
@@ -20809,19 +20809,19 @@ precede implementation by multiple releases.
 </thead>
 <tbody>
 <tr><td>ラベル</td><td>永続的な分類: type、scope、risk、size、contributor tier、stale/triage ポリシー</td><td>プッシュごとのレビュー状態、アクティブなCIステータス、個人のタスクリスト</td></tr>
-<tr><td>プロジェクトボード</td><td>計画状態: 準備状況、アクティブなオーナーまたはスチュワードのパス、ロードマップのグループ化、依存関係/ブロッカーの状態、フィールドが存在する場合の陳腐化除外理由</td><td>権威あるPRレビューキュー、マージ可能性、必須チェック</td></tr>
+<tr><td>プロジェクトボード</td><td>planning state: readiness, routing evidence, roadmap grouping, dependency/blocker state, stale-exemption reason when a field exists</td><td>権威あるPRレビューキュー、マージ可能性、必須チェック</td></tr>
 <tr><td>ネイティブPRの状態</td><td>レビュー判定、必須チェック、ブランチの最新性、コンフリクト、マージ可否、ドラフト/レディ状態</td><td>長期的なロードマップのオーナーシップ</td></tr>
 <tr><td>課題/RFC</td><td>永続的なディスカッション記録、承認状態、ユーザーニーズ、リンクされた実装履歴</td><td>ポリシー昇格後のメンテナー向けドキュメントのライブ置換</td></tr>
 </tbody>
 </table>
 </div>
 <p>PRレーン、コントリビューター受け入れラベル、stale除外ラベル、ラベル移行は永続的なガバナンスの概念ですが、その正確な運用基準はメンテナードキュメントに記載されています。FND-003がこの役割分担を管理します。ラベルは永続的な作業を分類し、プロジェクトボードは作業を計画し、ネイティブのPRステートはライブレビューとマージの状態を管理し、issue/RFCは決定事項を保持します。<a href="#pr-lanes">メンテナーPRワークフロー</a>はPRレーンの定義を管理し、<a href="#ラベル">ラベルガイド</a>はラベルの正確な意味とクリーンアップルールを管理し、<a href="#issue-triage">レビュアープレイブック</a>はレビュアーがトリアージとレビューの際にこれらのシグナルをどのように適用するかを管理します。ライブラベル移行は通常のPRレビューではなく、メンテナーが承認した別個のクリーンアップ作業として扱ってください。</p>
-<p>古い適用除外はガバナンス上の例外であり、永続的なラベルの保護ではありません。対象となるポリシーでは、<code>status:no-stale</code> が有効となるのは、レーンの運用ソースに、なぜそのイシューが適用除外なのか、そして次のアクションの責任者が誰かの両方が記録されている場合のみです。メンテナー向けドキュメントでは、これらの情報がどこに存在するか、そして古い項目の自動処理や一括整理がどのようにこのルールを適用するかを定義しています。</p>
+<p>Stale exemptions are governance exceptions, not permanent label shields. The target policy is that <code>status:no-stale</code> is valid only when the lane’s operational source records why the issue is exempt and what visible routing evidence carries the next decision. The maintainer docs define where those facts live and how stale automation or stale sweeps enforce the rule.</p>
 <hr>
 <h2 id="4-github-discussions-コミュニティでのディスカッションと引き継ぎ"><a class="header" href="#4-github-discussions-コミュニティでのディスカッションと引き継ぎ">4. GitHub Discussions: コミュニティでのディスカッションと引き継ぎ</a></h2>
 <h3 id="41-メンテナンス済みディスカッションレーン"><a class="header" href="#41-メンテナンス済みディスカッションレーン">4.1 メンテナンス済みディスカッションレーン</a></h3>
 <p>GitHub Discussions は、メンテナンスされたコミュニティの場として扱ってください。Discussions は、質問、アイデア、投票、お知らせ、ショーケース、プロジェクトや統合機能のデモ、また Discord よりも永続性が求められるものの、まだ追跡対象の作業にはなっていない探索的なスレッドに役立ちます。</p>
-<p>正確なカテゴリ、カテゴリの説明、およびスチュワードの周期は運用上の詳細です。これらはコントリビューター向けコミュニケーションガイドおよびメンテナーのスチュワードシップドキュメントに記載されており、この基盤ドキュメントを改訂することなく進化する可能性があります。</p>
+<p>Exact categories, category descriptions, and review cadence are operational details. They belong in the contributor communication guide and maintainer workflow docs, and they may evolve without revising this foundation document.</p>
 <h3 id="42-ディスカッションから追跡対象作業への昇格"><a class="header" href="#42-ディスカッションから追跡対象作業への昇格">4.2 ディスカッションから追跡対象作業への昇格</a></h3>
 <p>Discussion はスレッドが存在するというだけでバックログ作業になるわけではありません。Discussion が具体的に追跡可能な成果を生み出したときに昇格させてください。コントリビューター向けのトリガー例は <a href="#通信">Communication</a> を参照してください。</p>
 <p>ターゲットは結果によって異なります。確認されたバグや受理された機能スコープはissueに移行します。アーキテクチャに関する決定はRFCプロセスを通じて処理されます。PR固有の詳細はPRコメントに移行します。恒久的な運用ルールはメンテナーまたはコントリビューター向けドキュメントに移行します。</p>
@@ -21422,7 +21422,7 @@ clippy                  ← cargo clippy --all-targets -- -D warnings
 <tr><td><code>status:blocked</code></td><td><code>#b60205</code> 赤</td><td>記録済みの未解決の外部依存関係、メンテナーの判断、またはリンクされた前提条件を待機中</td></tr>
 <tr><td><code>status:in-progress</code></td><td><code>#0075ca</code> 青</td><td>オープンPRがそのIssueに積極的に対応しています。staleパス中はライブPRの状態を確認してください</td></tr>
 <tr><td><code>status:stale</code></td><td><code>#e4e669</code> 黄色</td><td>staleしきい値ウィンドウ内に元の作成者のアクティビティがありません</td></tr>
-<tr><td><code>status:no-stale</code></td><td><code>#0e8a16</code> 緑</td><td>承認済みまたはその他の長期的な作業に対する明示的な陳腐化の除外。対象ポリシーでは、運用ソース内に記録された理由とアクティブな所有者またはスチュワードのパスが必要です</td></tr>
+<tr><td><code>status:no-stale</code></td><td><code>#0e8a16</code> 緑</td><td>Explicit stale exemption for accepted or otherwise long-lived work; target policy requires a recorded reason and visible routing evidence in the operational source</td></tr>
 <tr><td><code>status:help-wanted</code></td><td><code>#059669</code> グリーン</td><td>コントリビューターを探しています</td></tr>
 <tr><td><code>status:good-first-issue</code></td><td><code>#059669</code> グリーン</td><td>新規コントリビューター向け</td></tr>
 <tr><td><code>status:discussion</code></td><td><code>#a78bfa</code> 紫</td><td>作業開始前にチームでの議論が必要です</td></tr>
@@ -21490,7 +21490,7 @@ clippy                  ← cargo clippy --all-targets -- -D warnings
 <p><strong>CODEOWNERS のレビューを自動リクエストする（CODEOWNERS に組み込まれており、Action は不要）:</strong></p>
 <p>GitHub は、CODEOWNERS ファイルが存在し、ブランチ保護で必要とされている場合に自動的に CODEOWNERS を適用します。アクションは不要です。</p>
 <p><strong>古いIssueの管理 (<code>.github/workflows/stale.yml</code>):</strong></p>
-<p>45日間アクティビティのないIssueには<code>status:stale</code>ラベルが付けられ、そのIssueがまだ関連性があるかどうかを尋ねるコメントが投稿されます。staleラベルが付けられてから15日間アクティビティのないIssueはクローズされます。これにより、数か月前のもので関連性がなくなった何百ものIssueがバックログに蓄積するのを防ぎます。<code>priority:p0</code>、<code>type:rfc</code>、オープンなリンク済みPRがあるIssue、および記録されたブロッカーが未解決のまま残っている<code>status:blocked</code>のIssueは除外します。意図された<code>status:no-stale</code>のフォローアップは、運用上のソースがstale除外理由とコントリビューターから見えるアクティブなオーナーまたはスチュワードのパスの両方を記録している場合にのみ除外することです。メンテナーラベルガイドおよびIssueトリアージプロトコルに現在の運用上の詳細が記載されています。</p>
+<p>Issues with no activity for 45 days are labeled <code>status:stale</code> and a comment is posted asking if the issue is still relevant. Issues with no activity for 15 days after the stale label is applied are closed. This prevents the backlog from accumulating hundreds of issues that are months old and no longer relevant. Exclude <code>priority:p0</code>, <code>type:rfc</code>, issues with open linked PRs, and issues with <code>status:blocked</code> while a recorded blocker remains unresolved. The intended <code>status:no-stale</code> follow-up is to exclude it only while the operational source records both the stale-exemption reason and contributor-visible routing evidence. The maintainer label guide and issue-triage protocol carry the current operational details.</p>
 <p><strong>PRサイズラベル付け (<code>.github/workflows/pr-size.yml</code>):</strong></p>
 <p>変更された行数に基づいて、PR に <code>size:xs</code> から <code>size:xl</code> までのラベルを自動的に付与します。これにより、差分を開かずにレビュアーやメンテナーが範囲をすぐに把握できます。これらの閾値を初期値として使用してください：XS &lt; 10行、S &lt; 50行、M &lt; 250行、L &lt; 1000行、XL ≥ 1000行。</p>
 <p><strong>PRマージ時のマイルストーンチェック (<code>.github/workflows/milestone-check.yml</code>):</strong></p>
@@ -21510,7 +21510,7 @@ clippy                  ← cargo clippy --all-targets -- -D warnings
 <ul>
 <li><input disabled="" type="checkbox"> ステータス、タイプ、優先度、マイルストーンフィールドを含むGitHubプロジェクトを作成します。</li>
 <li><input disabled="" type="checkbox"> 4つのプロジェクトビュー（ロードマップ、ボード、バックログ、マイワーク）を作成します</li>
-<li><input disabled="" type="checkbox"> コントリビューターコミュニケーションおよびメンテナースチュワードシップのドキュメントに記載された管理対象カテゴリで GitHub Discussions を有効化する</li>
+<li><input disabled="" type="checkbox"> Enable GitHub Discussions with maintained categories documented in the contributor communication and maintainer workflow docs</li>
 <li><input disabled="" type="checkbox"> 既存の提案（セクション 8.4）に対して、3つのRFC課題を作成する</li>
 <li><input disabled="" type="checkbox"> 6つのイシューテンプレート（セクション7）を追加する</li>
 <li><input disabled="" type="checkbox"> <code>CODEOWNERS</code> ファイルを作成する（セクション 6.1）</li>
@@ -23939,12 +23939,13 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <p>自動化はパス/スコープのラベルとCIゲーティングを処理します。リスク、サイズ、種類、コントリビューター層のラベルは、保守されているワークフローが明示的に所有していない限り、メンテナーの受け入れ判断となります。最終的なマージの責任は、人間のメンテナーとPR作成者が負います。</p>
 <h2 id="プロジェクトボードコントラクト"><a class="header" href="#プロジェクトボードコントラクト">プロジェクトボードコントラクト</a></h2>
 <p>Project ボードは自動化された計画用ボードであり、信頼できる PR レビューキューではありません。</p>
-<p>ボードは、Issueの準備状況、アクティブな担当者、ロードマップのグルーピング、依存関係、ブロッカーの状態、および陳腐化除外の理由を管理するために使用します。これらのシグナルは変化が緩やかなため、ボードのフィールドやプランニングレーンを有用な状態に保つことができます。</p>
+<p>Use the board for issue readiness, routing evidence, roadmap grouping, dependencies, blocker state, and stale-exemption reasons. Those signals move slowly enough that a board field or planning lane can stay useful.</p>
 <p>この計画分割のドラフトJSONサマリーは <a href="maintainers/project-board-contract.json"><code>project-board-contract.json</code></a> にあります。これは将来のボード更新自動化のための設計入力として扱い、まだアクティブなGitHub Project統合としては扱わないでください。</p>
 <p>ネイティブ PR レビュー状態を手動ボードのレーンにミラーリングしないでください。GitHub PR の状態が、レビュー判断、必須チェック、マージ可能性、コンフリクト、古い承認、およびマージ準備状況を所有します。ボードが後で <code>DIRTY</code>、<code>BEHIND</code>、<code>APPROVED</code> などの派生的な PR ルーティングを表示する場合は、それを別個の信頼できる情報源ではなく、GitHub 状態のダッシュボードビューとして扱ってください。</p>
 <p>ボードを有用に保ちつつ、プッシュ、レビュー、CI 実行のたびにメンテナーが更新する必要をなくします。</p>
-<h3 id="課題の所有権パス"><a class="header" href="#課題の所有権パス">課題の所有権パス</a></h3>
-<p>Issueは、長期間にわたって受理済み・進行中・stale除外の状態を安全に維持するには、その前に所有権のパスが必要です。PRにはCODEOWNERSやレビュアー指定がありますが、Issueには次のトリアージ判断のための同等のルーティング契約が必要です。</p>
+<h3 id="issue-routing-evidence"><a class="header" href="#issue-routing-evidence">Issue routing evidence</a></h3>
+<p>Issue triage stays a shared maintainer responsibility. Accepted issues do not need a standing owner map before they can remain open, and CODEOWNERS does not make code owners responsible for every issue in a matching area.</p>
+<p>Issues need contributor-visible routing evidence when a special state would otherwise hide them from routine review or stale sweeps: <code>status:no-stale</code>, active release/RFC/design tracker status, or a deferred maintainer decision. <code>status:blocked</code> keeps its simpler rule: record the unresolved blocker and revisit stale protection when the blocker clears.</p>
 <p>これらの意味を一貫して使用してください。</p>
 <div class="table-wrapper">
 <table>
@@ -23953,25 +23954,25 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 </thead>
 <tbody>
 <tr><td>担当者</td><td>誰かが当面の作業を積極的に実装、調査、または推進しています。</td><td>関連するすべての課題に対する恒久的な領域の所有権または受動的な責任。</td></tr>
-<tr><td>エリア管理者</td><td>メンテナーまたは文書化された管理担当者が、次のルーティング判断（明確化、受理、クローズ、保留、または次の実装パスの特定）を担当します。</td><td>自動的な実装の所有権。</td></tr>
-<tr><td>プロジェクトのアクティブな所有者</td><td>ボードに表示される、次の操作に現在責任を持つ担当者またはスチュワードのソース。</td><td>ライブPRレビュー状態の代替。</td></tr>
-<tr><td>ラベル</td><td>永続的な分類と、考えられる領域へのルーティング。</td><td>所有権そのもの。</td></tr>
+<tr><td>Routing evidence</td><td>A visible issue comment, body section, public field, board field, or linked tracker records the reason for special handling and the next decision surface.</td><td>Automatic implementation ownership or permanent area ownership.</td></tr>
+<tr><td>Tracker/RFC surface</td><td>An active release tracker, RFC, or design tracker can be the coordination surface while it remains current.</td><td>Permanent stale protection after the tracker closes, drifts, or stops representing an active decision.</td></tr>
+<tr><td>Project board field</td><td>Optional planning signal for readiness, routing evidence, blocker state, or stale-exemption rationale when it is visible and maintained.</td><td>A private stale-policy source or replacement for native PR review state.</td></tr>
+<tr><td>Labels and CODEOWNERS</td><td>Durable classification, likely area routing, and PR-review consultation hints.</td><td>Ownership or stale protection by themselves.</td></tr>
 </tbody>
 </table>
 </div>
-<p>エリアの管理責任（stewardship）は、CODEOWNERS のイシュー側に相当するものですが、CODEOWNERS を通じて実装されるわけではありません。GitHub のイシューフィールドが有効化され、イシューページ上で一般に公開されている場合は、<code>Area steward</code> または <code>Owner path</code> の Public なイシューフィールドを優先してください。組織内限定またはプライベートなイシューフィールドや Project フィールドは、コントリビューターに可視なオーナーシップを満たしません。そうでない場合、コントリビューターに可視な情報源としては、メンテナンスされた steward テーブル、公開された Project フィールド、イシュー上で可視なメンテナーのコメント、またはイシューからリンクされた公開トラッカーのエントリが利用できます。</p>
-<p>次の実装パスを特定することは、スチュワードが自らその課題を実装したり、人員を保証したりしなければならないという意味ではありません。それは、次のステップを明確にすることを意味します。つまり、アクティブなオーナーを割り当てる、課題をコントリビューターが着手できる状態にする、トラッカーやマイルストーンに振り分ける、メンテナーのトリアージに向けてスケジュールを組む、あるいは記録された根拠とともにクローズ／延期するということです。</p>
-<p>スチュワードシップとは意思決定の責任であり、無期限の納品責任ではありません。スチュワード化されたイシューを「所有」状態のまま宙ぶらりんにしておくべきではありません。次に表示される更新では、上記のいずれかの結果を記録するか、必要な意思決定を明示する必要があります。</p>
-<p>課題をメンテナーのトリアージ対象としてスケジュールすることが有効なのは、その課題にどのような判断が必要か、その判断がどこで追跡されるか、いつ再検討されるかが記録されている場合のみです。トリアージ作業が完了したら、トリアージ用のルーティングを、アクティブな担当者、コントリビューターがすぐ着手できるスコープ、トラッカーまたはマイルストーンへのルート、ブロック/保留状態、またはクローズ理由に置き換えてください。</p>
-<p>承認済みまたは保護された課題については、<code>status:no-stale</code> を追加または維持する前に、これらの可視的なオーナーソースのいずれかを優先してください:</p>
+<p>CODEOWNERS is a PR-review routing mechanism. It can identify people to consult when an issue clearly touches a path, but it does not create issue ownership and should not be mirrored into stale policy as a private routing map.</p>
+<p>Routing evidence is about the next decision, not delivery ownership. A routed issue should not sit in “owned” limbo; the next visible update should make one of these outcomes explicit: assign an active implementer, make the issue contributor-ready, route it to a tracker or milestone, record the blocker, schedule a concrete maintainer decision point, or close/defer it with rationale.</p>
+<p>Scheduling an issue for maintainer triage is valid only when the issue records what decision is needed, where that decision will be tracked, and when it will be revisited. After that triage pass, replace the triage routing with an active implementer, contributor-ready scope, tracker or milestone route, blocked/deferred state, or closure rationale.</p>
+<p>For protected issues, record both the stale-exemption reason and the next decision surface before adding or keeping <code>status:no-stale</code>. Useful visible evidence sources include:</p>
 <ul>
-<li>作業中の担当者。</li>
-<li>スチュワードパスを指定するパブリックなissueフィールド、issueコメント、または本文セクション</li>
-<li>プロジェクト公開の active-owner または area-steward フィールド。</li>
-<li>スチュワードまたはオーナーのソースを示す、リンクされた公開トラッカーエントリ。</li>
+<li>an assignee doing active work plus an issue-visible note, body section, or tracker entry explaining why stale handling should not apply;</li>
+<li>an issue comment, issue body section, or public issue field recording the stale-exemption reason and next decision surface;</li>
+<li>a public Project field that is visible to normal issue readers and actively maintained;</li>
+<li>a linked public tracker, milestone, RFC, or design issue that records why the issue stays open and when it should be revisited.</li>
 </ul>
-<p>アクティブなリリーストラッカーおよびアクティブなRFCや設計トラッカーは、永続的な調整サーフェスです。issueのタイトル、本文、ラベル、またはマイルストーンがアクティブなトラッカーやRFCを明確に示している場合、トラッカー自体がstale除外の理由とコントリビューターから見えるスチュワードサーフェスを提供するため、issueごとに繰り返しオーナーがコメントする必要はありません。マイルストーンがクローズされたとき、トラッカーがライブのリリース状態から逸脱したとき、RFCが決定に至った、置き換えられた、もしくはクローズされたとき、またはissueがもはやアクティブなプロジェクト決定サーフェスを表さなくなったときには、除外を見直してください。</p>
-<p>これらのいずれも存在せず、その issue がアクティブなトラッカーや RFC でもない場合でも、トリアージが継続している間は issue をオープンのままにできますが、<code>status:no-stale</code> を恒久的な盾として頼るべきではありません。stale-exemption の監査が導入されるまでは、理由やオーナーの根拠の欠落は監査上の指摘事項および修正提案であって、自動的な stale-closure のトリガーではありません。</p>
+<p>Active release trackers and active RFC or design trackers are durable coordination surfaces. When the issue title, body, labels, or milestone clearly identify an active tracker or RFC, the tracker itself supplies the stale-exemption reason and contributor-visible routing surface; it does not need repetitive per-issue comments. Revisit the exemption when the milestone closes, the tracker drifts from live release state, the RFC reaches a decision, is superseded, or closes, or the issue no longer represents an active project decision surface.</p>
+<p>If none of those exists and the issue is not an active tracker or RFC, the issue can still stay open while triage continues, but it should not rely on <code>status:no-stale</code> as a permanent shield. Until the stale-exemption audit lands, missing reason or routing evidence is an audit finding and proposed correction, not an automatic stale-closure trigger.</p>
 <h2 id="prレーン"><a class="header" href="#prレーン">PRレーン</a></h2>
 <p>PR レーン（lanes）は、レビューの分配に関する期待値であり、必須ラベルの別系統ではありません。PR にどれだけのレビューの深さ、順序付け、メンテナの注意が必要かを判断するために使用します。実際の分配データは、CODEOWNERS、ネイティブの GitHub レビュー状態、CI、ラベル、リンクされた issue、明示的な関係キーワードが引き続き担います。</p>
 <div class="table-wrapper">
@@ -24058,7 +24059,7 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <ul>
 <li>最初のメンテナーのトリアージの目標：<strong>48時間以内</strong>。</li>
 <li>ブロックされたPRには、部分的なレビューのシリーズではなく、1つの実行可能なチェックリストコメントが表示されます。</li>
-<li><code>status:no-stale</code> は、別の stale 除外で保護されていない issue に対して、受理済みまたはその他の長期的な作業のうち、記録された stale 除外理由と、コントリビューターから見える形でアクティブなオーナーまたはスチュワードの経路を持つものに予約されています。アクティブなリリーストラッカーおよびアクティブな RFC または設計トラッカーは、それらがアクティブである限り、トラッカー自体をその可視的な理由およびスチュワードの面として使用できます。これらの事実を欠いた既存の除外は、stale 除外修復パケットが反映されるまで監査指摘事項となります。</li>
+<li><code>status:no-stale</code> is reserved for accepted or otherwise long-lived work with a recorded stale-exemption reason and contributor-visible routing evidence when the issue is not already protected by another stale exclusion. Active release trackers and active RFC or design trackers may use the tracker itself as that visible reason and routing surface while they remain active. Existing exemptions missing those facts are audit findings until the stale-exemption repair packet lands.</li>
 </ul>
 <p>スタックされた作業では、レビュー順序を決定論的にするために、明示的な <code>Depends on #...</code> を必要とします。</p>
 <p>置換には明示的な <code>Supersedes #...</code> が必要です。寄稿とテンプレートのルールについては、<a href="#prを置き換える">PRの置換</a> を参照してください。</p>
@@ -24182,13 +24183,13 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <tr><td><code>status:accepted</code></td><td>チームが RFC または作業項目を承認しました。Issue にも stale 保護が必要な場合にのみ <code>status:no-stale</code> を追加してください。</td></tr>
 <tr><td><code>status:blocked</code></td><td>有効な作業が外部依存関係、メンテナーの決定、またはリンクされた前提条件を待機しています。ブロッカーを記録してください。これは、そのブロッカーが未解決のままである間のみ、stale 保護として機能します。</td></tr>
 <tr><td><code>status:in-progress</code></td><td>オープン中のPRがこのissueに積極的に対応しています。staleパス中にこの情報に依存する前に、ライブのPR状態を再確認してください。</td></tr>
-<tr><td><code>status:no-stale</code></td><td>受理された作業や、その他の長期的な作業はオープンのままにしておくべきであり、別の stale 除外ルールによって既に保護されているわけではありません。<a href="#issue-ownership-path">Project board contract</a> に記載されている貢献者から参照可能なオーナー情報源を用いて、理由とアクティブなオーナーまたはスチュワードのパスを記録してください。アクティブなリリーストラッカーや、アクティブな RFC や設計トラッカーは、それらがアクティブである間、トラッカー自体を可視的な理由およびスチュワード面として使用できます。</td></tr>
+<tr><td><code>status:no-stale</code></td><td>Accepted or otherwise long-lived work should stay open and is not already protected by another stale exclusion. Record the reason and routing evidence using the contributor-visible sources in the <a href="#issue-routing-evidence">Project board contract</a>. Active release trackers and active RFC or design trackers may use the tracker itself as the visible reason and routing surface while they remain active.</td></tr>
 <tr><td><code>good first issue</code></td><td>XS/S、自己完結型で、明確な受け入れ基準、関連するコードまたはドキュメントへのリンク、指名されたメンターまたは連絡先があり、オンボーディングのリスクが低い、ドキュメント化された作業。</td></tr>
 <tr><td><code>help wanted</code></td><td>メンテナーが外部からの支援を望み、レビュー可能な、実行可能でブロックされていない作業。一般的な有効/未割り当てのマーカーとして使用しないでください。</td></tr>
 </tbody>
 </table>
 </div>
-<p>担当者（Assignee）はアクティブな作業を意味します。エリアスチュワード（Area steward）は、実装担当者がアクティブでない場合に、次のイシュールーティングの決定に対する責任を意味します。<a href="#issue-ownership-path">Project board contract</a> では、受け入れられるオーナーソースとルーティング結果が定義されています。ラベルは該当エリアの可能性を特定できますが、ラベル単体ではオーナーソースにはなりません。</p>
+<p>Assignee means active work. Routing evidence records why an issue needs special stale protection, tracker treatment, or a deferred maintainer decision. <code>status:blocked</code> only needs the recorded unresolved blocker unless it also needs separate <code>status:no-stale</code> protection. The <a href="#issue-routing-evidence">Project board contract</a> defines the accepted evidence sources and routing outcomes. Labels can identify the likely area, but labels alone are not ownership or stale protection.</p>
 <h3 id="解像度ラベル"><a class="header" href="#解像度ラベル">解像度ラベル</a></h3>
 <p>解決ラベルは、アイテムをクローズするかアクティブキューから削除する場合にのみ使用してください。これらは最終的な結果を説明するものであり、オープンのままにすべき作業の <code>status:*</code> ライフサイクルラベルを置き換えるものではありません。<a href="#resolution-labels">ラベルガイド</a>が、現在の解決ラベルの定義および移行の保留に関する信頼できる情報源です。</p>
 <p>重複の場合は、議論を終了またはリダイレクトする前に正規のターゲットへリンクしてください。無効なレポートの場合は、そのレポートが対応不可である理由、または代わりにどこへ送るべきかを説明してください。明示的に取り組まないと決めた作業については、ボードレベルの <code>Won't Do</code> / ライブの <code>wontfix</code> パスを使用し、簡潔な理由を残してください。</p>
@@ -24222,7 +24223,7 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <p>これにより、コンテキストの損失を抑え、次のレビュアーがすでにあなたが行ったフェッチを再度行わないようにします。</p>
 <h2 id="週次キューの保守"><a class="header" href="#週次キューの保守">週次キューの保守</a></h2>
 <ul>
-<li>古くなったキューを巡回します。<code>status:no-stale</code> を適用するのは、<a href="#issue-ownership-path">プロジェクトボード規約</a>のルールに従う場合のみです。受理された作業やその他長期にわたる作業に、オープンのままにしておく記録された理由があり、目に見えるアクティブなオーナーまたはスチュワードのパスが存在し、他の古さ除外がまだ適用されていない場合に限ります。アクティブなリリーストラッカーやアクティブな RFC・設計トラッカーは、issue 自体がアクティブな調整または意思決定の対象を明確に示している場合、デフォルトで古さ保護を維持してよいでしょう。ただし、マイルストーンがクローズされたとき、トラッカーがライブ状態から乖離したとき、RFC が決定に至った・置き換えられた・クローズされたとき、または issue がアクティブなプロジェクトの意思決定対象を表さなくなったときには、それらを見直してください。古さ免除の監査が導入されるまでは、これらの事実が欠けている既存の <code>status:no-stale</code> issue を、自動的な古さの候補としてではなく監査対象として扱ってください。</li>
+<li>Walk the stale queue. Apply <code>status:no-stale</code> only under the rules in the <a href="#issue-routing-evidence">Project board contract</a>: when accepted or otherwise long-lived work has a recorded reason to stay open, contributor-visible routing evidence, and no other stale exclusion already applies. Active release trackers and active RFC or design trackers may keep stale protection by default when the issue itself clearly identifies the active coordination or decision surface; revisit them when the milestone closes, the tracker drifts from live state, the RFC reaches a decision, is superseded, or closes, or the issue stops representing an active project decision surface. Until the stale-exemption audit lands, treat existing <code>status:no-stale</code> issues missing those facts as audit findings rather than automatic stale candidates.</li>
 <li>まず、<code>size: XS/S</code> のバグおよびセキュリティ関連のPRを優先してください。</li>
 <li>頻繁に寄せられるサポートの質問を、ドキュメントの改善や自動応答のガイドラインへと変換する。</li>
 </ul>
@@ -24238,16 +24239,16 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <p>定義が競合する場合は、まずソースファイルを更新し、その後このページを同期してください。</p>
 <h2 id="所有権の境界"><a class="header" href="#所有権の境界">所有権の境界</a></h2>
 <p>ラベルは可搬性のあるメタデータです。これがどのような種類の作業なのか、どのコード領域に触れるのか、レビューする際のリスクはどの程度か、そして stale ポリシーや triage ポリシーで特別な対応が必要かどうかを示すものです。</p>
-<p>Project board automation を追加する場合は、第二の PR レビューキューとしてではなく、自動化されたプランニングボードとして使用してください。このボードは、動きの遅いプランニングに関する質問に答えるためのものです。たとえば、何が着手可能か、誰が担当しているか、どのトラッカーやマイルストーンに属するか、何がブロックされているか、といった内容です。動きの速いレビューやマージに関する質問には、引き続き GitHub ネイティブの PR state が答えるべきです。</p>
+<p>When Project board automation is added, use it as an automated planning board, not as a second PR review queue. The board should answer slower-moving planning questions: what is ready to pick up, what routing evidence keeps it active, what tracker or milestone it belongs to, and what is blocked. Native GitHub PR state should continue to answer fast-moving review and merge questions.</p>
 <p>更新頻度に基づいて分割を維持します:</p>
 <ul>
 <li>ラベルは独自の永続的な分類を保持します：作業の種類、スコープ/コンポーネント、レビューのリスク、測定された PR サイズ、および stale 除外。</li>
-<li>プロジェクトボードのフィールドは、Issueの計画段階、アクティブなオーナーまたはスチュワードのパス、依存関係の状態、古い状態の除外理由、およびロードマップのグループ化に適しています（これらのフィールドが積極的に管理されている場合）。</li>
+<li>Project board fields are appropriate for issue planning stage, visible routing evidence, dependency state, stale-exemption reason, and roadmap grouping when those fields are actively maintained.</li>
 <li>ネイティブの GitHub PR 状態は、変化の速いレビュー状態を管理します。レビュー判定、必須チェック、マージ可否、コンフリクト、古くなった承認などです。</li>
 </ul>
 <p>ボードはメンテナーの作業を軽減するべきです。あるフィールドが PR のプッシュやレビューのたびに手動でのメンテナンスを必要とする場合は、代わりにラベル、マイルストーン、またはネイティブの GitHub state を使用することを推奨します。</p>
-<p>ラベルは所有権の可能性を示唆できますが、所有権そのものではありません。<code>channel:*</code>、<code>provider:*</code>、<code>tool:*</code>、<code>security</code>、または <code>docs</code> ラベルは、おそらく注意が必要な対象を識別します。コントリビューターに見えるowner-sourceのルールは、<a href="#project-board-contract">プロジェクトボード契約</a>に記載されています。</p>
-<p>アクティブな作業には assignees を使用します。まだ誰も実装していない場合のルーティング責任には、エリアスチュワードシップを使用します。<a href="#issue-ownership-path">Project board contract</a> では、受け入れられるオーナーソースとルーティング結果を定義しています。</p>
+<p>Labels can suggest likely routing, but they are not ownership. A <code>channel:*</code>, <code>provider:*</code>, <code>tool:*</code>, <code>security</code>, or <code>docs</code> label identifies the surface that probably needs attention. Contributor-visible routing-evidence rules live in the <a href="#issue-routing-evidence">Project board contract</a>.</p>
+<p>Use assignees for active work. Use issue comments, issue body sections, public fields, or linked trackers for routing evidence when a special stale, tracker, or deferred-decision state needs explanation. <code>status:blocked</code> uses the recorded-blocker rule. The <a href="#issue-routing-evidence">Project board contract</a> defines the accepted evidence sources and routing outcomes.</p>
 <h2 id="正規の表記"><a class="header" href="#正規の表記">正規の表記</a></h2>
 <p>スコープ付きモジュールラベルには、スペースなしのモジュール表記を使用します: <code>provider:openai</code>、<code>channel:telegram</code>、<code>security:policy</code> などのラベルです。size、risk、および多くの type ファミリーは、現在コロンの後にスペースを保持しています: <code>size: XS</code>、<code>risk: low</code>、<code>risk: medium</code>、<code>risk: high</code>、<code>type: docs</code>。</p>
 <p><code>provider: openai</code>、<code>channel: telegram</code>、<code>tool: shell</code> のような古い重複ラベルは整理の対象です。size、risk、type ラベルの将来的なスペース無しの表記についても、軽率なリネームではなくマイグレーションの問題です。削除する前に、オープンな issue/PR を正規のラベルに移行してください。オープンな参照を持つラベルを削除したり、ラベルファミリーを広範にリネームしたり、その整理バッチに対するメンテナーの判断なしに stale-policy ラベルを削除したりしないでください。</p>
@@ -24467,7 +24468,7 @@ gh api repos/zeroclaw-labs/zeroclaw/actions/permissions/selected-actions
 <tr><td><code>status:blocked</code></td><td>作業は有効ですが、外部依存関係、メンテナーの判断、またはリンクされた前提条件を待機しています。ブロッカーが記録され未解決の間は stale から除外されます。同じブロッカーに対して <code>status:no-stale</code> と併用しないでください。</td></tr>
 <tr><td><code>status:in-progress</code></td><td>オープンな PR がこの issue に積極的に対応しています。stale パスの実行中はライブの PR の状態と照合してください。PR がクローズされた後は、このラベルは恒久的な除外対象とはなりません。</td></tr>
 <tr><td><code>status:stale</code></td><td>ステイル期間中に作成者のアクティビティがありません。更新されない場合はクローズされる可能性があります</td></tr>
-<tr><td><code>status:no-stale</code></td><td>承認済み、またはその他の理由で長期間有効でありながら、別の stale 除外でまだ保護されていない作業に対する明示的な stale 免除。ターゲットポリシー: <a href="#issue-ownership-path">プロジェクトボード規約</a>に、コントリビューターから見える stale 免除理由とオーナーパスがある場合にのみ使用してください。アクティブなリリーストラッカーおよびアクティブな RFC・設計トラッカーは、アクティブである間はトラッカー自体を可視理由およびスチュワード面として使用できます。マイルストーンがクローズしたとき、トラッカーがライブ状態から逸脱したとき、RFC が決定に至ったとき、置き換えられたとき、クローズしたとき、または当該 issue がアクティブなプロジェクト決定面を表さなくなったときに、それらを見直してください。これらの事実が欠けている既存の免除は、stale スイープがそれらを尊重しなくなる前に監査・修復する必要があります。</td></tr>
+<tr><td><code>status:no-stale</code></td><td>Explicit stale exemption for accepted or otherwise long-lived work that is not already protected by another stale exclusion. Target policy: use only when the <a href="#issue-routing-evidence">Project board contract</a> has a contributor-visible stale-exemption reason and routing evidence. Active release trackers and active RFC or design trackers may use the tracker itself as the visible reason and routing surface while they remain active; revisit them when the milestone closes, the tracker drifts from live state, the RFC reaches a decision, is superseded, or closes, or the issue stops representing an active project decision surface. Existing exemptions missing those facts should be audited and repaired before stale sweeps stop honoring them.</td></tr>
 </tbody>
 </table>
 </div>
