@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-ec8bc59a.js";
+            window.path_to_searchindex_js = "searchindex-0c970d57.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-8e2df50e.js"></script>
+        <script src="toc-35fdbf2d.js"></script>
         <script>
             // Persist sidebar fold state across navigations. mdBook's toc.js
             // expands only the active page's ancestor chain on every load,
@@ -9286,6 +9286,166 @@ impl ModelEndpoint for MyProviderEndpoint {
 <li><a href="#プラグインプロトコル">開発 → プラグインプロトコル</a>: プラグインがファーストクラスのクレートよりもうまく機能する場合</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="openai-codex-over-a-chatgpt-subscription"><a class="header" href="#openai-codex-over-a-chatgpt-subscription">OpenAI Codex over a ChatGPT subscription</a></h1>
+<p>Run an agent on the <code>openai</code> slot, paid through a ChatGPT subscription instead of metered <code>OPENAI_API_KEY</code> billing. The agent is a GPT-5.x Codex model driving ZeroClaw’s tools, authenticated by your Codex login rather than an API key. Billing follows your ChatGPT plan: the usage included with your subscription is consumed first, and Codex usage beyond that included allowance draws on your account’s flexible credits at OpenAI’s per-model token rates. It is not a flat per-call <code>$0</code> path once you are past the included allowance.</p>
+<p>This page covers the slot config, the served model strings, the cost and routing implications, and the OAuth wiring. For the universal provider fields see <a href="#プロバイダー設定">Configuration</a>; for the one-line catalog entry see the <a href="#プロバイダーカタログ">Provider Catalog</a>.</p>
+<h2 id="設定"><a class="header" href="#設定">設定</a></h2>
+<p>Codex subscription auth lives on the <code>openai</code> slot. Set <code>wire_api = "responses"</code> to route through <code>POST /v1/responses</code> (the Codex backend, not the chat completions API) and <code>requires_openai_auth = true</code> to pull credentials from <code>~/.codex/auth.json</code> instead of an <code>api_key</code> field:</p>
+<pre><code class="language-toml">[providers.models.openai.coding]
+model                = "gpt-5.4"
+wire_api             = "responses"
+requires_openai_auth = true
+
+[providers.models.openai.review]
+model                = "codex-auto-review"
+wire_api             = "responses"
+requires_openai_auth = true
+</code></pre>
+<p>There is no <code>api_key</code> field; <code>requires_openai_auth = true</code> is the switch that reads the stored Codex login rather than a key on the entry. See <a href="#oauth-and-subscription-auth">Configuration → OAuth and subscription auth</a>.</p>
+<p>The alias half (<code>coding</code>, <code>review</code>) is operator-chosen; pick whatever fits. Reference it from an agent with <code>model_provider = "openai.coding"</code>.</p>
+<h2 id="models"><a class="header" href="#models">Models</a></h2>
+<p>The <code>responses</code> wire API hits the Codex backend directly, so the <code>model</code> value must be an <strong>exact served ID</strong>: the Codex CLI’s client-side aliases (<code>gpt-5</code>, <code>gpt-5.3</code>, <code>instant</code>, <code>gpt-5.5-instant</code>) are not resolved here and fail with a <code>400</code>.</p>
+<p>Treat the served catalog as volatile. Query it rather than trusting any hardcoded list, including this one:</p>
+<pre><code class="language-bash"># Field names match the live ~/.codex/auth.json (verify against the file itself;
+# the layout has shifted across Codex versions).
+AT=$(jq -r .tokens.access_token ~/.codex/auth.json)
+# account_id is OPTIONAL in auth.json; ZeroClaw falls back to the OAuth JWT when
+# it is absent. `// empty` keeps jq from emitting the literal string "null", and
+# the header is sent only when the field is actually present. After an import you
+# can also read the resolved id from `zeroclaw auth status`.
+ACC=$(jq -r '.tokens.account_id // empty' ~/.codex/auth.json)
+curl -s "https://chatgpt.com/backend-api/codex/models?client_version=1.0.0" \
+  -H "Authorization: Bearer ${AT}" \
+  ${ACC:+-H "chatgpt-account-id: ${ACC}"} \
+  -H "originator: pi" | jq -r '.models[].slug'
+</code></pre>
+<blockquote>
+<p><code>client_version</code> is required and gated: a stale or too-low value returns an empty <code>{"models": []}</code> with no error. Use a current client version (for example <code>1.0.0</code>) if the list comes back empty.</p>
+</blockquote>
+<p>Served catalog (2026-06-02; verify against the endpoint before pinning):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Served ID</th><th>役割</th></tr>
+</thead>
+<tbody>
+<tr><td><code>gpt-5.4</code></td><td>everyday coding (default workhorse)</td></tr>
+<tr><td><code>gpt-5.5</code></td><td>frontier: complex coding / reasoning</td></tr>
+<tr><td><code>gpt-5.4-mini</code></td><td>small, fast, cheap; simpler tasks and subagents</td></tr>
+<tr><td><code>gpt-5.3-codex-spark</code></td><td>ultra-fast coding iteration</td></tr>
+<tr><td><code>codex-auto-review</code></td><td>automatic code-review model</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><code>GPT-5.5 Instant</code> and <code>GPT-5.3</code> are <strong>ChatGPT-app</strong> models, a different namespace that is not served on the Codex backend, so they are not usable from this slot.</p>
+</blockquote>
+<p>To avoid editing config on every model bump, resolve roles to current served IDs dynamically (enumerate <code>codex/models</code>, pick the newest match per role) rather than pinning a version.</p>
+<h2 id="cost-and-routing"><a class="header" href="#cost-and-routing">Cost and routing</a></h2>
+<p>How OpenAI bills this path (follow OpenAI’s current Codex / ChatGPT-plan billing docs, which supersede any figure pinned here):</p>
+<ol>
+<li><strong>Included plan usage first.</strong> Each ChatGPT plan includes a Codex usage allowance that refreshes on a rolling window. While you are inside it, Codex requests do not draw extra charges.</li>
+<li><strong>Flexible credits after the included allowance.</strong> Once the included usage is exhausted, Codex usage draws from your account’s credit balance where the plan supports it. Input, cached input, and output are priced as credits per 1M tokens, so what a task consumes depends on its token mix and the model used.</li>
+<li><strong>Over-limit options.</strong> When the included allowance and any credits are gone, OpenAI’s paths are add credits, upgrade the plan, or wait for the window to reset.</li>
+</ol>
+<p>The plan tiers below are therefore <strong>usage-allowance multipliers</strong>, not a guarantee of per-call zero cost.</p>
+<h3 id="zeroclaw-cost-tracking"><a class="header" href="#zeroclaw-cost-tracking">ZeroClaw cost tracking</a></h3>
+<p>ZeroClaw records this slot at <code>$0</code> per call. <strong>That is a local accounting limitation, not an OpenAI billing fact:</strong> ZeroClaw cannot see your ChatGPT plan’s included-usage meter or credit balance, so it cannot attribute per-call token cost to a subscription request. Read the <code>$0</code> as “not metered by ZeroClaw”, and watch the real allowance / credit state in your OpenAI account. Keep subscription and metered (api-key) classes separate in accounting; see <a href="#コストの追跡">Cost tracking</a>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Class</th><th>ZeroClaw budget signal</th><th>Real billing</th></tr>
+</thead>
+<tbody>
+<tr><td>Subscription (<code>openai</code> slot, Codex auth)</td><td>rolling Codex usage allowance</td><td>included plan usage, then per-token flexible credits</td></tr>
+<tr><td>Metered (api-key providers)</td><td>running $ balance</td><td>per-token</td></tr>
+</tbody>
+</table>
+</div>
+<p>So routing is about spending the included allowance deliberately and keeping a fallback for when you are past it, both to avoid credit burn at per-model token rates and to survive a hard stop. It is not “free per token” once you are outside the included usage.</p>
+<p>Routing is per-agent (see <a href="#ルーティング">Routing</a>): define one agent alias per role, each pointing at an <code>openai</code> Codex entry, and point channels at the agent that should handle their traffic.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>役割</th><th>Served model</th></tr>
+</thead>
+<tbody>
+<tr><td>everyday coding (default)</td><td><code>gpt-5.4</code></td></tr>
+<tr><td>code review / adversarial</td><td><code>codex-auto-review</code></td></tr>
+<tr><td>heavy / frontier reasoning</td><td><code>gpt-5.5</code></td></tr>
+<tr><td>light / narrow / subagent</td><td><code>gpt-5.4-mini</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Keep a metered fallback for when the subscription can’t serve: allowance exhausted (<code>429</code>), token refresh in backoff (see below), or an unavailable model string. The fallback is per-token, so it should be the exception. Which providers sit in that fallback set is environment-specific; configure it in your own routing, not here.</p>
+<h2 id="subscription-tiers-and-limits"><a class="header" href="#subscription-tiers-and-limits">Subscription tiers and limits</a></h2>
+<p>ChatGPT tiers relevant to this slot (as of 2026-06). The “allowance” column is the <strong>included-usage multiplier</strong>, not a free-call ceiling: beyond the included allowance every tier falls back to per-token flexible credits at OpenAI’s published Codex rates. A higher tier raises the included multiplier; it does not make usage free.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>階層</th><th>Price</th><th>Codex included-usage allowance</th></tr>
+</thead>
+<tbody>
+<tr><td>Plus</td><td>$20/mo</td><td>baseline</td></tr>
+<tr><td>Pro</td><td>$100/mo</td><td>5× Plus limits</td></tr>
+<tr><td>Pro</td><td>$200/mo</td><td>20× Plus limits</td></tr>
+</tbody>
+</table>
+</div>
+<p>Both Pro tiers expose the same model suite and features; they differ only in included-allowance volume.</p>
+<blockquote>
+<p><strong>The $100 tier stepped down on 2026-06-01.</strong> Through 2026-05-31 it ran a launch promotion at 10× Plus, then reverted to the standard 5×. Per-model message counts captured before that date included a temporary 2× boost and are no longer accurate.</p>
+</blockquote>
+<p>OpenAI does not publish hard per-tier Codex message counts, and does not pin “unlimited” to specific model names; the public pricing page shows one “Pro” card (“From $100”, headline “5x or 20x more usage”) with the catch-all “unlimited, subject to abuse guardrails.” Treat any specific per-model count, from older docs or other sources, as non-authoritative. The Pro reasoning flagship is GPT-5.5 Pro.</p>
+<blockquote>
+<p>The pricing page’s <code>128K</code> / <code>400K</code> context-window and <code>~680 pages</code> figures describe the ChatGPT-app GPT Instant / GPT Reasoning models, a different namespace than the Codex <code>responses</code> backend this slot uses. Do not read them as Codex-backend limits.</p>
+</blockquote>
+<h2 id="importing-the-token"><a class="header" href="#importing-the-token">Importing the token</a></h2>
+<p>Import the existing Codex-CLI token non-interactively rather than starting a browser flow:</p>
+<pre><code class="language-bash">zeroclaw auth login --model-provider openai-codex --import ~/.codex/auth.json
+zeroclaw auth status   # openai-codex:default kind=OAuth account=... expires=...
+</code></pre>
+<p>(Interactive alternatives: <code>zeroclaw auth login</code> without <code>--import</code>, or <code>--device-code</code>.)</p>
+<p>Run the daemon from the default config-dir (<code>~/.zeroclaw</code>). The auth profile is stored there natively and the <code>zeroclaw auth</code> commands default there; pointing the daemon at a custom dir means the profile has to be placed there too, and because it is encrypted per-config-dir (below), that is where the pain starts.</p>
+<h3 id="two-things-that-bite"><a class="header" href="#two-things-that-bite">Two things that bite</a></h3>
+<p><strong>Auth profiles are not portable.</strong> <code>auth-profiles.json</code> is encrypted (<code>enc2:</code>) with the config-dir’s <code>.secret_key</code>. You cannot copy one host’s profile to another, because the target cannot decrypt it; the runtime logs <code>enc2: decryption failed (wrong `.secret_key` or tampered ciphertext)</code> (the <code>or tampered ciphertext</code> clause shares this error path, so the message alone does not distinguish a foreign profile from a corrupt blob). Each host imports its own profile from a raw <code>~/.codex/auth.json</code>. If a foreign <code>auth-profiles.json</code> is already present, move it aside first or the import fails trying to load it:</p>
+<pre><code class="language-bash">mv ~/.zeroclaw/auth-profiles.json ~/.zeroclaw/auth-profiles.json.foreign 2&gt;/dev/null
+zeroclaw auth login --model-provider openai-codex --import ~/.codex/auth.json
+</code></pre>
+<p><strong>Refresh tokens rotate, one owner only.</strong> Each successful refresh invalidates the previous refresh token. If two hosts refresh the same account independently, they invalidate each other:</p>
+<pre><code class="language-text">error=OpenAI token refresh is in backoff for 9s due to previous failures
+</code></pre>
+<p>The pattern that works across more than one host, strictly limited to machines <strong>you own under the same OpenAI account</strong>:</p>
+<blockquote>
+<p>⚠️ <strong>Credential boundary.</strong> <code>~/.codex/auth.json</code> holds live bearer and refresh credentials for your OpenAI account. Distribute it <strong>only</strong> to your own hosts, over a <strong>private, encrypted channel</strong>: a secret manager, an encrypted transport, or an SSH-only pull. <strong>Never</strong> commit it to a repo, publish it, paste it into chat or a ticket, or share it with another user or a team. OpenAI’s terms prohibit sharing account credentials or making an account available to someone else, and a raw <code>auth.json</code> pull point is a high-value secret on its own. This is operator-facing credential-handling guidance; the runtime code does not change it.</p>
+</blockquote>
+<ol>
+<li>One host owns the refresh (e.g. the one running the Codex CLI’s background refresh) and keeps <code>~/.codex/auth.json</code> current.</li>
+<li>That host publishes the raw <code>~/.codex/auth.json</code> to a <strong>private</strong> pull point (secret manager or encrypted/SSH-only channel), reachable only by your own hosts.</li>
+<li>Every other host pulls the raw <code>auth.json</code> (portable, it is just the token) and re-imports it locally, which re-encrypts it under that host’s own <code>.secret_key</code>.</li>
+<li>Other hosts do not refresh independently.</li>
+</ol>
+<p>The artifact you distribute is the raw <code>~/.codex/auth.json</code>, never the encrypted <code>auth-profiles.json</code>, and only ever to your own machines through a private, encrypted channel.</p>
+<h2 id="verifying"><a class="header" href="#verifying">Verifying</a></h2>
+<pre><code class="language-bash">zeroclaw auth status   # present and unexpired
+# then drive the agent once against the local gateway
+</code></pre>
+<p>A healthy run returns model output with <code>exit_code=0</code>. Two failure signatures:</p>
+<ul>
+<li><code>... token refresh in backoff</code>: stale or rotated token; re-pull the raw <code>auth.json</code> and re-import.</li>
+<li><code>model=&lt;x&gt; ... 400</code>: unsupported model string; use an exact served ID.</li>
+</ul>
+<h2 id="new-host-checklist"><a class="header" href="#new-host-checklist">New-host checklist</a></h2>
+<ol>
+<li><code>~/.codex/auth.json</code> present and current (pulled from the refresh owner).</li>
+<li><code>zeroclaw auth login --model-provider openai-codex --import ~/.codex/auth.json</code> (move aside any foreign <code>auth-profiles.json</code> first).</li>
+<li><code>zeroclaw auth status</code> shows <code>openai-codex:default ... kind=OAuth ... expires=&lt;future&gt;</code>.</li>
+<li>An <code>openai</code> entry with <code>wire_api = "responses"</code>, <code>requires_openai_auth = true</code>, and an exact served model ID.</li>
+<li>Daemon on <code>--config-dir ~/.zeroclaw</code> (the default).</li>
+<li>Drive the agent once → <code>exit_code=0</code> with real output.</li>
+<li>Router maps roles to current served IDs (don’t pin a version you will have to chase).</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="チャンネル-概要"><a class="header" href="#チャンネル-概要">チャンネル: 概要</a></h1>
 <p><strong>チャネル</strong>とは、エージェントが対話を行うメッセージング基盤です。1つの ZeroClaw インスタンスは複数のチャネルを同時にバインドできます。同じエージェントが、別々のプロセスを実行することなく、Discord、Telegram、メール、そして REST ゲートウェイ経由で応答できます。</p>
 <p>エージェントは応答するチャネルを一覧表示します。チャネルがエージェントにアタッチされる方法（および<a href="#ピアグループ">ピアグループ</a>によって共有チャネル上のエージェント同士がアドレス指定できる方法）については、<a href="#エージェント">エージェント</a>を参照してください。</p>
@@ -9378,7 +9538,7 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 </table>
 </div>
 <p><a href="#webhooks">Webhooks</a> と <a href="#acp-agent-client-protocol">ACP</a> を参照してください。</p>
-<h2 id="設定"><a class="header" href="#設定">設定</a></h2>
+<h2 id="設定-1"><a class="header" href="#設定-1">設定</a></h2>
 <p>最新のチャネルインスタンスは <code>[channels.&lt;type&gt;.&lt;alias&gt;]</code> の下に設定され、一般的な最初のエイリアスとして <code>default</code> が使用されます。いずれの設定方法でも設定できます。</p>
 <div class="os-tabs-src">
 <h4 id="ゲートウェイダッシュボード-47"><a class="header" href="#ゲートウェイダッシュボード-47">ゲートウェイダッシュボード</a></h4>
@@ -10227,7 +10387,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>ボットがメンバーリストに表示されるようになります（ZeroClaw を起動するまではオフラインです）。</p>
 <h3 id="5-起動とテスト"><a class="header" href="#5-起動とテスト">5. 起動とテスト</a></h3>
 <p>ZeroClaw を起動し（<code>zeroclaw service restart</code> または <code>zeroclaw daemon</code>）、ボットが見えるチャンネルでメッセージを送信します。返信されるはずです。返信されない場合は、<a href="#troubleshooting">トラブルシューティング</a>に進んでください。</p>
-<h2 id="設定-1"><a class="header" href="#設定-1">設定</a></h2>
+<h2 id="設定-2"><a class="header" href="#設定-2">設定</a></h2>
 <p>ライブスキーマから取得した完全なフィールド一覧です。ほとんどには適切なデフォルト値が設定されており、基本的なボットでは <code>bot_token</code> のみを設定すれば十分です。</p>
 <div class="cfg-fields">
 <details class="cfg-field">
@@ -10679,7 +10839,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p><code>app_token</code> も同様に設定します（手順3で取得した <code>xapp-</code> トークンです）。</p>
 <h3 id="6-ボットを招待してテストする"><a class="header" href="#6-ボットを招待してテストする">6. ボットを招待してテストする</a></h3>
 <p>Slack でチャンネルを開き、<code>/invite @YourBotName</code> と入力します。次にメッセージを送信するか、ボットを @-メンションします。ZeroClaw を起動すると (<code>zeroclaw service restart</code> または <code>zeroclaw daemon</code>)、返信が来るはずです。返信がない場合は、<a href="#troubleshooting">トラブルシューティング</a>を参照してください。</p>
-<h2 id="設定-2"><a class="header" href="#設定-2">設定</a></h2>
+<h2 id="設定-3"><a class="header" href="#設定-3">設定</a></h2>
 <p>ライブスキーマから導出された完全なフィールド一覧です。基本的なSocketモードのBotでは、<code>bot_token</code>と<code>app_token</code>のみを設定します。</p>
 <div class="cfg-fields">
 <details class="cfg-field">
@@ -11078,7 +11238,7 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 <li><code>mention_only</code> は DM およびグループ DM チャンネル内ではバイパスされます（1対1の会話ではボットを @-メンションする必要がないようにするため）。</li>
 </ol>
 <p>ボットを制限するには、<code>channel_ids</code>、<code>team_ids</code>、または <code>discover_dms</code> で絞り込みます。</p>
-<h2 id="設定-3"><a class="header" href="#設定-3">設定</a></h2>
+<h2 id="設定-4"><a class="header" href="#設定-4">設定</a></h2>
 <p><code>bot_token</code> と <code>password</code> は機密情報です：</p>
 <blockquote>
 <p><strong><code>channels.mattermost.&lt;alias&gt;.bot_token</code> はシークレットです。</strong> 暗号化して保存され、平文の <code>config.toml</code> には記録されません。書き込み時に暗号化される以下のいずれかの方法で設定してください:</p>
@@ -11759,7 +11919,7 @@ export LINE_CHANNEL_SECRET="your-channel-secret"
 <li><strong>Webhookシークレット</strong>：署名検証を行う場合、Talkの管理UIから取得してください（強く推奨）。</li>
 <li><strong>外部からアクセス可能なゲートウェイ</strong>: セルフホストの場合のトンネルオプションについては <a href="#docker-とコンテナ">Setup → Container</a> を参照してください</li>
 </ul>
-<h2 id="設定-4"><a class="header" href="#設定-4">設定</a></h2>
+<h2 id="設定-5"><a class="header" href="#設定-5">設定</a></h2>
 <div class="cfg-fields">
 <details class="cfg-field">
 <summary><code>app_token</code>* 🔑 <span class="cfg-field-meta"><code>secret</code> · default <code>—</code></span></summary>
@@ -13874,7 +14034,7 @@ zeroclaw channel start
 <blockquote>
 <p><strong>ゲートウェイの <code>/webhook</code> エンドポイントとは別物です。</strong> ゲートウェイサービスには、HTTP経由でエージェントにアクセスするペアリング済みクライアント向けの独自の <code>POST /webhook</code> があり、これは <code>[gateway]</code> の下に存在し、<a href="#ネットワークデプロイメント">運用 → ネットワークデプロイ</a>で説明されています。このページでは <code>[channels.webhook]</code> チャネルのみを説明します。</p>
 </blockquote>
-<h2 id="設定-5"><a class="header" href="#設定-5">設定</a></h2>
+<h2 id="設定-6"><a class="header" href="#設定-6">設定</a></h2>
 <div class="cfg-fields">
 <details class="cfg-field">
 <summary><code>auth_header</code> 🔑 <span class="cfg-field-meta"><code>secret</code> · default <code>null</code></span></summary>
@@ -14384,7 +14544,7 @@ Content-Type: application/json
 <p><code>session_id</code> は <code>sessionId</code> の snake_case エイリアスとして受け付けられます。</p>
 <p>セッションが現在アクティブでない場合（ストアにはまだ存在している可能性があります）、<code>SESSION_NOT_FOUND</code>（<code>-32000</code>）を返します。</p>
 <p><strong>Close と stop の違い:</strong> <code>session/close</code> はセッションを非アクティブ化しつつ、後で再読み込みできるよう永続レコードを保持します。<code>session/stop</code> もセッションをメモリから削除しますが、ストアに対しては同じ効果があります。どちらも SQLite レコードを削除しません。</p>
-<h2 id="設定-6"><a class="header" href="#設定-6">設定</a></h2>
+<h2 id="設定-7"><a class="header" href="#設定-7">設定</a></h2>
 <div class="cfg-fields">
 <details class="cfg-field">
 <summary><code>default_agent</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
@@ -15602,7 +15762,7 @@ Tool receipts:
 </code></pre>
 <h3 id="llmの出力において"><a class="header" href="#llmの出力において">LLMの出力において</a></h3>
 <p>モデルはコンテキスト内でレシートを参照するため、ツールの結果を説明する際にそれらをそのまま出力することがあります。リークディテクターは、このエコー出力が機能するように <code>zc-receipt-*</code> トークンを変更せずに通過させるよう設定されています。ランタイムとモデルの両方がレシートブロックを含む場合、ユーザーには2つが表示されます。チャネル固有のフォーマットルールを使って一方を取り除いてください。</p>
-<h2 id="設定-7"><a class="header" href="#設定-7">設定</a></h2>
+<h2 id="設定-8"><a class="header" href="#設定-8">設定</a></h2>
 <h2 id="セキュリティプロパティ"><a class="header" href="#セキュリティプロパティ">セキュリティプロパティ</a></h2>
 <ul>
 <li><strong>デーモンプロセスごとのエフェメラルキー。</strong> <code>start_channels</code> 時に生成され、メモリ内にのみ保持され、再起動のたびにローテーションされます。永続化されることはなく、ログに記録されることもなく、モデルのコンテキストに含まれることもありません。長期ストレージを侵害しても何も得られません。</li>
@@ -18645,7 +18805,7 @@ cp -r my-plugin/ ~/.zeroclaw/plugins/my-plugin/
 </code></pre>
 </div>
 
-<h2 id="設定-8"><a class="header" href="#設定-8">設定</a></h2>
+<h2 id="設定-9"><a class="header" href="#設定-9">設定</a></h2>
 <p><code>plugins</code> および <code>plugins.security</code> セクション（gateway、zerocode、または <code>zeroclaw config set</code>）を介してプラグインシステムを有効にします。すべてのフィールド、デフォルト値、および <code>signature_mode</code> 列挙型については、<a href="#設定リファレンス-1">設定リファレンス</a>を参照してください。</p>
 <p><code>plugins-wasm</code> フィーチャーフラグはコンパイル時に有効にする必要があります (デフォルトの <code>ci-all</code> フィーチャーセットに含まれています)。</p>
 <div style="break-before: page; page-break-before: always;"></div>
