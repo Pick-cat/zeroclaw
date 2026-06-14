@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "../searchindex-bb1bf4f4.js";
+            window.path_to_searchindex_js = "../searchindex-577a1923.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-8b3eb20a.js"></script>
@@ -620,18 +620,37 @@ full set, derived from the schema:</p>
 
 </details>
 <details class="cfg-field">
+<summary><code>tls_ca_cert_path</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
+<p>Path to a PEM-encoded CA certificate for TLS connections to this provider. Must be an absolute path; shell expansion (e.g. <code>~</code>) is not performed. Leave unset to use the system’s default trust store.</p>
+<p><strong>Set it on any surface:</strong></p>
+<div class="os-tabs-src">
+<h4 id="gateway-dashboard-16"><a class="header" href="#gateway-dashboard-16">Gateway dashboard</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
+</code></pre>
+<h4 id="environment-variable-16"><a class="header" href="#environment-variable-16">Environment variable</a></h4>
+<p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
+<pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__tls_ca_cert_path=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>uri</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
 <p>Endpoint URI the client hits. Override the family’s default endpoint when pointing at a self-hosted gateway (LiteLLM, vLLM, Ollama), a custom proxy, or any non-standard URL. Leave unset to use the family’s default URI from its <code>ModelEndpoint</code> impl. Set this to the FULL endpoint URL; there is no separate path-suffix field.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-16"><a class="header" href="#gateway-dashboard-16">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-17"><a class="header" href="#gateway-dashboard-17">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
+<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-16"><a class="header" href="#environment-variable-16">Environment variable</a></h4>
+<h4 id="environment-variable-17"><a class="header" href="#environment-variable-17">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__uri=
 </code></pre>
@@ -642,14 +661,14 @@ full set, derived from the schema:</p>
 <summary><code>wire_api</code> <span class="cfg-field-meta"><code>WireApi</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-17"><a class="header" href="#gateway-dashboard-17">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18"><a class="header" href="#gateway-dashboard-18">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
+<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.wire_api &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-17"><a class="header" href="#environment-variable-17">Environment variable</a></h4>
+<h4 id="environment-variable-18"><a class="header" href="#environment-variable-18">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__wire_api=
 </code></pre>

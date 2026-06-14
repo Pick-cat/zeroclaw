@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-bb1bf4f4.js";
+            window.path_to_searchindex_js = "searchindex-577a1923.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8b3eb20a.js"></script>
@@ -8489,18 +8489,37 @@ multi-region families, CLI shims).</p>
 
 </details>
 <details class="cfg-field">
+<summary><code>tls_ca_cert_path</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
+<p>Path to a PEM-encoded CA certificate for TLS connections to this provider. Must be an absolute path; shell expansion (e.g. <code>~</code>) is not performed. Leave unset to use the system’s default trust store.</p>
+<p><strong>Set it on any surface:</strong></p>
+<div class="os-tabs-src">
+<h4 id="gateway-dashboard-16-1"><a class="header" href="#gateway-dashboard-16-1">Gateway dashboard</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
+</code></pre>
+<h4 id="environment-variable-16"><a class="header" href="#environment-variable-16">Environment variable</a></h4>
+<p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
+<pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__tls_ca_cert_path=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>uri</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
 <p>Endpoint URI the client hits. Override the family’s default endpoint when pointing at a self-hosted gateway (LiteLLM, vLLM, Ollama), a custom proxy, or any non-standard URL. Leave unset to use the family’s default URI from its <code>ModelEndpoint</code> impl. Set this to the FULL endpoint URL; there is no separate path-suffix field.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-16-1"><a class="header" href="#gateway-dashboard-16-1">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-17"><a class="header" href="#gateway-dashboard-17">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
+<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-16"><a class="header" href="#environment-variable-16">Environment variable</a></h4>
+<h4 id="environment-variable-17"><a class="header" href="#environment-variable-17">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__uri=
 </code></pre>
@@ -8512,14 +8531,14 @@ multi-region families, CLI shims).</p>
 <p>Wire protocol flavor for the model_provider client. <code>responses</code> routes through OpenAI’s Codex/Responses API (<code>POST /v1/responses</code>); <code>chat_completions</code> routes through the legacy <code>/v1/chat/completions</code> (or the family’s chat-completions-compatible endpoint). Auto-selected per family when unset.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-17"><a class="header" href="#gateway-dashboard-17">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18"><a class="header" href="#gateway-dashboard-18">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
+<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.wire_api &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-17"><a class="header" href="#environment-variable-17">Environment variable</a></h4>
+<h4 id="environment-variable-18"><a class="header" href="#environment-variable-18">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__wire_api=
 </code></pre>
@@ -8547,14 +8566,14 @@ multi-region families, CLI shims).</p>
 <p>Azure API version string (e.g. <code>2024-10-21</code>).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18"><a class="header" href="#gateway-dashboard-18">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-19"><a class="header" href="#gateway-dashboard-19">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> and set the <code>providers.models.azure.&lt;alias&gt;.api_version</code> field.</p>
-<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
+<h4 id="zerocode-19"><a class="header" href="#zerocode-19">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.azure.&lt;alias&gt;.api_version</code> field.</p>
-<h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-19"><a class="header" href="#zeroclaw-config-19">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.api_version &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-18"><a class="header" href="#environment-variable-18">Environment variable</a></h4>
+<h4 id="environment-variable-19"><a class="header" href="#environment-variable-19">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__api_version=
 </code></pre>
@@ -8566,14 +8585,14 @@ multi-region families, CLI shims).</p>
 <p>Azure deployment name: the deployment created in Azure AI Studio.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-19"><a class="header" href="#gateway-dashboard-19">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-20"><a class="header" href="#gateway-dashboard-20">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> and set the <code>providers.models.azure.&lt;alias&gt;.deployment</code> field.</p>
-<h4 id="zerocode-19"><a class="header" href="#zerocode-19">zerocode</a></h4>
+<h4 id="zerocode-20"><a class="header" href="#zerocode-20">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.azure.&lt;alias&gt;.deployment</code> field.</p>
-<h4 id="zeroclaw-config-19"><a class="header" href="#zeroclaw-config-19">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-20"><a class="header" href="#zeroclaw-config-20">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.deployment &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-19"><a class="header" href="#environment-variable-19">Environment variable</a></h4>
+<h4 id="environment-variable-20"><a class="header" href="#environment-variable-20">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__deployment=
 </code></pre>
@@ -8585,14 +8604,14 @@ multi-region families, CLI shims).</p>
 <p>Azure resource name (the <code>&lt;resource&gt;</code> part of <code>&lt;resource&gt;.openai.azure.com</code>).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-20"><a class="header" href="#gateway-dashboard-20">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-21"><a class="header" href="#gateway-dashboard-21">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> and set the <code>providers.models.azure.&lt;alias&gt;.resource</code> field.</p>
-<h4 id="zerocode-20"><a class="header" href="#zerocode-20">zerocode</a></h4>
+<h4 id="zerocode-21"><a class="header" href="#zerocode-21">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.azure.&lt;alias&gt;.resource</code> field.</p>
-<h4 id="zeroclaw-config-20"><a class="header" href="#zeroclaw-config-20">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-21"><a class="header" href="#zeroclaw-config-21">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.resource &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-20"><a class="header" href="#environment-variable-20">Environment variable</a></h4>
+<h4 id="environment-variable-21"><a class="header" href="#environment-variable-21">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__resource=
 </code></pre>
@@ -8611,14 +8630,14 @@ multi-region families, CLI shims).</p>
 <p>Override the Ollama <code>num_ctx</code> (context window, in tokens) sent on every <code>/api/chat</code> request. Defaults to the framework constant (<code>OLLAMA_DEFAULT_NUM_CTX</code>) when unset.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-21"><a class="header" href="#gateway-dashboard-21">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-22"><a class="header" href="#gateway-dashboard-22">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> and set the <code>providers.models.ollama.&lt;alias&gt;.num_ctx</code> field.</p>
-<h4 id="zerocode-21"><a class="header" href="#zerocode-21">zerocode</a></h4>
+<h4 id="zerocode-22"><a class="header" href="#zerocode-22">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.ollama.&lt;alias&gt;.num_ctx</code> field.</p>
-<h4 id="zeroclaw-config-21"><a class="header" href="#zeroclaw-config-21">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-22"><a class="header" href="#zeroclaw-config-22">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.num_ctx &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-21"><a class="header" href="#environment-variable-21">Environment variable</a></h4>
+<h4 id="environment-variable-22"><a class="header" href="#environment-variable-22">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__num_ctx=
 </code></pre>
@@ -8630,14 +8649,14 @@ multi-region families, CLI shims).</p>
 <p>Override the Ollama <code>num_predict</code> (max output tokens) sent on every <code>/api/chat</code> request. Defaults to the framework constant (<code>OLLAMA_DEFAULT_NUM_PREDICT</code>) when unset.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-22"><a class="header" href="#gateway-dashboard-22">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-23"><a class="header" href="#gateway-dashboard-23">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> and set the <code>providers.models.ollama.&lt;alias&gt;.num_predict</code> field.</p>
-<h4 id="zerocode-22"><a class="header" href="#zerocode-22">zerocode</a></h4>
+<h4 id="zerocode-23"><a class="header" href="#zerocode-23">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.ollama.&lt;alias&gt;.num_predict</code> field.</p>
-<h4 id="zeroclaw-config-22"><a class="header" href="#zeroclaw-config-22">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-23"><a class="header" href="#zeroclaw-config-23">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.num_predict &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-22"><a class="header" href="#environment-variable-22">Environment variable</a></h4>
+<h4 id="environment-variable-23"><a class="header" href="#environment-variable-23">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__num_predict=
 </code></pre>
@@ -8649,14 +8668,14 @@ multi-region families, CLI shims).</p>
 <p>Force every Ollama <code>/api/chat</code> request to use this temperature, overriding the per-call value passed through <code>ModelProvider::chat_with_system(.., temperature)</code>. When unset (<code>None</code>, the default), the per-call temperature wins: full backward compatibility.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-23"><a class="header" href="#gateway-dashboard-23">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-24"><a class="header" href="#gateway-dashboard-24">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> and set the <code>providers.models.ollama.&lt;alias&gt;.temperature_override</code> field.</p>
-<h4 id="zerocode-23"><a class="header" href="#zerocode-23">zerocode</a></h4>
+<h4 id="zerocode-24"><a class="header" href="#zerocode-24">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.ollama.&lt;alias&gt;.temperature_override</code> field.</p>
-<h4 id="zeroclaw-config-23"><a class="header" href="#zeroclaw-config-23">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-24"><a class="header" href="#zeroclaw-config-24">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.temperature_override &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-23"><a class="header" href="#environment-variable-23">Environment variable</a></h4>
+<h4 id="environment-variable-24"><a class="header" href="#environment-variable-24">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__temperature_override=
 </code></pre>
@@ -8675,14 +8694,14 @@ multi-region families, CLI shims).</p>
 <p>Authentication mode for model model_provider families that support more than one (e.g. Qwen, Minimax can use API key OR OAuth). Families that only support a single auth flow simply omit this field from their config struct.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-24"><a class="header" href="#gateway-dashboard-24">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-25"><a class="header" href="#gateway-dashboard-25">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> and set the <code>providers.models.gemini.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zerocode-24"><a class="header" href="#zerocode-24">zerocode</a></h4>
+<h4 id="zerocode-25"><a class="header" href="#zerocode-25">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.gemini.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zeroclaw-config-24"><a class="header" href="#zeroclaw-config-24">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-25"><a class="header" href="#zeroclaw-config-25">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-24"><a class="header" href="#environment-variable-24">Environment variable</a></h4>
+<h4 id="environment-variable-25"><a class="header" href="#environment-variable-25">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -8694,14 +8713,14 @@ multi-region families, CLI shims).</p>
 <p>Google OAuth app <code>client_id</code>, used when this alias drives ZeroClaw’s own browser/device-code login flow (<code>zeroclaw auth login --model-provider gemini --profile &lt;alias&gt;</code>). Operators relying on the upstream <code>gemini login</code> tool don’t need this; that tool writes its own client_id / client_secret into <code>~/.gemini/oauth_creds.json</code>.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-25"><a class="header" href="#gateway-dashboard-25">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-26"><a class="header" href="#gateway-dashboard-26">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> and set the <code>providers.models.gemini.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zerocode-25"><a class="header" href="#zerocode-25">zerocode</a></h4>
+<h4 id="zerocode-26"><a class="header" href="#zerocode-26">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.gemini.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zeroclaw-config-25"><a class="header" href="#zeroclaw-config-25">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-26"><a class="header" href="#zeroclaw-config-26">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-25"><a class="header" href="#environment-variable-25">Environment variable</a></h4>
+<h4 id="environment-variable-26"><a class="header" href="#environment-variable-26">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -8713,14 +8732,14 @@ multi-region families, CLI shims).</p>
 <p>Google OAuth app <code>client_secret</code>. Set alongside <code>oauth_client_id</code>.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-26"><a class="header" href="#gateway-dashboard-26">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-27"><a class="header" href="#gateway-dashboard-27">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> and set the <code>providers.models.gemini.&lt;alias&gt;.oauth_client_secret</code> field.</p>
-<h4 id="zerocode-26"><a class="header" href="#zerocode-26">zerocode</a></h4>
+<h4 id="zerocode-27"><a class="header" href="#zerocode-27">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.gemini.&lt;alias&gt;.oauth_client_secret</code> field.</p>
-<h4 id="zeroclaw-config-26"><a class="header" href="#zeroclaw-config-26">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-27"><a class="header" href="#zeroclaw-config-27">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_client_secret &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-26"><a class="header" href="#environment-variable-26">Environment variable</a></h4>
+<h4 id="environment-variable-27"><a class="header" href="#environment-variable-27">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_client_secret=
 </code></pre>
@@ -8732,14 +8751,14 @@ multi-region families, CLI shims).</p>
 <p>Pin a specific GCP project ID for the OAuth <code>loadCodeAssist</code> discovery call. When unset, the discovery probes for an already-onboarded project on the credential’s account. Replaces <code>GOOGLE_CLOUD_PROJECT</code> / <code>GOOGLE_CLOUD_PROJECT_ID</code> env vars.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-27"><a class="header" href="#gateway-dashboard-27">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-28"><a class="header" href="#gateway-dashboard-28">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> and set the <code>providers.models.gemini.&lt;alias&gt;.oauth_project</code> field.</p>
-<h4 id="zerocode-27"><a class="header" href="#zerocode-27">zerocode</a></h4>
+<h4 id="zerocode-28"><a class="header" href="#zerocode-28">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.gemini.&lt;alias&gt;.oauth_project</code> field.</p>
-<h4 id="zeroclaw-config-27"><a class="header" href="#zeroclaw-config-27">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-28"><a class="header" href="#zeroclaw-config-28">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_project &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-27"><a class="header" href="#environment-variable-27">Environment variable</a></h4>
+<h4 id="environment-variable-28"><a class="header" href="#environment-variable-28">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_project=
 </code></pre>
@@ -8768,14 +8787,14 @@ multi-region families, CLI shims).</p>
 <p>Moonshot endpoint variants. Operators pick the region that matches their account; the runtime resolves the URI from the chosen variant unless overridden by <code>base.uri</code>. Code variant is intl-only.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-28"><a class="header" href="#gateway-dashboard-28">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-29"><a class="header" href="#gateway-dashboard-29">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/moonshot"><code>/config/providers.models/moonshot</code></a> and set the <code>providers.models.moonshot.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-28"><a class="header" href="#zerocode-28">zerocode</a></h4>
+<h4 id="zerocode-29"><a class="header" href="#zerocode-29">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.moonshot.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-28"><a class="header" href="#zeroclaw-config-28">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-29"><a class="header" href="#zeroclaw-config-29">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.moonshot.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-28"><a class="header" href="#environment-variable-28">Environment variable</a></h4>
+<h4 id="environment-variable-29"><a class="header" href="#environment-variable-29">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__moonshot__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8797,14 +8816,14 @@ multi-region families, CLI shims).</p>
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `global`</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-29"><a class="header" href="#gateway-dashboard-29">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-30"><a class="header" href="#gateway-dashboard-30">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/zai"><code>/config/providers.models/zai</code></a> and set the <code>providers.models.zai.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-29"><a class="header" href="#zerocode-29">zerocode</a></h4>
+<h4 id="zerocode-30"><a class="header" href="#zerocode-30">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.zai.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-29"><a class="header" href="#zeroclaw-config-29">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-30"><a class="header" href="#zeroclaw-config-30">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.zai.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-29"><a class="header" href="#environment-variable-29">Environment variable</a></h4>
+<h4 id="environment-variable-30"><a class="header" href="#environment-variable-30">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__zai__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8822,14 +8841,14 @@ multi-region families, CLI shims).</p>
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `global`</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-30"><a class="header" href="#gateway-dashboard-30">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-31"><a class="header" href="#gateway-dashboard-31">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/glm"><code>/config/providers.models/glm</code></a> and set the <code>providers.models.glm.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-30"><a class="header" href="#zerocode-30">zerocode</a></h4>
+<h4 id="zerocode-31"><a class="header" href="#zerocode-31">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.glm.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-30"><a class="header" href="#zeroclaw-config-30">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-31"><a class="header" href="#zeroclaw-config-31">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.glm.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-30"><a class="header" href="#environment-variable-30">Environment variable</a></h4>
+<h4 id="environment-variable-31"><a class="header" href="#environment-variable-31">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__glm__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8848,14 +8867,14 @@ multi-region families, CLI shims).</p>
 <p>Authentication mode for model model_provider families that support more than one (e.g. Qwen, Minimax can use API key OR OAuth). Families that only support a single auth flow simply omit this field from their config struct.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-31"><a class="header" href="#gateway-dashboard-31">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-32"><a class="header" href="#gateway-dashboard-32">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> and set the <code>providers.models.minimax.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zerocode-31"><a class="header" href="#zerocode-31">zerocode</a></h4>
+<h4 id="zerocode-32"><a class="header" href="#zerocode-32">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.minimax.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zeroclaw-config-31"><a class="header" href="#zeroclaw-config-31">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-32"><a class="header" href="#zeroclaw-config-32">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-31"><a class="header" href="#environment-variable-31">Environment variable</a></h4>
+<h4 id="environment-variable-32"><a class="header" href="#environment-variable-32">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -8866,14 +8885,14 @@ multi-region families, CLI shims).</p>
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `intl`</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-32"><a class="header" href="#gateway-dashboard-32">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-33"><a class="header" href="#gateway-dashboard-33">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> and set the <code>providers.models.minimax.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-32"><a class="header" href="#zerocode-32">zerocode</a></h4>
+<h4 id="zerocode-33"><a class="header" href="#zerocode-33">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.minimax.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-32"><a class="header" href="#zeroclaw-config-32">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-33"><a class="header" href="#zeroclaw-config-33">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-32"><a class="header" href="#environment-variable-32">Environment variable</a></h4>
+<h4 id="environment-variable-33"><a class="header" href="#environment-variable-33">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8885,14 +8904,14 @@ multi-region families, CLI shims).</p>
 <p>Override of MiniMax’s published OAuth client_id. Most operators should leave this unset; the runtime defaults to the vendor-published client_id (same one MiniMax’s own portal uses).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-33"><a class="header" href="#gateway-dashboard-33">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-34"><a class="header" href="#gateway-dashboard-34">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> and set the <code>providers.models.minimax.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zerocode-33"><a class="header" href="#zerocode-33">zerocode</a></h4>
+<h4 id="zerocode-34"><a class="header" href="#zerocode-34">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.minimax.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zeroclaw-config-33"><a class="header" href="#zeroclaw-config-33">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-34"><a class="header" href="#zeroclaw-config-34">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-33"><a class="header" href="#environment-variable-33">Environment variable</a></h4>
+<h4 id="environment-variable-34"><a class="header" href="#environment-variable-34">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -8904,14 +8923,14 @@ multi-region families, CLI shims).</p>
 <p>Long-lived OAuth refresh token issued by MiniMax. When set, the runtime exchanges it for a short-lived access token at provider construction time and uses that as the API credential. Operators who prefer dashboard-generated long-lived API keys can leave this unset and populate <code>api_key</code> directly.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-34"><a class="header" href="#gateway-dashboard-34">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-35"><a class="header" href="#gateway-dashboard-35">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> and set the <code>providers.models.minimax.&lt;alias&gt;.oauth_refresh_token</code> field.</p>
-<h4 id="zerocode-34"><a class="header" href="#zerocode-34">zerocode</a></h4>
+<h4 id="zerocode-35"><a class="header" href="#zerocode-35">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.minimax.&lt;alias&gt;.oauth_refresh_token</code> field.</p>
-<h4 id="zeroclaw-config-34"><a class="header" href="#zeroclaw-config-34">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-35"><a class="header" href="#zeroclaw-config-35">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.oauth_refresh_token &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-34"><a class="header" href="#environment-variable-34">Environment variable</a></h4>
+<h4 id="environment-variable-35"><a class="header" href="#environment-variable-35">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__oauth_refresh_token=
 </code></pre>
@@ -8930,14 +8949,14 @@ multi-region families, CLI shims).</p>
 <p>AWS region for the Bedrock endpoint (e.g. <code>us-east-1</code>, <code>eu-west-1</code>).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-35"><a class="header" href="#gateway-dashboard-35">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-36"><a class="header" href="#gateway-dashboard-36">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/bedrock"><code>/config/providers.models/bedrock</code></a> and set the <code>providers.models.bedrock.&lt;alias&gt;.region</code> field.</p>
-<h4 id="zerocode-35"><a class="header" href="#zerocode-35">zerocode</a></h4>
+<h4 id="zerocode-36"><a class="header" href="#zerocode-36">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.bedrock.&lt;alias&gt;.region</code> field.</p>
-<h4 id="zeroclaw-config-35"><a class="header" href="#zeroclaw-config-35">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-36"><a class="header" href="#zeroclaw-config-36">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.bedrock.&lt;alias&gt;.region &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-35"><a class="header" href="#environment-variable-35">Environment variable</a></h4>
+<h4 id="environment-variable-36"><a class="header" href="#environment-variable-36">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__bedrock__&lt;alias&gt;__region=
 </code></pre>
@@ -8960,14 +8979,14 @@ multi-region families, CLI shims).</p>
 <p>Authentication mode for model model_provider families that support more than one (e.g. Qwen, Minimax can use API key OR OAuth). Families that only support a single auth flow simply omit this field from their config struct.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-36"><a class="header" href="#gateway-dashboard-36">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-37"><a class="header" href="#gateway-dashboard-37">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> and set the <code>providers.models.qwen.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zerocode-36"><a class="header" href="#zerocode-36">zerocode</a></h4>
+<h4 id="zerocode-37"><a class="header" href="#zerocode-37">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.qwen.&lt;alias&gt;.auth_mode</code> field.</p>
-<h4 id="zeroclaw-config-36"><a class="header" href="#zeroclaw-config-36">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-37"><a class="header" href="#zeroclaw-config-37">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-36"><a class="header" href="#environment-variable-36">Environment variable</a></h4>
+<h4 id="environment-variable-37"><a class="header" href="#environment-variable-37">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -8979,14 +8998,14 @@ multi-region families, CLI shims).</p>
 <p>Qwen endpoint variants. Operators pick the region matching their account.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-37"><a class="header" href="#gateway-dashboard-37">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-38"><a class="header" href="#gateway-dashboard-38">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> and set the <code>providers.models.qwen.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-37"><a class="header" href="#zerocode-37">zerocode</a></h4>
+<h4 id="zerocode-38"><a class="header" href="#zerocode-38">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.qwen.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-37"><a class="header" href="#zeroclaw-config-37">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-38"><a class="header" href="#zeroclaw-config-38">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-37"><a class="header" href="#environment-variable-37">Environment variable</a></h4>
+<h4 id="environment-variable-38"><a class="header" href="#environment-variable-38">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8998,14 +9017,14 @@ multi-region families, CLI shims).</p>
 <p>Override of Qwen’s published OAuth client_id. Most operators should leave this unset.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-38"><a class="header" href="#gateway-dashboard-38">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-39"><a class="header" href="#gateway-dashboard-39">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> and set the <code>providers.models.qwen.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zerocode-38"><a class="header" href="#zerocode-38">zerocode</a></h4>
+<h4 id="zerocode-39"><a class="header" href="#zerocode-39">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.qwen.&lt;alias&gt;.oauth_client_id</code> field.</p>
-<h4 id="zeroclaw-config-38"><a class="header" href="#zeroclaw-config-38">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-39"><a class="header" href="#zeroclaw-config-39">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-38"><a class="header" href="#environment-variable-38">Environment variable</a></h4>
+<h4 id="environment-variable-39"><a class="header" href="#environment-variable-39">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -9017,14 +9036,14 @@ multi-region families, CLI shims).</p>
 <p>Long-lived Qwen OAuth refresh token. When set, the runtime exchanges it for a short-lived access token at provider construction time. Operators relying on the upstream <code>qwen login</code> tool (which writes <code>~/.qwen/oauth_creds.json</code>) leave this unset; the file-cache integration takes over.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-39"><a class="header" href="#gateway-dashboard-39">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-40"><a class="header" href="#gateway-dashboard-40">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> and set the <code>providers.models.qwen.&lt;alias&gt;.oauth_refresh_token</code> field.</p>
-<h4 id="zerocode-39"><a class="header" href="#zerocode-39">zerocode</a></h4>
+<h4 id="zerocode-40"><a class="header" href="#zerocode-40">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.qwen.&lt;alias&gt;.oauth_refresh_token</code> field.</p>
-<h4 id="zeroclaw-config-39"><a class="header" href="#zeroclaw-config-39">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-40"><a class="header" href="#zeroclaw-config-40">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_refresh_token &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-39"><a class="header" href="#environment-variable-39">Environment variable</a></h4>
+<h4 id="environment-variable-40"><a class="header" href="#environment-variable-40">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_refresh_token=
 </code></pre>
@@ -9036,14 +9055,14 @@ multi-region families, CLI shims).</p>
 <p>Operator override of the resource URL the refreshed access token is paired with. When unset, the runtime falls back to the <code>endpoint</code>-derived URL (or the cached <code>resource_url</code> when reading from <code>~/.qwen/oauth_creds.json</code>).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-40"><a class="header" href="#gateway-dashboard-40">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-41"><a class="header" href="#gateway-dashboard-41">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> and set the <code>providers.models.qwen.&lt;alias&gt;.oauth_resource_url</code> field.</p>
-<h4 id="zerocode-40"><a class="header" href="#zerocode-40">zerocode</a></h4>
+<h4 id="zerocode-41"><a class="header" href="#zerocode-41">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.qwen.&lt;alias&gt;.oauth_resource_url</code> field.</p>
-<h4 id="zeroclaw-config-40"><a class="header" href="#zeroclaw-config-40">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-41"><a class="header" href="#zeroclaw-config-41">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_resource_url &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-40"><a class="header" href="#environment-variable-40">Environment variable</a></h4>
+<h4 id="environment-variable-41"><a class="header" href="#environment-variable-41">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_resource_url=
 </code></pre>
@@ -9082,14 +9101,14 @@ multi-region families, CLI shims).</p>
 <p>Path to the <code>gemini</code> CLI binary. Falls back to <code>gemini</code> (PATH lookup).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-41"><a class="header" href="#gateway-dashboard-41">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-42"><a class="header" href="#gateway-dashboard-42">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/gemini_cli"><code>/config/providers.models/gemini_cli</code></a> and set the <code>providers.models.gemini_cli.&lt;alias&gt;.binary_path</code> field.</p>
-<h4 id="zerocode-41"><a class="header" href="#zerocode-41">zerocode</a></h4>
+<h4 id="zerocode-42"><a class="header" href="#zerocode-42">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.gemini_cli.&lt;alias&gt;.binary_path</code> field.</p>
-<h4 id="zeroclaw-config-41"><a class="header" href="#zeroclaw-config-41">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-42"><a class="header" href="#zeroclaw-config-42">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini_cli.&lt;alias&gt;.binary_path &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-41"><a class="header" href="#environment-variable-41">Environment variable</a></h4>
+<h4 id="environment-variable-42"><a class="header" href="#environment-variable-42">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini_cli__&lt;alias&gt;__binary_path=
 </code></pre>
@@ -9108,14 +9127,14 @@ multi-region families, CLI shims).</p>
 <p>Path to the <code>kilo</code> CLI binary. Falls back to <code>kilo</code> (PATH lookup).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-42"><a class="header" href="#gateway-dashboard-42">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-43"><a class="header" href="#gateway-dashboard-43">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/kilocli"><code>/config/providers.models/kilocli</code></a> and set the <code>providers.models.kilocli.&lt;alias&gt;.binary_path</code> field.</p>
-<h4 id="zerocode-42"><a class="header" href="#zerocode-42">zerocode</a></h4>
+<h4 id="zerocode-43"><a class="header" href="#zerocode-43">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.kilocli.&lt;alias&gt;.binary_path</code> field.</p>
-<h4 id="zeroclaw-config-42"><a class="header" href="#zeroclaw-config-42">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-43"><a class="header" href="#zeroclaw-config-43">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.kilocli.&lt;alias&gt;.binary_path &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-42"><a class="header" href="#environment-variable-42">Environment variable</a></h4>
+<h4 id="environment-variable-43"><a class="header" href="#environment-variable-43">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__kilocli__&lt;alias&gt;__binary_path=
 </code></pre>
@@ -9134,14 +9153,14 @@ multi-region families, CLI shims).</p>
 <p>Kilo AI Gateway endpoint. Single canonical endpoint at kilo.ai.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-43"><a class="header" href="#gateway-dashboard-43">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-44"><a class="header" href="#gateway-dashboard-44">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/kilo"><code>/config/providers.models/kilo</code></a> and set the <code>providers.models.kilo.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-43"><a class="header" href="#zerocode-43">zerocode</a></h4>
+<h4 id="zerocode-44"><a class="header" href="#zerocode-44">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.kilo.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-43"><a class="header" href="#zeroclaw-config-43">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-44"><a class="header" href="#zeroclaw-config-44">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.kilo.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-43"><a class="header" href="#environment-variable-43">Environment variable</a></h4>
+<h4 id="environment-variable-44"><a class="header" href="#environment-variable-44">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__kilo__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -9237,14 +9256,14 @@ multi-region families, CLI shims).</p>
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>table</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-44"><a class="header" href="#gateway-dashboard-44">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-45"><a class="header" href="#gateway-dashboard-45">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/stepfun"><code>/config/providers.models/stepfun</code></a> and set the <code>providers.models.stepfun.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zerocode-44"><a class="header" href="#zerocode-44">zerocode</a></h4>
+<h4 id="zerocode-45"><a class="header" href="#zerocode-45">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.stepfun.&lt;alias&gt;.endpoint</code> field.</p>
-<h4 id="zeroclaw-config-44"><a class="header" href="#zeroclaw-config-44">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-45"><a class="header" href="#zeroclaw-config-45">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.stepfun.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-44"><a class="header" href="#environment-variable-44">Environment variable</a></h4>
+<h4 id="environment-variable-45"><a class="header" href="#environment-variable-45">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__stepfun__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -9571,14 +9590,14 @@ full set, derived from the schema:</p>
 <p>Secret API token for this model_provider. Grab it from the model_provider’s dashboard (OpenAI platform, Anthropic console, OpenRouter keys page, etc.). Stored via the OS keyring when possible; never commit it to config.toml directly.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-45"><a class="header" href="#gateway-dashboard-45">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-46"><a class="header" href="#gateway-dashboard-46">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.api_key</code> field.</p>
-<h4 id="zerocode-45"><a class="header" href="#zerocode-45">zerocode</a></h4>
+<h4 id="zerocode-46"><a class="header" href="#zerocode-46">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.api_key</code> field.</p>
-<h4 id="zeroclaw-config-45"><a class="header" href="#zeroclaw-config-45">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-46"><a class="header" href="#zeroclaw-config-46">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.api_key    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-45"><a class="header" href="#environment-variable-45">Environment variable</a></h4>
+<h4 id="environment-variable-46"><a class="header" href="#environment-variable-46">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__api_key=
 </code></pre>
@@ -9871,18 +9890,37 @@ full set, derived from the schema:</p>
 
 </details>
 <details class="cfg-field">
+<summary><code>tls_ca_cert_path</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
+<p>Path to a PEM-encoded CA certificate for TLS connections to this provider. Must be an absolute path; shell expansion (e.g. <code>~</code>) is not performed. Leave unset to use the system’s default trust store.</p>
+<p><strong>Set it on any surface:</strong></p>
+<div class="os-tabs-src">
+<h4 id="gateway-dashboard-16-2"><a class="header" href="#gateway-dashboard-16-2">Gateway dashboard</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
+</code></pre>
+<h4 id="environment-variable-16-1"><a class="header" href="#environment-variable-16-1">Environment variable</a></h4>
+<p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
+<pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__tls_ca_cert_path=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>uri</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
 <p>Endpoint URI the client hits. Override the family’s default endpoint when pointing at a self-hosted gateway (LiteLLM, vLLM, Ollama), a custom proxy, or any non-standard URL. Leave unset to use the family’s default URI from its <code>ModelEndpoint</code> impl. Set this to the FULL endpoint URL; there is no separate path-suffix field.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-16-2"><a class="header" href="#gateway-dashboard-16-2">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-17-1"><a class="header" href="#gateway-dashboard-17-1">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
+<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.uri</code> field.</p>
-<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-16-1"><a class="header" href="#environment-variable-16-1">Environment variable</a></h4>
+<h4 id="environment-variable-17-1"><a class="header" href="#environment-variable-17-1">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__uri=
 </code></pre>
@@ -9893,14 +9931,14 @@ full set, derived from the schema:</p>
 <summary><code>wire_api</code> <span class="cfg-field-meta"><code>WireApi</code> · default <code>—</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-17-1"><a class="header" href="#gateway-dashboard-17-1">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-1"><a class="header" href="#gateway-dashboard-18-1">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
+<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.wire_api</code> field.</p>
-<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.wire_api &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-17-1"><a class="header" href="#environment-variable-17-1">Environment variable</a></h4>
+<h4 id="environment-variable-18-1"><a class="header" href="#environment-variable-18-1">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__wire_api=
 </code></pre>
@@ -10125,9 +10163,9 @@ cargo build --no-default-features --features "agent-runtime,gateway,channel-disc
 <h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
 <p>Modern channel instances are configured under <code>[channels.&lt;type&gt;.&lt;alias&gt;]</code>, with <code>default</code> as the common first alias. Set them through any config surface:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-46"><a class="header" href="#gateway-dashboard-46">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-47"><a class="header" href="#gateway-dashboard-47">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels"><code>/config/channels</code></a> in the web dashboard.</p>
-<h4 id="zerocode-46"><a class="header" href="#zerocode-46">zerocode</a></h4>
+<h4 id="zerocode-47"><a class="header" href="#zerocode-47">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Channels</strong>.</p>
 </div>
 
@@ -10214,9 +10252,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-47"><a class="header" href="#gateway-dashboard-47">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-48"><a class="header" href="#gateway-dashboard-48">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-47"><a class="header" href="#zerocode-47">zerocode</a></h4>
+<h4 id="zerocode-48"><a class="header" href="#zerocode-48">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -10253,10 +10291,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> and set the <code>channels.matrix.&lt;alias&gt;.access_token</code> field.</p>
 <h4 id="zerocode-1-5"><a class="header" href="#zerocode-1-5">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.matrix.&lt;alias&gt;.access_token</code> field.</p>
-<h4 id="zeroclaw-config-46"><a class="header" href="#zeroclaw-config-46">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-47"><a class="header" href="#zeroclaw-config-47">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.access_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-46"><a class="header" href="#environment-variable-46">Environment variable</a></h4>
+<h4 id="environment-variable-47"><a class="header" href="#environment-variable-47">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__access_token=
 </code></pre>
@@ -10572,9 +10610,9 @@ for the field reference.</p>
 <p>Optional Matrix user ID (e.g. <code>"@bot:matrix.org"</code>).</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-1"><a class="header" href="#gateway-dashboard-18-1">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-2"><a class="header" href="#gateway-dashboard-18-2">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> and set the <code>channels.matrix.&lt;alias&gt;.user_id</code> field.</p>
-<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.matrix.&lt;alias&gt;.user_id</code> field.</p>
 <h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.user_id &lt;value&gt;
@@ -10629,7 +10667,7 @@ you have a specific reason not to.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> and set the <code>channels.matrix.&lt;alias&gt;.password</code> field there.</p>
 <h4 id="zerocode-20-1"><a class="header" href="#zerocode-20-1">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.matrix.&lt;alias&gt;.password</code> field (input is masked).</p>
-<h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.password    # prompts for masked input, stores encrypted
 </code></pre>
 </div>
@@ -11003,9 +11041,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-48"><a class="header" href="#gateway-dashboard-48">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-49"><a class="header" href="#gateway-dashboard-49">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-48"><a class="header" href="#zerocode-48">zerocode</a></h4>
+<h4 id="zerocode-49"><a class="header" href="#zerocode-49">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -11053,7 +11091,7 @@ through a surface that encrypts it rather than typing it into <code>config.toml<
 <p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.bot_token</code> field there.</p>
 <h4 id="zerocode-2-6"><a class="header" href="#zerocode-2-6">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.bot_token</code> field (input is masked).</p>
-<h4 id="zeroclaw-config-47"><a class="header" href="#zeroclaw-config-47">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-48"><a class="header" href="#zeroclaw-config-48">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.bot_token    # prompts for masked input, stores encrypted
 </code></pre>
 </div>
@@ -11088,7 +11126,7 @@ defaults; for a basic bot you only ever set <code>bot_token</code>.</p>
 <h4 id="zeroclaw-config-1-6"><a class="header" href="#zeroclaw-config-1-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.approval_timeout_secs &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-47"><a class="header" href="#environment-variable-47">Environment variable</a></h4>
+<h4 id="environment-variable-48"><a class="header" href="#environment-variable-48">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__approval_timeout_secs=
 </code></pre>
@@ -11366,9 +11404,9 @@ defaults; for a basic bot you only ever set <code>bot_token</code>.</p>
 <p>Stall-watchdog timeout in seconds. When non-zero, the bot will abort and retry if no progress is made within this duration. 0 = disabled.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-2"><a class="header" href="#gateway-dashboard-18-2">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-3"><a class="header" href="#gateway-dashboard-18-3">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> field.</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> field.</p>
 <h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
@@ -11445,7 +11483,7 @@ search; the bot still replies normally either way.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> and set the <code>channels.discord.&lt;alias&gt;.stream_mode</code> field.</p>
 <h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.discord.&lt;alias&gt;.stream_mode</code> field.</p>
-<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
 </div>
@@ -11497,9 +11535,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-49"><a class="header" href="#gateway-dashboard-49">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-50"><a class="header" href="#gateway-dashboard-50">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-49"><a class="header" href="#zerocode-49">zerocode</a></h4>
+<h4 id="zerocode-50"><a class="header" href="#zerocode-50">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -11556,7 +11594,7 @@ starts with <code>xoxb-</code>. This is your <code>bot_token</code>.</li>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> and set the <code>channels.slack.&lt;alias&gt;.bot_token</code> field there.</p>
 <h4 id="zerocode-2-7"><a class="header" href="#zerocode-2-7">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.slack.&lt;alias&gt;.bot_token</code> field (input is masked).</p>
-<h4 id="zeroclaw-config-48"><a class="header" href="#zeroclaw-config-48">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-49"><a class="header" href="#zeroclaw-config-49">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.bot_token    # prompts for masked input, stores encrypted
 </code></pre>
 </div>
@@ -11583,7 +11621,7 @@ you only set <code>bot_token</code> and <code>app_token</code>.</p>
 <h4 id="zeroclaw-config-1-7"><a class="header" href="#zeroclaw-config-1-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.app_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-48"><a class="header" href="#environment-variable-48">Environment variable</a></h4>
+<h4 id="environment-variable-49"><a class="header" href="#environment-variable-49">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__slack__&lt;alias&gt;__app_token=
 </code></pre>
@@ -11861,9 +11899,9 @@ you only set <code>bot_token</code> and <code>app_token</code>.</p>
 <p>Use the newer Slack <code>markdown</code> block type (12 000 char limit, richer formatting). Defaults to false (uses universally supported <code>section</code> blocks with <code>mrkdwn</code>). Enable this only if your Slack workspace supports the <code>markdown</code> block type.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-3"><a class="header" href="#gateway-dashboard-18-3">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-4"><a class="header" href="#gateway-dashboard-18-4">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> and set the <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> field.</p>
-<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
+<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> field.</p>
 <h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.use_markdown_blocks &lt;value&gt;
@@ -11934,7 +11972,7 @@ richer layout. Turn off for plain text.</li>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> and set the <code>channels.slack.&lt;alias&gt;.stream_drafts</code> field.</p>
 <h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.slack.&lt;alias&gt;.stream_drafts</code> field.</p>
-<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.stream_drafts &lt;value&gt;
 </code></pre>
 </div>
@@ -11981,9 +12019,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-50"><a class="header" href="#gateway-dashboard-50">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-51"><a class="header" href="#gateway-dashboard-51">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-50"><a class="header" href="#zerocode-50">zerocode</a></h4>
+<h4 id="zerocode-51"><a class="header" href="#zerocode-51">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -12010,7 +12048,7 @@ not resolve usernames at message-receive time.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/mattermost"><code>/config/channels/mattermost</code></a> and set the <code>channels.mattermost.&lt;alias&gt;.bot_token</code> field there.</p>
 <h4 id="zerocode-1-8"><a class="header" href="#zerocode-1-8">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.mattermost.&lt;alias&gt;.bot_token</code> field (input is masked).</p>
-<h4 id="zeroclaw-config-49"><a class="header" href="#zeroclaw-config-49">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-50"><a class="header" href="#zeroclaw-config-50">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.mattermost.&lt;alias&gt;.bot_token    # prompts for masked input, stores encrypted
 </code></pre>
 </div>
@@ -12029,7 +12067,7 @@ not resolve usernames at message-receive time.</p>
 <h4 id="zeroclaw-config-1-8"><a class="header" href="#zeroclaw-config-1-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.mattermost.&lt;alias&gt;.bot_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-49"><a class="header" href="#environment-variable-49">Environment variable</a></h4>
+<h4 id="environment-variable-50"><a class="header" href="#environment-variable-50">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__mattermost__&lt;alias&gt;__bot_token=
 </code></pre>
@@ -12391,9 +12429,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-51"><a class="header" href="#gateway-dashboard-51">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-52"><a class="header" href="#gateway-dashboard-52">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-51"><a class="header" href="#zerocode-51">zerocode</a></h4>
+<h4 id="zerocode-52"><a class="header" href="#zerocode-52">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -12429,10 +12467,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/line"><code>/config/channels/line</code></a> and set the <code>channels.line.&lt;alias&gt;.channel_access_token</code> field.</p>
 <h4 id="zerocode-1-9"><a class="header" href="#zerocode-1-9">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.line.&lt;alias&gt;.channel_access_token</code> field.</p>
-<h4 id="zeroclaw-config-50"><a class="header" href="#zeroclaw-config-50">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-51"><a class="header" href="#zeroclaw-config-51">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.line.&lt;alias&gt;.channel_access_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-50"><a class="header" href="#environment-variable-50">Environment variable</a></h4>
+<h4 id="environment-variable-51"><a class="header" href="#environment-variable-51">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__line__&lt;alias&gt;__channel_access_token=
 </code></pre>
@@ -12691,9 +12729,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-52"><a class="header" href="#gateway-dashboard-52">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-53"><a class="header" href="#gateway-dashboard-53">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-52"><a class="header" href="#zerocode-52">zerocode</a></h4>
+<h4 id="zerocode-53"><a class="header" href="#zerocode-53">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -12722,10 +12760,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/nextcloud_talk"><code>/config/channels/nextcloud_talk</code></a> and set the <code>channels.nextcloud_talk.&lt;alias&gt;.app_token</code> field.</p>
 <h4 id="zerocode-1-10"><a class="header" href="#zerocode-1-10">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.nextcloud_talk.&lt;alias&gt;.app_token</code> field.</p>
-<h4 id="zeroclaw-config-51"><a class="header" href="#zeroclaw-config-51">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-52"><a class="header" href="#zeroclaw-config-52">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.nextcloud_talk.&lt;alias&gt;.app_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-51"><a class="header" href="#environment-variable-51">Environment variable</a></h4>
+<h4 id="environment-variable-52"><a class="header" href="#environment-variable-52">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__nextcloud_talk__&lt;alias&gt;__app_token=
 </code></pre>
@@ -12955,9 +12993,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-53"><a class="header" href="#gateway-dashboard-53">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-54"><a class="header" href="#gateway-dashboard-54">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-53"><a class="header" href="#zerocode-53">zerocode</a></h4>
+<h4 id="zerocode-54"><a class="header" href="#zerocode-54">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -12983,10 +13021,10 @@ message types before they reach the agent.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/signal"><code>/config/channels/signal</code></a> and set the <code>channels.signal.&lt;alias&gt;.account</code> field.</p>
 <h4 id="zerocode-1-11"><a class="header" href="#zerocode-1-11">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.signal.&lt;alias&gt;.account</code> field.</p>
-<h4 id="zeroclaw-config-52"><a class="header" href="#zeroclaw-config-52">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-53"><a class="header" href="#zeroclaw-config-53">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.signal.&lt;alias&gt;.account &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-52"><a class="header" href="#environment-variable-52">Environment variable</a></h4>
+<h4 id="environment-variable-53"><a class="header" href="#environment-variable-53">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__signal__&lt;alias&gt;__account=
 </code></pre>
@@ -13235,9 +13273,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-54"><a class="header" href="#gateway-dashboard-54">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-55"><a class="header" href="#gateway-dashboard-55">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-54"><a class="header" href="#zerocode-54">zerocode</a></h4>
+<h4 id="zerocode-55"><a class="header" href="#zerocode-55">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -13275,10 +13313,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> and set the <code>channels.whatsapp.&lt;alias&gt;.access_token</code> field.</p>
 <h4 id="zerocode-1-12"><a class="header" href="#zerocode-1-12">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.whatsapp.&lt;alias&gt;.access_token</code> field.</p>
-<h4 id="zeroclaw-config-53"><a class="header" href="#zeroclaw-config-53">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-54"><a class="header" href="#zeroclaw-config-54">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.access_token    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-53"><a class="header" href="#environment-variable-53">Environment variable</a></h4>
+<h4 id="environment-variable-54"><a class="header" href="#environment-variable-54">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__access_token=
 </code></pre>
@@ -13594,9 +13632,9 @@ for the field reference.</p>
 <p>When true and mode = “personal”, always respond to messages in the user’s own self-chat (Notes to Self). Defaults to false.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-4"><a class="header" href="#gateway-dashboard-18-4">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-5"><a class="header" href="#gateway-dashboard-18-5">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> and set the <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> field.</p>
-<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
+<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> field.</p>
 <h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.self_chat_mode &lt;value&gt;
@@ -13617,10 +13655,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> and set the <code>channels.whatsapp.&lt;alias&gt;.session_path</code> field.</p>
 <h4 id="zerocode-19-4"><a class="header" href="#zerocode-19-4">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.whatsapp.&lt;alias&gt;.session_path</code> field.</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.session_path &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-18-1"><a class="header" href="#environment-variable-18-1">Environment variable</a></h4>
+<h4 id="environment-variable-18-2"><a class="header" href="#environment-variable-18-2">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__session_path=
 </code></pre>
@@ -13724,9 +13762,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-55"><a class="header" href="#gateway-dashboard-55">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-56"><a class="header" href="#gateway-dashboard-56">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-55"><a class="header" href="#zerocode-55">zerocode</a></h4>
+<h4 id="zerocode-56"><a class="header" href="#zerocode-56">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -13791,9 +13829,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-56"><a class="header" href="#gateway-dashboard-56">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-57"><a class="header" href="#gateway-dashboard-57">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-56"><a class="header" href="#zerocode-56">zerocode</a></h4>
+<h4 id="zerocode-57"><a class="header" href="#zerocode-57">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -13863,9 +13901,9 @@ names peer <code>agents</code> for cross-agent dispatch, an <code>ignore</code> 
 for the field reference.</p>
 <p>Where to set this:</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-57"><a class="header" href="#gateway-dashboard-57">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-58"><a class="header" href="#gateway-dashboard-58">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> in the web dashboard.</p>
-<h4 id="zerocode-57"><a class="header" href="#zerocode-57">zerocode</a></h4>
+<h4 id="zerocode-58"><a class="header" href="#zerocode-58">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Peer groups</strong>.</p>
 </div>
 
@@ -13880,10 +13918,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> and set the <code>channels.email.&lt;alias&gt;.default_subject</code> field.</p>
 <h4 id="zerocode-1-14"><a class="header" href="#zerocode-1-14">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.email.&lt;alias&gt;.default_subject</code> field.</p>
-<h4 id="zeroclaw-config-54"><a class="header" href="#zeroclaw-config-54">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-55"><a class="header" href="#zeroclaw-config-55">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.default_subject &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-54"><a class="header" href="#environment-variable-54">Environment variable</a></h4>
+<h4 id="environment-variable-55"><a class="header" href="#environment-variable-55">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__default_subject=
 </code></pre>
@@ -14186,9 +14224,9 @@ for the field reference.</p>
 <summary><code>smtp_username</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-5"><a class="header" href="#gateway-dashboard-18-5">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-6"><a class="header" href="#gateway-dashboard-18-6">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> and set the <code>channels.email.&lt;alias&gt;.smtp_username</code> field.</p>
-<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
+<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.email.&lt;alias&gt;.smtp_username</code> field.</p>
 <h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_username &lt;value&gt;
@@ -14208,10 +14246,10 @@ for the field reference.</p>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> and set the <code>channels.email.&lt;alias&gt;.username</code> field.</p>
 <h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.email.&lt;alias&gt;.username</code> field.</p>
-<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-18-2"><a class="header" href="#environment-variable-18-2">Environment variable</a></h4>
+<h4 id="environment-variable-18-3"><a class="header" href="#environment-variable-18-3">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__username=
 </code></pre>
@@ -14422,14 +14460,14 @@ for the field reference.</p>
 <summary><code>allowed_destinations</code> <span class="cfg-field-meta"><code>string[]</code> · default <code>[]</code></span></summary>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-58"><a class="header" href="#gateway-dashboard-58">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-59"><a class="header" href="#gateway-dashboard-59">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/clawdtalk"><code>/config/channels/clawdtalk</code></a> and set the <code>channels.clawdtalk.&lt;alias&gt;.allowed_destinations</code> field.</p>
-<h4 id="zerocode-58"><a class="header" href="#zerocode-58">zerocode</a></h4>
+<h4 id="zerocode-59"><a class="header" href="#zerocode-59">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.clawdtalk.&lt;alias&gt;.allowed_destinations</code> field.</p>
-<h4 id="zeroclaw-config-55"><a class="header" href="#zeroclaw-config-55">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-56"><a class="header" href="#zeroclaw-config-56">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.clawdtalk.&lt;alias&gt;.allowed_destinations &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-55"><a class="header" href="#environment-variable-55">Environment variable</a></h4>
+<h4 id="environment-variable-56"><a class="header" href="#environment-variable-56">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__clawdtalk__&lt;alias&gt;__allowed_destinations=
 </code></pre>
@@ -14763,11 +14801,11 @@ for the field reference.</p>
 <p>RMS energy threshold for voice activity detection. Samples below this level are treated as silence. Default: <code>0.01</code>.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-18-6"><a class="header" href="#gateway-dashboard-18-6">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-18-7"><a class="header" href="#gateway-dashboard-18-7">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> and set the <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> field.</p>
-<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
+<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> field.</p>
-<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-7"><a class="header" href="#zeroclaw-config-18-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
 <h4 id="environment-variable-17-5"><a class="header" href="#environment-variable-17-5">Environment variable</a></h4>
@@ -14789,7 +14827,7 @@ for the field reference.</p>
 <h4 id="zeroclaw-config-19-4"><a class="header" href="#zeroclaw-config-19-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.excluded_tools &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-18-3"><a class="header" href="#environment-variable-18-3">Environment variable</a></h4>
+<h4 id="environment-variable-18-4"><a class="header" href="#environment-variable-18-4">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_wake__&lt;alias&gt;__excluded_tools=
 </code></pre>
@@ -14901,14 +14939,14 @@ for the field reference.</p>
 <p>Optional <code>Authorization</code> header value for outbound requests.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-59"><a class="header" href="#gateway-dashboard-59">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-60"><a class="header" href="#gateway-dashboard-60">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/channels/webhook"><code>/config/channels/webhook</code></a> and set the <code>channels.webhook.&lt;alias&gt;.auth_header</code> field.</p>
-<h4 id="zerocode-59"><a class="header" href="#zerocode-59">zerocode</a></h4>
+<h4 id="zerocode-60"><a class="header" href="#zerocode-60">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>channels.webhook.&lt;alias&gt;.auth_header</code> field.</p>
-<h4 id="zeroclaw-config-56"><a class="header" href="#zeroclaw-config-56">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-57"><a class="header" href="#zeroclaw-config-57">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.webhook.&lt;alias&gt;.auth_header    # masked input, stored encrypted
 </code></pre>
-<h4 id="environment-variable-56"><a class="header" href="#environment-variable-56">Environment variable</a></h4>
+<h4 id="environment-variable-57"><a class="header" href="#environment-variable-57">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__webhook__&lt;alias&gt;__auth_header=
 </code></pre>
@@ -15413,14 +15451,14 @@ not part of the base ACP spec. If ACP later standardizes a conflicting
 <p>Agent alias to use when <code>session/new</code> omits <code>agentAlias</code> and more than one agent is configured. When exactly one agent exists it is auto-selected regardless of this field.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-60"><a class="header" href="#gateway-dashboard-60">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-61"><a class="header" href="#gateway-dashboard-61">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/acp"><code>/config/acp</code></a> and set the <code>acp.default_agent</code> field.</p>
-<h4 id="zerocode-60"><a class="header" href="#zerocode-60">zerocode</a></h4>
+<h4 id="zerocode-61"><a class="header" href="#zerocode-61">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>acp.default_agent</code> field.</p>
-<h4 id="zeroclaw-config-57"><a class="header" href="#zeroclaw-config-57">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-58"><a class="header" href="#zeroclaw-config-58">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set acp.default_agent &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-57"><a class="header" href="#environment-variable-57">Environment variable</a></h4>
+<h4 id="environment-variable-58"><a class="header" href="#environment-variable-58">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_acp__default_agent=
 </code></pre>
@@ -15675,14 +15713,14 @@ pub trait Tool: Send + Sync + Attributable {
 <p>Command arguments for stdio transport.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-61"><a class="header" href="#gateway-dashboard-61">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-62"><a class="header" href="#gateway-dashboard-62">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/mcp.servers"><code>/config/mcp.servers</code></a> and set the <code>mcp.servers.args</code> field.</p>
-<h4 id="zerocode-61"><a class="header" href="#zerocode-61">zerocode</a></h4>
+<h4 id="zerocode-62"><a class="header" href="#zerocode-62">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>mcp.servers.args</code> field.</p>
-<h4 id="zeroclaw-config-58"><a class="header" href="#zeroclaw-config-58">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-59"><a class="header" href="#zeroclaw-config-59">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set mcp.servers.args &lt;value&gt;
 </code></pre>
-<h4 id="environment-variable-58"><a class="header" href="#environment-variable-58">Environment variable</a></h4>
+<h4 id="environment-variable-59"><a class="header" href="#environment-variable-59">Environment variable</a></h4>
 <p>Export the override (POSIX shells; drop into <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code>, or a Dockerfile). Replace <code>&lt;alias&gt;</code> with the literal alias:</p>
 <pre><code class="language-sh">export ZEROCLAW_mcp__servers__args=
 </code></pre>
@@ -15951,9 +15989,9 @@ zeroclaw config set browser.enabled false
 </div>
 
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-62"><a class="header" href="#gateway-dashboard-62">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-63"><a class="header" href="#gateway-dashboard-63">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/browser"><code>/config/browser</code></a> in the web dashboard.</p>
-<h4 id="zerocode-62"><a class="header" href="#zerocode-62">zerocode</a></h4>
+<h4 id="zerocode-63"><a class="header" href="#zerocode-63">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Browser</strong>.</p>
 </div>
 
@@ -25342,9 +25380,9 @@ author can resolve it inline.</li>
 <h2 id="add-a-second-agent"><a class="header" href="#add-a-second-agent">Add a second agent</a></h2>
 <p>Add another agent through the gateway dashboard, zerocode, or <code>zeroclaw config set</code>. The runtime creates <code>&lt;install&gt;/agents/&lt;alias&gt;/workspace/</code> on first agent-loop entry. On every start the agent loop injects the workspace identity files that exist into the system prompt: <code>AGENTS.md</code>, <code>SOUL.md</code>, <code>TOOLS.md</code>, <code>IDENTITY.md</code>, <code>USER.md</code>, then <code>BOOTSTRAP.md</code> (first run only) and <code>MEMORY.md</code> (main session only). <code>HEARTBEAT.md</code> is also a workspace personality file but it is read by the heartbeat engine, not injected into the prompt. The dashboard’s personality editor exposes <code>SOUL.md</code>, <code>IDENTITY.md</code>, <code>USER.md</code>, <code>AGENTS.md</code>, <code>TOOLS.md</code>, <code>HEARTBEAT.md</code>, and <code>MEMORY.md</code> for editing. Create and edit those files to give the agent its persona. (<code>BOOTSTRAP.md</code> is a first-run scaffold the agent reads once and removes; the editor does not expose it.)</p>
 <div class="os-tabs-src">
-<h4 id="gateway-dashboard-63"><a class="header" href="#gateway-dashboard-63">Gateway dashboard</a></h4>
+<h4 id="gateway-dashboard-64"><a class="header" href="#gateway-dashboard-64">Gateway dashboard</a></h4>
 <p>Open <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> in the web dashboard.</p>
-<h4 id="zerocode-63"><a class="header" href="#zerocode-63">zerocode</a></h4>
+<h4 id="zerocode-64"><a class="header" href="#zerocode-64">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, under <strong>Agents</strong>.</p>
 </div>
 

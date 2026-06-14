@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-4a32fef2.js";
+            window.path_to_searchindex_js = "searchindex-ec8bc59a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e2df50e.js"></script>
@@ -7756,18 +7756,37 @@ api_key = "..."
 
 </details>
 <details class="cfg-field">
+<summary><code>tls_ca_cert_path</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
+<p>Path to a PEM-encoded CA certificate for TLS connections to this provider. Must be an absolute path; shell expansion (e.g. <code>~</code>) is not performed. Leave unset to use the system’s default trust store.</p>
+<p><strong>任意のサーフェスに設定する場合:</strong></p>
+<div class="os-tabs-src">
+<h4 id="ゲートウェイダッシュボード-16-1"><a class="header" href="#ゲートウェイダッシュボード-16-1">ゲートウェイダッシュボード</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
+</code></pre>
+<h4 id="環境変数-16"><a class="header" href="#環境変数-16">環境変数</a></h4>
+<p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
+<pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__tls_ca_cert_path=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>uri</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
 <p>クライアントが接続するエンドポイント URI。セルフホスト型のゲートウェイ（LiteLLM、vLLM、Ollama）、カスタムプロキシ、または非標準の URL を指定する場合に、ファミリーのデフォルトエンドポイントを上書きします。未設定のままにすると、ファミリーの <code>ModelEndpoint</code> 実装によるデフォルト URI が使用されます。これにはエンドポイントの完全な URL を設定してください。パスサフィックス用の個別フィールドはありません。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-16-1"><a class="header" href="#ゲートウェイダッシュボード-16-1">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-17"><a class="header" href="#ゲートウェイダッシュボード-17">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> を開き、<code>providers.models.openrouter.&lt;alias&gt;.uri</code> フィールドを設定します。</p>
-<h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
+<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.openrouter.&lt;alias&gt;.uri</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16"><a class="header" href="#環境変数-16">環境変数</a></h4>
+<h4 id="環境変数-17"><a class="header" href="#環境変数-17">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__uri=
 </code></pre>
@@ -7779,14 +7798,14 @@ api_key = "..."
 <p>model_provider クライアント用のワイヤープロトコル形式。<code>responses</code> は OpenAI の Codex/Responses API（<code>POST /v1/responses</code>）経由でルーティングします。<code>chat_completions</code> は従来の <code>/v1/chat/completions</code>（またはそのファミリーの chat-completions 互換エンドポイント）経由でルーティングします。未設定の場合、ファミリーごとに自動選択されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-17"><a class="header" href="#ゲートウェイダッシュボード-17">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18"><a class="header" href="#ゲートウェイダッシュボード-18">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> を開いて、<code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> フィールドを設定してください。</p>
-<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
+<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.wire_api &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-17"><a class="header" href="#環境変数-17">環境変数</a></h4>
+<h4 id="環境変数-18"><a class="header" href="#環境変数-18">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__wire_api=
 </code></pre>
@@ -7814,14 +7833,14 @@ api_key = "..."
 <p>Azure APIバージョン文字列（例：<code>2024-10-21</code>）。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18"><a class="header" href="#ゲートウェイダッシュボード-18">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-19"><a class="header" href="#ゲートウェイダッシュボード-19">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> を開き、<code>providers.models.azure.&lt;alias&gt;.api_version</code> フィールドを設定してください。</p>
-<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
+<h4 id="zerocode-19"><a class="header" href="#zerocode-19">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.azure.&lt;alias&gt;.api_version</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-19"><a class="header" href="#zeroclaw-config-19">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.api_version &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-18"><a class="header" href="#環境変数-18">環境変数</a></h4>
+<h4 id="環境変数-19"><a class="header" href="#環境変数-19">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__api_version=
 </code></pre>
@@ -7833,14 +7852,14 @@ api_key = "..."
 <p>Azure デプロイ名: Azure AI Studio で作成されたデプロイ。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-19"><a class="header" href="#ゲートウェイダッシュボード-19">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-20"><a class="header" href="#ゲートウェイダッシュボード-20">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> を開いて <code>providers.models.azure.&lt;alias&gt;.deployment</code> フィールドを設定してください。</p>
-<h4 id="zerocode-19"><a class="header" href="#zerocode-19">zerocode</a></h4>
+<h4 id="zerocode-20"><a class="header" href="#zerocode-20">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.azure.&lt;alias&gt;.deployment</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-19"><a class="header" href="#zeroclaw-config-19">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-20"><a class="header" href="#zeroclaw-config-20">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.deployment &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-19"><a class="header" href="#環境変数-19">環境変数</a></h4>
+<h4 id="環境変数-20"><a class="header" href="#環境変数-20">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__deployment=
 </code></pre>
@@ -7852,14 +7871,14 @@ api_key = "..."
 <p>Azure リソース名（<code>&lt;resource&gt;.openai.azure.com</code> の <code>&lt;resource&gt;</code> の部分）。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-20"><a class="header" href="#ゲートウェイダッシュボード-20">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-21"><a class="header" href="#ゲートウェイダッシュボード-21">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/azure"><code>/config/providers.models/azure</code></a> を開いて、<code>providers.models.azure.&lt;alias&gt;.resource</code> フィールドを設定してください。</p>
-<h4 id="zerocode-20"><a class="header" href="#zerocode-20">zerocode</a></h4>
+<h4 id="zerocode-21"><a class="header" href="#zerocode-21">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.azure.&lt;alias&gt;.resource</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-20"><a class="header" href="#zeroclaw-config-20">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-21"><a class="header" href="#zeroclaw-config-21">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.azure.&lt;alias&gt;.resource &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-20"><a class="header" href="#環境変数-20">環境変数</a></h4>
+<h4 id="環境変数-21"><a class="header" href="#環境変数-21">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__azure__&lt;alias&gt;__resource=
 </code></pre>
@@ -7878,14 +7897,14 @@ api_key = "..."
 <p>すべての <code>/api/chat</code> リクエストで送信される Ollama の <code>num_ctx</code>（コンテキストウィンドウ、トークン単位）を上書きします。未設定の場合は、フレームワーク定数（<code>OLLAMA_DEFAULT_NUM_CTX</code>）がデフォルトになります。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-21"><a class="header" href="#ゲートウェイダッシュボード-21">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-22"><a class="header" href="#ゲートウェイダッシュボード-22">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> を開き、<code>providers.models.ollama.&lt;alias&gt;.num_ctx</code> フィールドを設定します。</p>
-<h4 id="zerocode-21"><a class="header" href="#zerocode-21">zerocode</a></h4>
+<h4 id="zerocode-22"><a class="header" href="#zerocode-22">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.ollama.&lt;alias&gt;.num_ctx</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-21"><a class="header" href="#zeroclaw-config-21">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-22"><a class="header" href="#zeroclaw-config-22">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.num_ctx &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-21"><a class="header" href="#環境変数-21">環境変数</a></h4>
+<h4 id="環境変数-22"><a class="header" href="#環境変数-22">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__num_ctx=
 </code></pre>
@@ -7897,14 +7916,14 @@ api_key = "..."
 <p>すべての <code>/api/chat</code> リクエストで送信される Ollama の <code>num_predict</code>（最大出力トークン数）を上書きします。設定されていない場合は、フレームワークの定数（<code>OLLAMA_DEFAULT_NUM_PREDICT</code>）がデフォルトとして使用されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-22"><a class="header" href="#ゲートウェイダッシュボード-22">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-23"><a class="header" href="#ゲートウェイダッシュボード-23">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> を開いて、<code>providers.models.ollama.&lt;alias&gt;.num_predict</code> フィールドを設定してください。</p>
-<h4 id="zerocode-22"><a class="header" href="#zerocode-22">zerocode</a></h4>
+<h4 id="zerocode-23"><a class="header" href="#zerocode-23">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.ollama.&lt;alias&gt;.num_predict</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-22"><a class="header" href="#zeroclaw-config-22">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-23"><a class="header" href="#zeroclaw-config-23">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.num_predict &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-22"><a class="header" href="#環境変数-22">環境変数</a></h4>
+<h4 id="環境変数-23"><a class="header" href="#環境変数-23">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__num_predict=
 </code></pre>
@@ -7916,14 +7935,14 @@ api_key = "..."
 <p>すべての Ollama <code>/api/chat</code> リクエストでこの temperature を強制的に使用し、<code>ModelProvider::chat_with_system(.., temperature)</code> を通じて渡される呼び出しごとの値を上書きします。未設定（<code>None</code>、デフォルト）の場合は、呼び出しごとの temperature が優先されます。完全な後方互換性を備えています。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-23"><a class="header" href="#ゲートウェイダッシュボード-23">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-24"><a class="header" href="#ゲートウェイダッシュボード-24">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/ollama"><code>/config/providers.models/ollama</code></a> を開いて、<code>providers.models.ollama.&lt;alias&gt;.temperature_override</code> フィールドを設定してください。</p>
-<h4 id="zerocode-23"><a class="header" href="#zerocode-23">zerocode</a></h4>
+<h4 id="zerocode-24"><a class="header" href="#zerocode-24">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.ollama.&lt;alias&gt;.temperature_override</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-23"><a class="header" href="#zeroclaw-config-23">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-24"><a class="header" href="#zeroclaw-config-24">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.ollama.&lt;alias&gt;.temperature_override &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-23"><a class="header" href="#環境変数-23">環境変数</a></h4>
+<h4 id="環境変数-24"><a class="header" href="#環境変数-24">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__ollama__&lt;alias&gt;__temperature_override=
 </code></pre>
@@ -7942,14 +7961,14 @@ api_key = "..."
 <p>複数の認証方式をサポートする model_provider ファミリー（例：Qwen、Minimax は API キーまたは OAuth を使用可能）の認証モード。単一の認証フローのみをサポートするファミリーは、設定構造体からこのフィールドを単に省略します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-24"><a class="header" href="#ゲートウェイダッシュボード-24">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-25"><a class="header" href="#ゲートウェイダッシュボード-25">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> を開き、<code>providers.models.gemini.&lt;alias&gt;.auth_mode</code> フィールドを設定します。</p>
-<h4 id="zerocode-24"><a class="header" href="#zerocode-24">zerocode</a></h4>
+<h4 id="zerocode-25"><a class="header" href="#zerocode-25">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.gemini.&lt;alias&gt;.auth_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-24"><a class="header" href="#zeroclaw-config-24">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-25"><a class="header" href="#zeroclaw-config-25">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-24"><a class="header" href="#環境変数-24">環境変数</a></h4>
+<h4 id="環境変数-25"><a class="header" href="#環境変数-25">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -7961,14 +7980,14 @@ api_key = "..."
 <p>Google OAuth アプリの <code>client_id</code>。このエイリアスが ZeroClaw 独自のブラウザ/デバイスコードによるログインフロー（<code>zeroclaw auth login --model-provider gemini --profile &lt;alias&gt;</code>）を駆動する際に使用されます。上流の <code>gemini login</code> ツールを利用するオペレーターには不要です。そのツールは独自の client_id / client_secret を <code>~/.gemini/oauth_creds.json</code> に書き込みます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-25"><a class="header" href="#ゲートウェイダッシュボード-25">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-26"><a class="header" href="#ゲートウェイダッシュボード-26">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> を開き、<code>providers.models.gemini.&lt;alias&gt;.oauth_client_id</code> フィールドを設定してください。</p>
-<h4 id="zerocode-25"><a class="header" href="#zerocode-25">zerocode</a></h4>
+<h4 id="zerocode-26"><a class="header" href="#zerocode-26">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.gemini.&lt;alias&gt;.oauth_client_id</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-25"><a class="header" href="#zeroclaw-config-25">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-26"><a class="header" href="#zeroclaw-config-26">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-25"><a class="header" href="#環境変数-25">環境変数</a></h4>
+<h4 id="環境変数-26"><a class="header" href="#環境変数-26">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -7980,14 +7999,14 @@ api_key = "..."
 <p>Google OAuth アプリの <code>client_secret</code>。<code>oauth_client_id</code> と併せて設定します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-26"><a class="header" href="#ゲートウェイダッシュボード-26">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-27"><a class="header" href="#ゲートウェイダッシュボード-27">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> を開き、<code>providers.models.gemini.&lt;alias&gt;.oauth_client_secret</code> フィールドを設定してください。</p>
-<h4 id="zerocode-26"><a class="header" href="#zerocode-26">zerocode</a></h4>
+<h4 id="zerocode-27"><a class="header" href="#zerocode-27">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.gemini.&lt;alias&gt;.oauth_client_secret</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-26"><a class="header" href="#zeroclaw-config-26">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-27"><a class="header" href="#zeroclaw-config-27">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_client_secret &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-26"><a class="header" href="#環境変数-26">環境変数</a></h4>
+<h4 id="環境変数-27"><a class="header" href="#環境変数-27">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_client_secret=
 </code></pre>
@@ -7999,14 +8018,14 @@ api_key = "..."
 <p>OAuth の <code>loadCodeAssist</code> 検出呼び出しで使用する特定の GCP プロジェクト ID を固定します。未設定の場合、検出処理は認証情報のアカウントですでにオンボーディング済みのプロジェクトを探索します。<code>GOOGLE_CLOUD_PROJECT</code> / <code>GOOGLE_CLOUD_PROJECT_ID</code> 環境変数を置き換えます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-27"><a class="header" href="#ゲートウェイダッシュボード-27">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-28"><a class="header" href="#ゲートウェイダッシュボード-28">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/gemini"><code>/config/providers.models/gemini</code></a> を開いて、<code>providers.models.gemini.&lt;alias&gt;.oauth_project</code> フィールドを設定してください。</p>
-<h4 id="zerocode-27"><a class="header" href="#zerocode-27">zerocode</a></h4>
+<h4 id="zerocode-28"><a class="header" href="#zerocode-28">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.gemini.&lt;alias&gt;.oauth_project</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-27"><a class="header" href="#zeroclaw-config-27">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-28"><a class="header" href="#zeroclaw-config-28">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini.&lt;alias&gt;.oauth_project &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-27"><a class="header" href="#環境変数-27">環境変数</a></h4>
+<h4 id="環境変数-28"><a class="header" href="#環境変数-28">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini__&lt;alias&gt;__oauth_project=
 </code></pre>
@@ -8035,14 +8054,14 @@ api_key = "..."
 <p>Moonshot エンドポイントのバリエーション。オペレーターはアカウントに合ったリージョンを選択します。ランタイムは、<code>base.uri</code> で上書きされない限り、選択したバリエーションから URI を解決します。Code バリエーションは intl 専用です。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-28"><a class="header" href="#ゲートウェイダッシュボード-28">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-29"><a class="header" href="#ゲートウェイダッシュボード-29">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/moonshot"><code>/config/providers.models/moonshot</code></a> を開いて <code>providers.models.moonshot.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zerocode-28"><a class="header" href="#zerocode-28">zerocode</a></h4>
+<h4 id="zerocode-29"><a class="header" href="#zerocode-29">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.moonshot.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-28"><a class="header" href="#zeroclaw-config-28">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-29"><a class="header" href="#zeroclaw-config-29">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.moonshot.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-28"><a class="header" href="#環境変数-28">環境変数</a></h4>
+<h4 id="環境変数-29"><a class="header" href="#環境変数-29">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__moonshot__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8064,14 +8083,14 @@ api_key = "..."
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `global`</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-29"><a class="header" href="#ゲートウェイダッシュボード-29">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-30"><a class="header" href="#ゲートウェイダッシュボード-30">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/zai"><code>/config/providers.models/zai</code></a> を開き、<code>providers.models.zai.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-29"><a class="header" href="#zerocode-29">zerocode</a></h4>
+<h4 id="zerocode-30"><a class="header" href="#zerocode-30">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.zai.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-29"><a class="header" href="#zeroclaw-config-29">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-30"><a class="header" href="#zeroclaw-config-30">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.zai.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-29"><a class="header" href="#環境変数-29">環境変数</a></h4>
+<h4 id="環境変数-30"><a class="header" href="#環境変数-30">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__zai__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8089,14 +8108,14 @@ api_key = "..."
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `global`</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-30"><a class="header" href="#ゲートウェイダッシュボード-30">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-31"><a class="header" href="#ゲートウェイダッシュボード-31">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/glm"><code>/config/providers.models/glm</code></a> を開き、<code>providers.models.glm.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-30"><a class="header" href="#zerocode-30">zerocode</a></h4>
+<h4 id="zerocode-31"><a class="header" href="#zerocode-31">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.glm.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-30"><a class="header" href="#zeroclaw-config-30">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-31"><a class="header" href="#zeroclaw-config-31">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.glm.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-30"><a class="header" href="#環境変数-30">環境変数</a></h4>
+<h4 id="環境変数-31"><a class="header" href="#環境変数-31">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__glm__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8115,14 +8134,14 @@ api_key = "..."
 <p>複数の認証方式をサポートする model_provider ファミリー（例：Qwen、Minimax は API キーまたは OAuth を使用可能）の認証モード。単一の認証フローのみをサポートするファミリーは、設定構造体からこのフィールドを単に省略します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-31"><a class="header" href="#ゲートウェイダッシュボード-31">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-32"><a class="header" href="#ゲートウェイダッシュボード-32">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> を開いて、<code>providers.models.minimax.&lt;alias&gt;.auth_mode</code> フィールドを設定してください。</p>
-<h4 id="zerocode-31"><a class="header" href="#zerocode-31">zerocode</a></h4>
+<h4 id="zerocode-32"><a class="header" href="#zerocode-32">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.minimax.&lt;alias&gt;.auth_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-31"><a class="header" href="#zeroclaw-config-31">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-32"><a class="header" href="#zeroclaw-config-32">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-31"><a class="header" href="#環境変数-31">環境変数</a></h4>
+<h4 id="環境変数-32"><a class="header" href="#環境変数-32">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -8133,14 +8152,14 @@ api_key = "..."
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>`cn` \| `intl`</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-32"><a class="header" href="#ゲートウェイダッシュボード-32">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-33"><a class="header" href="#ゲートウェイダッシュボード-33">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> を開いて、<code>providers.models.minimax.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-32"><a class="header" href="#zerocode-32">zerocode</a></h4>
+<h4 id="zerocode-33"><a class="header" href="#zerocode-33">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>providers.models.minimax.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-32"><a class="header" href="#zeroclaw-config-32">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-33"><a class="header" href="#zeroclaw-config-33">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-32"><a class="header" href="#環境変数-32">環境変数</a></h4>
+<h4 id="環境変数-33"><a class="header" href="#環境変数-33">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8152,14 +8171,14 @@ api_key = "..."
 <p>MiniMaxが公開しているOAuthのclient_idを上書きします。ほとんどの運用者はこれを未設定のままにすべきです。ランタイムはベンダーが公開しているclient_id（MiniMax自身のポータルが使用するものと同じ）をデフォルトで使用します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-33"><a class="header" href="#ゲートウェイダッシュボード-33">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-34"><a class="header" href="#ゲートウェイダッシュボード-34">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> を開いて <code>providers.models.minimax.&lt;alias&gt;.oauth_client_id</code> フィールドを設定してください。</p>
-<h4 id="zerocode-33"><a class="header" href="#zerocode-33">zerocode</a></h4>
+<h4 id="zerocode-34"><a class="header" href="#zerocode-34">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.minimax.&lt;alias&gt;.oauth_client_id</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-33"><a class="header" href="#zeroclaw-config-33">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-34"><a class="header" href="#zeroclaw-config-34">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-33"><a class="header" href="#環境変数-33">環境変数</a></h4>
+<h4 id="環境変数-34"><a class="header" href="#環境変数-34">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -8171,14 +8190,14 @@ api_key = "..."
 <p>MiniMax が発行する長期有効な OAuth リフレッシュトークン。設定されている場合、ランタイムはプロバイダー構築時にこれを短命のアクセストークンと交換し、それを API 認証情報として使用します。ダッシュボードで生成された長期有効な API キーを使用したいオペレーターは、これを未設定のままにして <code>api_key</code> を直接設定できます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-34"><a class="header" href="#ゲートウェイダッシュボード-34">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-35"><a class="header" href="#ゲートウェイダッシュボード-35">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/minimax"><code>/config/providers.models/minimax</code></a> を開き、<code>providers.models.minimax.&lt;alias&gt;.oauth_refresh_token</code> フィールドを設定してください。</p>
-<h4 id="zerocode-34"><a class="header" href="#zerocode-34">zerocode</a></h4>
+<h4 id="zerocode-35"><a class="header" href="#zerocode-35">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.minimax.&lt;alias&gt;.oauth_refresh_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-34"><a class="header" href="#zeroclaw-config-34">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-35"><a class="header" href="#zeroclaw-config-35">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.minimax.&lt;alias&gt;.oauth_refresh_token &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-34"><a class="header" href="#環境変数-34">環境変数</a></h4>
+<h4 id="環境変数-35"><a class="header" href="#環境変数-35">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__minimax__&lt;alias&gt;__oauth_refresh_token=
 </code></pre>
@@ -8197,14 +8216,14 @@ api_key = "..."
 <p>Bedrock エンドポイントの AWS リージョン（例: <code>us-east-1</code>、<code>eu-west-1</code>）。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-35"><a class="header" href="#ゲートウェイダッシュボード-35">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-36"><a class="header" href="#ゲートウェイダッシュボード-36">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/bedrock"><code>/config/providers.models/bedrock</code></a> を開き、<code>providers.models.bedrock.&lt;alias&gt;.region</code> フィールドを設定します。</p>
-<h4 id="zerocode-35"><a class="header" href="#zerocode-35">zerocode</a></h4>
+<h4 id="zerocode-36"><a class="header" href="#zerocode-36">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.bedrock.&lt;alias&gt;.region</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-35"><a class="header" href="#zeroclaw-config-35">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-36"><a class="header" href="#zeroclaw-config-36">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.bedrock.&lt;alias&gt;.region &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-35"><a class="header" href="#環境変数-35">環境変数</a></h4>
+<h4 id="環境変数-36"><a class="header" href="#環境変数-36">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__bedrock__&lt;alias&gt;__region=
 </code></pre>
@@ -8227,14 +8246,14 @@ api_key = "..."
 <p>複数の認証方式をサポートする model_provider ファミリー（例：Qwen、Minimax は API キーまたは OAuth を使用可能）の認証モード。単一の認証フローのみをサポートするファミリーは、設定構造体からこのフィールドを単に省略します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-36"><a class="header" href="#ゲートウェイダッシュボード-36">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-37"><a class="header" href="#ゲートウェイダッシュボード-37">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> を開き、<code>providers.models.qwen.&lt;alias&gt;.auth_mode</code> フィールドを設定します。</p>
-<h4 id="zerocode-36"><a class="header" href="#zerocode-36">zerocode</a></h4>
+<h4 id="zerocode-37"><a class="header" href="#zerocode-37">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.qwen.&lt;alias&gt;.auth_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-36"><a class="header" href="#zeroclaw-config-36">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-37"><a class="header" href="#zeroclaw-config-37">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.auth_mode &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-36"><a class="header" href="#環境変数-36">環境変数</a></h4>
+<h4 id="環境変数-37"><a class="header" href="#環境変数-37">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__auth_mode=
 </code></pre>
@@ -8246,14 +8265,14 @@ api_key = "..."
 <p>Qwen エンドポイントのバリエーション。オペレーターはアカウントに一致するリージョンを選択します。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-37"><a class="header" href="#ゲートウェイダッシュボード-37">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-38"><a class="header" href="#ゲートウェイダッシュボード-38">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> を開いて、<code>providers.models.qwen.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-37"><a class="header" href="#zerocode-37">zerocode</a></h4>
+<h4 id="zerocode-38"><a class="header" href="#zerocode-38">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.qwen.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-37"><a class="header" href="#zeroclaw-config-37">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-38"><a class="header" href="#zeroclaw-config-38">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-37"><a class="header" href="#環境変数-37">環境変数</a></h4>
+<h4 id="環境変数-38"><a class="header" href="#環境変数-38">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8265,14 +8284,14 @@ api_key = "..."
 <p>Qwen の公開された OAuth client_id を上書きします。ほとんどのオペレーターはこれを未設定のままにしておくべきです。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-38"><a class="header" href="#ゲートウェイダッシュボード-38">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-39"><a class="header" href="#ゲートウェイダッシュボード-39">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> を開き、<code>providers.models.qwen.&lt;alias&gt;.oauth_client_id</code> フィールドを設定します。</p>
-<h4 id="zerocode-38"><a class="header" href="#zerocode-38">zerocode</a></h4>
+<h4 id="zerocode-39"><a class="header" href="#zerocode-39">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.qwen.&lt;alias&gt;.oauth_client_id</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-38"><a class="header" href="#zeroclaw-config-38">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-39"><a class="header" href="#zeroclaw-config-39">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_client_id &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-38"><a class="header" href="#環境変数-38">環境変数</a></h4>
+<h4 id="環境変数-39"><a class="header" href="#環境変数-39">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_client_id=
 </code></pre>
@@ -8284,14 +8303,14 @@ api_key = "..."
 <p>長期間有効な Qwen OAuth リフレッシュトークン。設定されている場合、ランタイムはプロバイダー構築時にこれを短命なアクセストークンと交換します。アップストリームの <code>qwen login</code> ツール（<code>~/.qwen/oauth_creds.json</code> に書き込みます）に依存しているオペレーターは、これを未設定のままにしてください。その場合、ファイルキャッシュ統合が処理を引き継ぎます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-39"><a class="header" href="#ゲートウェイダッシュボード-39">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-40"><a class="header" href="#ゲートウェイダッシュボード-40">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> を開き、<code>providers.models.qwen.&lt;alias&gt;.oauth_refresh_token</code> フィールドを設定します。</p>
-<h4 id="zerocode-39"><a class="header" href="#zerocode-39">zerocode</a></h4>
+<h4 id="zerocode-40"><a class="header" href="#zerocode-40">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.qwen.&lt;alias&gt;.oauth_refresh_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-39"><a class="header" href="#zeroclaw-config-39">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-40"><a class="header" href="#zeroclaw-config-40">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_refresh_token &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-39"><a class="header" href="#環境変数-39">環境変数</a></h4>
+<h4 id="環境変数-40"><a class="header" href="#環境変数-40">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_refresh_token=
 </code></pre>
@@ -8303,14 +8322,14 @@ api_key = "..."
 <p>更新後のアクセストークンと紐付けられるリソースURLをオペレーターが上書きします。未設定の場合、ランタイムは <code>endpoint</code> から導出されたURL（または <code>~/.qwen/oauth_creds.json</code> から読み込む場合はキャッシュされた <code>resource_url</code>）にフォールバックします。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-40"><a class="header" href="#ゲートウェイダッシュボード-40">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-41"><a class="header" href="#ゲートウェイダッシュボード-41">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/qwen"><code>/config/providers.models/qwen</code></a> を開き、<code>providers.models.qwen.&lt;alias&gt;.oauth_resource_url</code> フィールドを設定してください。</p>
-<h4 id="zerocode-40"><a class="header" href="#zerocode-40">zerocode</a></h4>
+<h4 id="zerocode-41"><a class="header" href="#zerocode-41">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.qwen.&lt;alias&gt;.oauth_resource_url</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-40"><a class="header" href="#zeroclaw-config-40">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-41"><a class="header" href="#zeroclaw-config-41">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.qwen.&lt;alias&gt;.oauth_resource_url &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-40"><a class="header" href="#環境変数-40">環境変数</a></h4>
+<h4 id="環境変数-41"><a class="header" href="#環境変数-41">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__qwen__&lt;alias&gt;__oauth_resource_url=
 </code></pre>
@@ -8349,14 +8368,14 @@ api_key = "..."
 <p><code>gemini</code> CLI バイナリへのパス。指定がない場合は <code>gemini</code>（PATH から検索）が使用されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-41"><a class="header" href="#ゲートウェイダッシュボード-41">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-42"><a class="header" href="#ゲートウェイダッシュボード-42">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/gemini_cli"><code>/config/providers.models/gemini_cli</code></a> を開き、<code>providers.models.gemini_cli.&lt;alias&gt;.binary_path</code> フィールドを設定してください。</p>
-<h4 id="zerocode-41"><a class="header" href="#zerocode-41">zerocode</a></h4>
+<h4 id="zerocode-42"><a class="header" href="#zerocode-42">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.gemini_cli.&lt;alias&gt;.binary_path</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-41"><a class="header" href="#zeroclaw-config-41">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-42"><a class="header" href="#zeroclaw-config-42">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.gemini_cli.&lt;alias&gt;.binary_path &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-41"><a class="header" href="#環境変数-41">環境変数</a></h4>
+<h4 id="環境変数-42"><a class="header" href="#環境変数-42">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__gemini_cli__&lt;alias&gt;__binary_path=
 </code></pre>
@@ -8375,14 +8394,14 @@ api_key = "..."
 <p><code>kilo</code> CLIバイナリへのパス。指定がない場合は<code>kilo</code>（PATH検索）にフォールバックします。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-42"><a class="header" href="#ゲートウェイダッシュボード-42">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-43"><a class="header" href="#ゲートウェイダッシュボード-43">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/kilocli"><code>/config/providers.models/kilocli</code></a> を開き、<code>providers.models.kilocli.&lt;alias&gt;.binary_path</code> フィールドを設定します。</p>
-<h4 id="zerocode-42"><a class="header" href="#zerocode-42">zerocode</a></h4>
+<h4 id="zerocode-43"><a class="header" href="#zerocode-43">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.kilocli.&lt;alias&gt;.binary_path</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-42"><a class="header" href="#zeroclaw-config-42">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-43"><a class="header" href="#zeroclaw-config-43">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.kilocli.&lt;alias&gt;.binary_path &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-42"><a class="header" href="#環境変数-42">環境変数</a></h4>
+<h4 id="環境変数-43"><a class="header" href="#環境変数-43">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__kilocli__&lt;alias&gt;__binary_path=
 </code></pre>
@@ -8401,14 +8420,14 @@ api_key = "..."
 <p>Kilo AI Gateway エンドポイント。kilo.ai の単一の正規エンドポイント。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-43"><a class="header" href="#ゲートウェイダッシュボード-43">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-44"><a class="header" href="#ゲートウェイダッシュボード-44">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/kilo"><code>/config/providers.models/kilo</code></a> を開き、<code>providers.models.kilo.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-43"><a class="header" href="#zerocode-43">zerocode</a></h4>
+<h4 id="zerocode-44"><a class="header" href="#zerocode-44">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.kilo.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-43"><a class="header" href="#zeroclaw-config-43">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-44"><a class="header" href="#zeroclaw-config-44">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.kilo.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-43"><a class="header" href="#環境変数-43">環境変数</a></h4>
+<h4 id="環境変数-44"><a class="header" href="#環境変数-44">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__kilo__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8504,14 +8523,14 @@ api_key = "..."
 <summary><code>endpoint</code> <span class="cfg-field-meta"><code>table</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-44"><a class="header" href="#ゲートウェイダッシュボード-44">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-45"><a class="header" href="#ゲートウェイダッシュボード-45">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/stepfun"><code>/config/providers.models/stepfun</code></a> を開き、<code>providers.models.stepfun.&lt;alias&gt;.endpoint</code> フィールドを設定してください。</p>
-<h4 id="zerocode-44"><a class="header" href="#zerocode-44">zerocode</a></h4>
+<h4 id="zerocode-45"><a class="header" href="#zerocode-45">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.stepfun.&lt;alias&gt;.endpoint</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-44"><a class="header" href="#zeroclaw-config-44">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-45"><a class="header" href="#zeroclaw-config-45">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.stepfun.&lt;alias&gt;.endpoint &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-44"><a class="header" href="#環境変数-44">環境変数</a></h4>
+<h4 id="環境変数-45"><a class="header" href="#環境変数-45">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__stepfun__&lt;alias&gt;__endpoint=
 </code></pre>
@@ -8784,14 +8803,14 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <p>この model_provider のシークレット API トークン。model_provider のダッシュボード（OpenAI platform、Anthropic console、OpenRouter keys ページなど）から取得します。可能な場合は OS キーリング経由で保存され、config.toml に直接コミットしないでください。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-45"><a class="header" href="#ゲートウェイダッシュボード-45">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-46"><a class="header" href="#ゲートウェイダッシュボード-46">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> を開き、<code>providers.models.custom.&lt;alias&gt;.api_key</code> フィールドを設定します。</p>
-<h4 id="zerocode-45"><a class="header" href="#zerocode-45">zerocode</a></h4>
+<h4 id="zerocode-46"><a class="header" href="#zerocode-46">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.custom.&lt;alias&gt;.api_key</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-45"><a class="header" href="#zeroclaw-config-45">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-46"><a class="header" href="#zeroclaw-config-46">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.api_key    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-45"><a class="header" href="#環境変数-45">環境変数</a></h4>
+<h4 id="環境変数-46"><a class="header" href="#環境変数-46">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__api_key=
 </code></pre>
@@ -9084,18 +9103,37 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 
 </details>
 <details class="cfg-field">
+<summary><code>tls_ca_cert_path</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
+<p>Path to a PEM-encoded CA certificate for TLS connections to this provider. Must be an absolute path; shell expansion (e.g. <code>~</code>) is not performed. Leave unset to use the system’s default trust store.</p>
+<p><strong>任意のサーフェスに設定する場合:</strong></p>
+<div class="os-tabs-src">
+<h4 id="ゲートウェイダッシュボード-16-2"><a class="header" href="#ゲートウェイダッシュボード-16-2">ゲートウェイダッシュボード</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
+<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
+</code></pre>
+<h4 id="環境変数-16-1"><a class="header" href="#環境変数-16-1">環境変数</a></h4>
+<p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
+<pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__tls_ca_cert_path=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>uri</code> <span class="cfg-field-meta"><code>string?</code> · default <code>—</code></span></summary>
 <p>クライアントが接続するエンドポイント URI。セルフホスト型のゲートウェイ（LiteLLM、vLLM、Ollama）、カスタムプロキシ、または非標準の URL を指定する場合に、ファミリーのデフォルトエンドポイントを上書きします。未設定のままにすると、ファミリーの <code>ModelEndpoint</code> 実装によるデフォルト URI が使用されます。これにはエンドポイントの完全な URL を設定してください。パスサフィックス用の個別フィールドはありません。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-16-2"><a class="header" href="#ゲートウェイダッシュボード-16-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-17-1"><a class="header" href="#ゲートウェイダッシュボード-17-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> を開き、<code>providers.models.custom.&lt;alias&gt;.uri</code> フィールドを設定します。</p>
-<h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
+<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.custom.&lt;alias&gt;.uri</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-16-1"><a class="header" href="#環境変数-16-1">環境変数</a></h4>
+<h4 id="環境変数-17-1"><a class="header" href="#環境変数-17-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__uri=
 </code></pre>
@@ -9106,14 +9144,14 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <summary><code>wire_api</code> <span class="cfg-field-meta"><code>WireApi</code> · default <code>—</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-17-1"><a class="header" href="#ゲートウェイダッシュボード-17-1">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-1"><a class="header" href="#ゲートウェイダッシュボード-18-1">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> を開き、<code>providers.models.custom.&lt;alias&gt;.wire_api</code> フィールドを設定してください。</p>
-<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
+<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>providers.models.custom.&lt;alias&gt;.wire_api</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.wire_api &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-17-1"><a class="header" href="#環境変数-17-1">環境変数</a></h4>
+<h4 id="環境変数-18-1"><a class="header" href="#環境変数-18-1">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__wire_api=
 </code></pre>
@@ -9343,9 +9381,9 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <h2 id="設定"><a class="header" href="#設定">設定</a></h2>
 <p>最新のチャネルインスタンスは <code>[channels.&lt;type&gt;.&lt;alias&gt;]</code> の下に設定され、一般的な最初のエイリアスとして <code>default</code> が使用されます。いずれの設定方法でも設定できます。</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-46"><a class="header" href="#ゲートウェイダッシュボード-46">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-47"><a class="header" href="#ゲートウェイダッシュボード-47">ゲートウェイダッシュボード</a></h4>
 <p>Webダッシュボードで <a href="http://127.0.0.1:42617/config/channels"><code>/config/channels</code></a> を開きます。</p>
-<h4 id="zerocode-46"><a class="header" href="#zerocode-46">zerocode</a></h4>
+<h4 id="zerocode-47"><a class="header" href="#zerocode-47">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Channels</strong> 配下にあります。</p>
 </div>
 
@@ -9404,9 +9442,9 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>matrix のピアグループは <code>channel</code> を <code>matrix</code> に設定し、許可する送信者を <code>external_peers</code> に列挙し（matrix の場合は完全な Matrix ユーザー ID <code>@user:server.tld</code>、<code>["*"]</code> は誰でも受け入れます）、必要に応じてクロスエージェントディスパッチ用にピア <code>agents</code> を指定し、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を設定します。フィールドのリファレンスは <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-47"><a class="header" href="#ゲートウェイダッシュボード-47">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-48"><a class="header" href="#ゲートウェイダッシュボード-48">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-47"><a class="header" href="#zerocode-47">zerocode</a></h4>
+<h4 id="zerocode-48"><a class="header" href="#zerocode-48">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -9443,10 +9481,10 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p><a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> を開き、<code>channels.matrix.&lt;alias&gt;.access_token</code> フィールドを設定します。</p>
 <h4 id="zerocode-1-5"><a class="header" href="#zerocode-1-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.matrix.&lt;alias&gt;.access_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-46"><a class="header" href="#zeroclaw-config-46">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-47"><a class="header" href="#zeroclaw-config-47">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.access_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-46"><a class="header" href="#環境変数-46">環境変数</a></h4>
+<h4 id="環境変数-47"><a class="header" href="#環境変数-47">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__access_token=
 </code></pre>
@@ -9762,9 +9800,9 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>オプションの Matrix ユーザー ID（例: <code>"@bot:matrix.org"</code>）。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-1"><a class="header" href="#ゲートウェイダッシュボード-18-1">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-2"><a class="header" href="#ゲートウェイダッシュボード-18-2">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> を開き、<code>channels.matrix.&lt;alias&gt;.user_id</code> フィールドを設定してください。</p>
-<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.matrix.&lt;alias&gt;.user_id</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.user_id &lt;value&gt;
@@ -9804,7 +9842,7 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p><a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> を開いて、そこで <code>channels.matrix.&lt;alias&gt;.password</code> フィールドを設定します。</p>
 <h4 id="zerocode-20-1"><a class="header" href="#zerocode-20-1">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.matrix.&lt;alias&gt;.password</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.password    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -10132,9 +10170,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>discord 用のピアグループでは、<code>channel</code> を <code>discord</code> に設定し、許可する送信者を <code>external_peers</code> に列挙します（discord の場合は Discord ユーザー ID（snowflake）。<code>["*"]</code> は誰でも受け入れます）。また、エージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を任意で指定できます。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-48"><a class="header" href="#ゲートウェイダッシュボード-48">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-49"><a class="header" href="#ゲートウェイダッシュボード-49">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-48"><a class="header" href="#zerocode-48">zerocode</a></h4>
+<h4 id="zerocode-49"><a class="header" href="#zerocode-49">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -10174,7 +10212,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開いて、そこで <code>channels.discord.&lt;alias&gt;.bot_token</code> フィールドを設定してください。</p>
 <h4 id="zerocode-2-6"><a class="header" href="#zerocode-2-6">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.bot_token</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-47"><a class="header" href="#zeroclaw-config-47">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-48"><a class="header" href="#zeroclaw-config-48">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.bot_token    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -10204,7 +10242,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <h4 id="zeroclaw-config-1-6"><a class="header" href="#zeroclaw-config-1-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.approval_timeout_secs &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-47"><a class="header" href="#環境変数-47">環境変数</a></h4>
+<h4 id="環境変数-48"><a class="header" href="#環境変数-48">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__approval_timeout_secs=
 </code></pre>
@@ -10482,9 +10520,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>ストールウォッチドッグのタイムアウト（秒）。0以外の場合、この時間内に進行がなければボットは中止して再試行します。0 = 無効。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-2"><a class="header" href="#ゲートウェイダッシュボード-18-2">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-3"><a class="header" href="#ゲートウェイダッシュボード-18-3">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> フィールドを設定します。</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
@@ -10546,7 +10584,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p><a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> を開き、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
 <h4 id="zerocode-20-2"><a class="header" href="#zerocode-20-2">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.discord.&lt;alias&gt;.stream_mode</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-2"><a class="header" href="#zeroclaw-config-18-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
 </div>
@@ -10584,9 +10622,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>slack のピアグループは <code>channel</code> を <code>slack</code> に設定し、許可する送信者を <code>external_peers</code> に列挙し（slack の場合は Slack のユーザー ID。<code>["*"]</code> は誰でも受け付けます）、エージェント間ディスパッチ用にピア <code>agents</code> をオプションで指定し、<code>ignore</code> のブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-49"><a class="header" href="#ゲートウェイダッシュボード-49">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-50"><a class="header" href="#ゲートウェイダッシュボード-50">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-49"><a class="header" href="#zerocode-49">zerocode</a></h4>
+<h4 id="zerocode-50"><a class="header" href="#zerocode-50">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -10633,7 +10671,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p><a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> を開いて、そこで <code>channels.slack.&lt;alias&gt;.bot_token</code> フィールドを設定してください。</p>
 <h4 id="zerocode-2-7"><a class="header" href="#zerocode-2-7">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.slack.&lt;alias&gt;.bot_token</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-48"><a class="header" href="#zeroclaw-config-48">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-49"><a class="header" href="#zeroclaw-config-49">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.bot_token    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -10656,7 +10694,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <h4 id="zeroclaw-config-1-7"><a class="header" href="#zeroclaw-config-1-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.app_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-48"><a class="header" href="#環境変数-48">環境変数</a></h4>
+<h4 id="環境変数-49"><a class="header" href="#環境変数-49">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__slack__&lt;alias&gt;__app_token=
 </code></pre>
@@ -10934,9 +10972,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # チ
 <p>より新しいSlackの<code>markdown</code>ブロックタイプ（12,000文字制限、よりリッチなフォーマット）を使用します。デフォルトはfalse（広くサポートされている<code>mrkdwn</code>付きの<code>section</code>ブロックを使用）。Slackワークスペースが<code>markdown</code>ブロックタイプをサポートしている場合のみ有効にしてください。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-3"><a class="header" href="#ゲートウェイダッシュボード-18-3">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-4"><a class="header" href="#ゲートウェイダッシュボード-18-4">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> を開いて <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> フィールドを設定してください。</p>
-<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
+<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.use_markdown_blocks &lt;value&gt;
@@ -10989,7 +11027,7 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 <p><a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> を開いて、<code>channels.slack.&lt;alias&gt;.stream_drafts</code> フィールドを設定してください。</p>
 <h4 id="zerocode-20-3"><a class="header" href="#zerocode-20-3">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.slack.&lt;alias&gt;.stream_drafts</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-3"><a class="header" href="#zeroclaw-config-18-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.stream_drafts &lt;value&gt;
 </code></pre>
 </div>
@@ -11024,9 +11062,9 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 <p>mattermost のピアグループでは、<code>channel</code> に <code>mattermost</code> を設定し、許可された送信者を <code>external_peers</code> に列挙します（mattermost の場合、Mattermost ユーザーの UUID（ユーザー名ではありません）。<code>["*"]</code> は誰でも受け入れます）。オプションで、エージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-50"><a class="header" href="#ゲートウェイダッシュボード-50">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-51"><a class="header" href="#ゲートウェイダッシュボード-51">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-50"><a class="header" href="#zerocode-50">zerocode</a></h4>
+<h4 id="zerocode-51"><a class="header" href="#zerocode-51">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -11050,7 +11088,7 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 <p><a href="http://127.0.0.1:42617/config/channels/mattermost"><code>/config/channels/mattermost</code></a> を開き、<code>channels.mattermost.&lt;alias&gt;.bot_token</code> フィールドを設定してください。</p>
 <h4 id="zerocode-1-8"><a class="header" href="#zerocode-1-8">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.mattermost.&lt;alias&gt;.bot_token</code> フィールドを設定します（入力はマスクされます）。</p>
-<h4 id="zeroclaw-config-49"><a class="header" href="#zeroclaw-config-49">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-50"><a class="header" href="#zeroclaw-config-50">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.mattermost.&lt;alias&gt;.bot_token    # マスク入力のプロンプトを表示し、暗号化して保存
 </code></pre>
 </div>
@@ -11069,7 +11107,7 @@ zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # チ�
 <h4 id="zeroclaw-config-1-8"><a class="header" href="#zeroclaw-config-1-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.mattermost.&lt;alias&gt;.bot_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-49"><a class="header" href="#環境変数-49">環境変数</a></h4>
+<h4 id="環境変数-50"><a class="header" href="#環境変数-50">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__mattermost__&lt;alias&gt;__bot_token=
 </code></pre>
@@ -11411,9 +11449,9 @@ zeroclaw config set channels.mattermost.&lt;alias&gt;.thread_replies false    # 
 <p>line のピアグループでは、<code>channel</code> を <code>line</code> に設定し、許可する送信者を <code>external_peers</code> に列挙します（line の場合は LINE ユーザー ID。<code>["*"]</code> は誰でも受け付けます）。必要に応じて、エージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定できます。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-51"><a class="header" href="#ゲートウェイダッシュボード-51">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-52"><a class="header" href="#ゲートウェイダッシュボード-52">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-51"><a class="header" href="#zerocode-51">zerocode</a></h4>
+<h4 id="zerocode-52"><a class="header" href="#zerocode-52">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -11449,10 +11487,10 @@ zeroclaw config set channels.mattermost.&lt;alias&gt;.thread_replies false    # 
 <p><a href="http://127.0.0.1:42617/config/channels/line"><code>/config/channels/line</code></a> を開き、<code>channels.line.&lt;alias&gt;.channel_access_token</code> フィールドを設定してください。</p>
 <h4 id="zerocode-1-9"><a class="header" href="#zerocode-1-9">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.line.&lt;alias&gt;.channel_access_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-50"><a class="header" href="#zeroclaw-config-50">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-51"><a class="header" href="#zeroclaw-config-51">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.line.&lt;alias&gt;.channel_access_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-50"><a class="header" href="#環境変数-50">環境変数</a></h4>
+<h4 id="環境変数-51"><a class="header" href="#環境変数-51">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__line__&lt;alias&gt;__channel_access_token=
 </code></pre>
@@ -11701,9 +11739,9 @@ export LINE_CHANNEL_SECRET="your-channel-secret"
 <p>nextcloud のピアグループでは、<code>channel</code> を <code>nextcloud</code> に設定し、許可する送信者を <code>external_peers</code> に列挙し（nextcloud の場合は Nextcloud のアクター ID。<code>["*"]</code> は誰でも受け入れます）、エージェント間ディスパッチ用にピアの <code>agents</code> を任意で指定し、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-52"><a class="header" href="#ゲートウェイダッシュボード-52">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-53"><a class="header" href="#ゲートウェイダッシュボード-53">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-52"><a class="header" href="#zerocode-52">zerocode</a></h4>
+<h4 id="zerocode-53"><a class="header" href="#zerocode-53">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -11732,10 +11770,10 @@ export LINE_CHANNEL_SECRET="your-channel-secret"
 <p><a href="http://127.0.0.1:42617/config/channels/nextcloud_talk"><code>/config/channels/nextcloud_talk</code></a> を開き、<code>channels.nextcloud_talk.&lt;alias&gt;.app_token</code> フィールドを設定します。</p>
 <h4 id="zerocode-1-10"><a class="header" href="#zerocode-1-10">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.nextcloud_talk.&lt;alias&gt;.app_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-51"><a class="header" href="#zeroclaw-config-51">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-52"><a class="header" href="#zeroclaw-config-52">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.nextcloud_talk.&lt;alias&gt;.app_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-51"><a class="header" href="#環境変数-51">環境変数</a></h4>
+<h4 id="環境変数-52"><a class="header" href="#環境変数-52">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__nextcloud_talk__&lt;alias&gt;__app_token=
 </code></pre>
@@ -11955,9 +11993,9 @@ if X-Nextcloud-Talk-Signature != expected_sig:
 <p>signal 用のピアグループは、<code>channel</code> に <code>signal</code> を設定し、許可された送信者を <code>external_peers</code> に列挙し（signal の場合、E.164 形式の電話番号または signal-cli ソース識別子。<code>["*"]</code> は誰でも受け付けます）、必要に応じてクロスエージェントディスパッチ用のピア <code>agents</code> を指定し、<code>ignore</code> ブロックリスト、および <code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-53"><a class="header" href="#ゲートウェイダッシュボード-53">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-54"><a class="header" href="#ゲートウェイダッシュボード-54">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-53"><a class="header" href="#zerocode-53">zerocode</a></h4>
+<h4 id="zerocode-54"><a class="header" href="#zerocode-54">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -11980,10 +12018,10 @@ if X-Nextcloud-Talk-Signature != expected_sig:
 <p><a href="http://127.0.0.1:42617/config/channels/signal"><code>/config/channels/signal</code></a> を開いて、<code>channels.signal.&lt;alias&gt;.account</code> フィールドを設定してください。</p>
 <h4 id="zerocode-1-11"><a class="header" href="#zerocode-1-11">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.signal.&lt;alias&gt;.account</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-52"><a class="header" href="#zeroclaw-config-52">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-53"><a class="header" href="#zeroclaw-config-53">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.signal.&lt;alias&gt;.account &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-52"><a class="header" href="#環境変数-52">環境変数</a></h4>
+<h4 id="環境変数-53"><a class="header" href="#環境変数-53">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__signal__&lt;alias&gt;__account=
 </code></pre>
@@ -12222,9 +12260,9 @@ zeroclaw channel start
 <p>whatsapp 用のピアグループでは、<code>channel</code> を <code>whatsapp</code> に設定し、許可する送信者を <code>external_peers</code> に列挙します（whatsapp の場合は電話番号識別子（Cloud API）または JID のユーザー部分（Web モード）。<code>["*"]</code> は誰でも受け入れます）。オプションで、エージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定できます。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-54"><a class="header" href="#ゲートウェイダッシュボード-54">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-55"><a class="header" href="#ゲートウェイダッシュボード-55">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-54"><a class="header" href="#zerocode-54">zerocode</a></h4>
+<h4 id="zerocode-55"><a class="header" href="#zerocode-55">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -12262,10 +12300,10 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> を開き、<code>channels.whatsapp.&lt;alias&gt;.access_token</code> フィールドを設定します。</p>
 <h4 id="zerocode-1-12"><a class="header" href="#zerocode-1-12">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.whatsapp.&lt;alias&gt;.access_token</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-53"><a class="header" href="#zeroclaw-config-53">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-54"><a class="header" href="#zeroclaw-config-54">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.access_token    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-53"><a class="header" href="#環境変数-53">環境変数</a></h4>
+<h4 id="環境変数-54"><a class="header" href="#環境変数-54">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__access_token=
 </code></pre>
@@ -12581,9 +12619,9 @@ zeroclaw channel start
 <p>true かつ mode = “personal” の場合、ユーザー自身のセルフチャット（Notes to Self）内のメッセージに常に応答します。デフォルトは false です。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-4"><a class="header" href="#ゲートウェイダッシュボード-18-4">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-5"><a class="header" href="#ゲートウェイダッシュボード-18-5">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> を開き、<code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> フィールドを設定します。</p>
-<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
+<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.self_chat_mode &lt;value&gt;
@@ -12604,10 +12642,10 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> を開いて、<code>channels.whatsapp.&lt;alias&gt;.session_path</code> フィールドを設定します。</p>
 <h4 id="zerocode-19-4"><a class="header" href="#zerocode-19-4">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>channels.whatsapp.&lt;alias&gt;.session_path</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-4"><a class="header" href="#zeroclaw-config-18-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.session_path &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-18-1"><a class="header" href="#環境変数-18-1">環境変数</a></h4>
+<h4 id="環境変数-18-2"><a class="header" href="#環境変数-18-2">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__session_path=
 </code></pre>
@@ -12700,9 +12738,9 @@ zeroclaw channel start
 <p>telegram のピアグループでは、<code>channel</code> を <code>telegram</code> に設定し、<code>external_peers</code> に許可する送信者を列挙し（telegram の場合、Telegram のユーザー ID または @username。<code>["*"]</code> は誰でも受け付けます）、必要に応じてクロスエージェントディスパッチ用のピア <code>agents</code> を指定し、<code>ignore</code> ブロックリストおよび <code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を設定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-55"><a class="header" href="#ゲートウェイダッシュボード-55">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-56"><a class="header" href="#ゲートウェイダッシュボード-56">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-55"><a class="header" href="#zerocode-55">zerocode</a></h4>
+<h4 id="zerocode-56"><a class="header" href="#zerocode-56">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -12757,9 +12795,9 @@ zeroclaw channel start
 <p>nostr のピアグループでは、<code>channel</code> に <code>nostr</code> を設定し、許可する送信者を <code>external_peers</code> に列挙します（nostr の場合は送信者の16進公開鍵。<code>["*"]</code> は誰でも受け付けます）。オプションで、エージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、<code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定できます。フィールドの詳細は <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-56"><a class="header" href="#ゲートウェイダッシュボード-56">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-57"><a class="header" href="#ゲートウェイダッシュボード-57">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-56"><a class="header" href="#zerocode-56">zerocode</a></h4>
+<h4 id="zerocode-57"><a class="header" href="#zerocode-57">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -12809,9 +12847,9 @@ zeroclaw channel start
 <p>メールのピアグループでは、<code>channel</code> を <code>email</code> に設定し、許可する送信者を <code>external_peers</code> に列挙し（メールの場合は送信者のメールアドレス。<code>["*"]</code> は誰でも受け入れます）、必要に応じてエージェント間ディスパッチ用のピア <code>agents</code>、<code>ignore</code> ブロックリスト、および <code>output_modality</code>（<code>mirror</code>、<code>voice</code>、または <code>text</code>）を指定します。フィールドのリファレンスについては <a href="#ピアグループ">Peer Groups</a> を参照してください。</p>
 <p>この設定の場所:</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-57"><a class="header" href="#ゲートウェイダッシュボード-57">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-58"><a class="header" href="#ゲートウェイダッシュボード-58">ゲートウェイダッシュボード</a></h4>
 <p>Web ダッシュボードで <a href="http://127.0.0.1:42617/config/peer_groups"><code>/config/peer_groups</code></a> を開きます。</p>
-<h4 id="zerocode-57"><a class="header" href="#zerocode-57">zerocode</a></h4>
+<h4 id="zerocode-58"><a class="header" href="#zerocode-58">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Peer groups</strong> の下。</p>
 </div>
 
@@ -12826,10 +12864,10 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて、<code>channels.email.&lt;alias&gt;.default_subject</code> フィールドを設定してください。</p>
 <h4 id="zerocode-1-14"><a class="header" href="#zerocode-1-14">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.default_subject</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-54"><a class="header" href="#zeroclaw-config-54">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-55"><a class="header" href="#zeroclaw-config-55">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.default_subject &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-54"><a class="header" href="#環境変数-54">環境変数</a></h4>
+<h4 id="環境変数-55"><a class="header" href="#環境変数-55">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__default_subject=
 </code></pre>
@@ -13132,9 +13170,9 @@ zeroclaw channel start
 <summary><code>smtp_username</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-5"><a class="header" href="#ゲートウェイダッシュボード-18-5">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-6"><a class="header" href="#ゲートウェイダッシュボード-18-6">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開いて、<code>channels.email.&lt;alias&gt;.smtp_username</code> フィールドを設定します。</p>
-<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
+<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.smtp_username</code> フィールドを設定します。</p>
 <h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_username &lt;value&gt;
@@ -13154,10 +13192,10 @@ zeroclaw channel start
 <p><a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> を開き、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
 <h4 id="zerocode-19-5"><a class="header" href="#zerocode-19-5">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.email.&lt;alias&gt;.username</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-5"><a class="header" href="#zeroclaw-config-18-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.username &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-18-2"><a class="header" href="#環境変数-18-2">環境変数</a></h4>
+<h4 id="環境変数-18-3"><a class="header" href="#環境変数-18-3">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__username=
 </code></pre>
@@ -13365,14 +13403,14 @@ zeroclaw channel start
 <summary><code>allowed_destinations</code> <span class="cfg-field-meta"><code>string[]</code> · default <code>[]</code></span></summary>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-58"><a class="header" href="#ゲートウェイダッシュボード-58">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-59"><a class="header" href="#ゲートウェイダッシュボード-59">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/clawdtalk"><code>/config/channels/clawdtalk</code></a> を開いて、<code>channels.clawdtalk.&lt;alias&gt;.allowed_destinations</code> フィールドを設定してください。</p>
-<h4 id="zerocode-58"><a class="header" href="#zerocode-58">zerocode</a></h4>
+<h4 id="zerocode-59"><a class="header" href="#zerocode-59">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.clawdtalk.&lt;alias&gt;.allowed_destinations</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-55"><a class="header" href="#zeroclaw-config-55">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-56"><a class="header" href="#zeroclaw-config-56">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.clawdtalk.&lt;alias&gt;.allowed_destinations &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-55"><a class="header" href="#環境変数-55">環境変数</a></h4>
+<h4 id="環境変数-56"><a class="header" href="#環境変数-56">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__clawdtalk__&lt;alias&gt;__allowed_destinations=
 </code></pre>
@@ -13705,11 +13743,11 @@ zeroclaw channel start
 <p>音声アクティビティ検出のRMSエネルギーしきい値。このレベルを下回るサンプルは無音として扱われます。デフォルト: <code>0.01</code>。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-18-6"><a class="header" href="#ゲートウェイダッシュボード-18-6">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-18-7"><a class="header" href="#ゲートウェイダッシュボード-18-7">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> を開き、<code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> フィールドを設定します。</p>
-<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
+<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-18-6"><a class="header" href="#zeroclaw-config-18-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-18-7"><a class="header" href="#zeroclaw-config-18-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
 <h4 id="環境変数-17-5"><a class="header" href="#環境変数-17-5">環境変数</a></h4>
@@ -13731,7 +13769,7 @@ zeroclaw channel start
 <h4 id="zeroclaw-config-19-4"><a class="header" href="#zeroclaw-config-19-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.excluded_tools &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-18-3"><a class="header" href="#環境変数-18-3">環境変数</a></h4>
+<h4 id="環境変数-18-4"><a class="header" href="#環境変数-18-4">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_wake__&lt;alias&gt;__excluded_tools=
 </code></pre>
@@ -13843,14 +13881,14 @@ zeroclaw channel start
 <p>送信リクエスト用のオプションの <code>Authorization</code> ヘッダー値。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-59"><a class="header" href="#ゲートウェイダッシュボード-59">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-60"><a class="header" href="#ゲートウェイダッシュボード-60">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/channels/webhook"><code>/config/channels/webhook</code></a> を開き、<code>channels.webhook.&lt;alias&gt;.auth_header</code> フィールドを設定してください。</p>
-<h4 id="zerocode-59"><a class="header" href="#zerocode-59">zerocode</a></h4>
+<h4 id="zerocode-60"><a class="header" href="#zerocode-60">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>channels.webhook.&lt;alias&gt;.auth_header</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-56"><a class="header" href="#zeroclaw-config-56">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-57"><a class="header" href="#zeroclaw-config-57">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.webhook.&lt;alias&gt;.auth_header    # マスクされた入力、暗号化して保存
 </code></pre>
-<h4 id="環境変数-56"><a class="header" href="#環境変数-56">環境変数</a></h4>
+<h4 id="環境変数-57"><a class="header" href="#環境変数-57">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__webhook__&lt;alias&gt;__auth_header=
 </code></pre>
@@ -14353,14 +14391,14 @@ Content-Type: application/json
 <p><code>session/new</code> で <code>agentAlias</code> が省略され、複数のエージェントが設定されている場合に使用するエージェントエイリアス。エージェントがちょうど1つだけ存在する場合は、このフィールドに関係なく自動的に選択されます。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-60"><a class="header" href="#ゲートウェイダッシュボード-60">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-61"><a class="header" href="#ゲートウェイダッシュボード-61">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/acp"><code>/config/acp</code></a> を開いて <code>acp.default_agent</code> フィールドを設定します。</p>
-<h4 id="zerocode-60"><a class="header" href="#zerocode-60">zerocode</a></h4>
+<h4 id="zerocode-61"><a class="header" href="#zerocode-61">zerocode</a></h4>
 <p><strong>Config</strong> ペインで、<code>acp.default_agent</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-57"><a class="header" href="#zeroclaw-config-57">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-58"><a class="header" href="#zeroclaw-config-58">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set acp.default_agent &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-57"><a class="header" href="#環境変数-57">環境変数</a></h4>
+<h4 id="環境変数-58"><a class="header" href="#環境変数-58">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_acp__default_agent=
 </code></pre>
@@ -14615,14 +14653,14 @@ pub trait Tool: Send + Sync + Attributable {
 <p>stdio トランスポートのコマンド引数。</p>
 <p><strong>任意のサーフェスに設定する場合:</strong></p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-61"><a class="header" href="#ゲートウェイダッシュボード-61">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-62"><a class="header" href="#ゲートウェイダッシュボード-62">ゲートウェイダッシュボード</a></h4>
 <p><a href="http://127.0.0.1:42617/config/mcp.servers"><code>/config/mcp.servers</code></a> を開いて、<code>mcp.servers.args</code> フィールドを設定してください。</p>
-<h4 id="zerocode-61"><a class="header" href="#zerocode-61">zerocode</a></h4>
+<h4 id="zerocode-62"><a class="header" href="#zerocode-62">zerocode</a></h4>
 <p><strong>Config</strong> ペインで <code>mcp.servers.args</code> フィールドを設定します。</p>
-<h4 id="zeroclaw-config-58"><a class="header" href="#zeroclaw-config-58">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-59"><a class="header" href="#zeroclaw-config-59">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set mcp.servers.args &lt;value&gt;
 </code></pre>
-<h4 id="環境変数-58"><a class="header" href="#環境変数-58">環境変数</a></h4>
+<h4 id="環境変数-59"><a class="header" href="#環境変数-59">環境変数</a></h4>
 <p>オーバーライドをエクスポートします（POSIXシェル用。<code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code>、またはDockerfileに記述します）。<code>&lt;alias&gt;</code>を実際のエイリアスに置き換えてください。</p>
 <pre><code class="language-sh">export ZEROCLAW_mcp__servers__args=
 </code></pre>
@@ -14887,9 +14925,9 @@ zeroclaw config set browser.enabled false
 </div>
 
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-62"><a class="header" href="#ゲートウェイダッシュボード-62">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-63"><a class="header" href="#ゲートウェイダッシュボード-63">ゲートウェイダッシュボード</a></h4>
 <p>Webダッシュボードで <a href="http://127.0.0.1:42617/config/browser"><code>/config/browser</code></a> を開きます。</p>
-<h4 id="zerocode-62"><a class="header" href="#zerocode-62">zerocode</a></h4>
+<h4 id="zerocode-63"><a class="header" href="#zerocode-63">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Browser</strong> の下にあります。</p>
 </div>
 
@@ -23359,9 +23397,9 @@ use crate::support::helpers::{build_agent, text_response, tool_response};
 <h2 id="2-つ目のエージェントを追加"><a class="header" href="#2-つ目のエージェントを追加">2 つ目のエージェントを追加</a></h2>
 <p>ゲートウェイダッシュボード、zerocode、または <code>zeroclaw config set</code> を使って別のエージェントを追加します。ランタイムは、エージェントループへの初回エントリ時に <code>&lt;install&gt;/agents/&lt;alias&gt;/workspace/</code> を作成します。起動のたびに、エージェントループは存在するワークスペースのアイデンティティファイルをシステムプロンプトに注入します。順に <code>AGENTS.md</code>、<code>SOUL.md</code>、<code>TOOLS.md</code>、<code>IDENTITY.md</code>、<code>USER.md</code>、続いて <code>BOOTSTRAP.md</code>（初回起動時のみ）と <code>MEMORY.md</code>（メインセッションのみ）です。<code>HEARTBEAT.md</code> もワークスペースのパーソナリティファイルですが、これはハートビートエンジンによって読み込まれ、プロンプトには注入されません。ダッシュボードのパーソナリティエディタでは、<code>SOUL.md</code>、<code>IDENTITY.md</code>、<code>USER.md</code>、<code>AGENTS.md</code>、<code>TOOLS.md</code>、<code>HEARTBEAT.md</code>、<code>MEMORY.md</code> を編集できます。これらのファイルを作成・編集して、エージェントにペルソナを与えてください。（<code>BOOTSTRAP.md</code> は初回起動時のスキャフォールドで、エージェントが一度読み込んで削除します。エディタには表示されません。）</p>
 <div class="os-tabs-src">
-<h4 id="ゲートウェイダッシュボード-63"><a class="header" href="#ゲートウェイダッシュボード-63">ゲートウェイダッシュボード</a></h4>
+<h4 id="ゲートウェイダッシュボード-64"><a class="header" href="#ゲートウェイダッシュボード-64">ゲートウェイダッシュボード</a></h4>
 <p>Webダッシュボードで <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> を開きます。</p>
-<h4 id="zerocode-63"><a class="header" href="#zerocode-63">zerocode</a></h4>
+<h4 id="zerocode-64"><a class="header" href="#zerocode-64">zerocode</a></h4>
 <p><strong>Config</strong> ペインの <strong>Agents</strong> の下。</p>
 </div>
 
