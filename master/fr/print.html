@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-417c7863.js";
+            window.path_to_searchindex_js = "searchindex-aa4f0662.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-902aed4a.js"></script>
@@ -664,7 +664,7 @@ keep_tool_context_turns  = 1
 </ul>
 <p>With Ollama, this is a no-text-fallback profile: authorized tools remain configured in <code>risk_profile</code>, but text-form tool markup from the model is not executed. Use it for chat-first local agents, or for providers that return native/structured tool calls. If a local model must use ZeroClaw’s text fallback tool syntax, set <code>strict_tool_parsing = false</code> and keep the other small-model limits.</p>
 <h2 id="hiérarchisation-des-coûts--modèle-puissant-si-nécessaire-modèle-rapide-sinon"><a class="header" href="#hiérarchisation-des-coûts--modèle-puissant-si-nécessaire-modèle-rapide-sinon">Hiérarchisation des coûts : modèle puissant si nécessaire, modèle rapide sinon</a></h2>
-<p>Exécutez deux agents et acheminez les canaux vers le niveau approprié. L’outil <code>delegate</code> permet à un agent de passer le relais à un autre en cours de conversation. La <a href="#délégation-et-sous-agents">délégation</a> est conditionnée : le profil de risque de l’appelant doit définir <code>delegation_policy mode = "allow"</code>, et <strong>les deux agents doivent partager le même profil de risque</strong> (la délégation ne franchit pas les niveaux de confiance). Ainsi, les agents de première ligne et de traitement lourd ci-dessous s’exécutent sur le <em>même</em> profil de risque <code>trusted</code> ; ils diffèrent par le modèle et le profil d’exécution (budget d’itérations), et non par la surface de confiance.</p>
+<p>Run two agents and route channels to the appropriate tier. The <code>delegate</code> tool lets one agent hand off to another mid-conversation. <a href="#délégation-et-sous-agents">Delegation</a> is gated: the caller’s risk profile must set <code>delegation_policy mode = "allow"</code>, and the target must be reachable from the caller (a same-profile peer, or an explicit entry in the caller’s <code>delegates</code> list). The frontline and heavy agents below run on the <em>same</em> <code>trusted</code> risk profile, so they reach each other as same-profile peers; they differ in model and runtime profile (iteration budget), not in trust surface.</p>
 <p>L’agent de première ligne traite chaque message entrant sur Haiku. Lorsqu’il a besoin d’un raisonnement plus approfondi, il appelle l’outil <code>delegate</code> avec <code>agent = "heavy"</code> ; comme les deux agents partagent le profil de risque <code>trusted</code> et que ce profil autorise la délégation, l’agent plus lourd prend en charge la sous-tâche sur Opus.</p>
 <h2 id="gestion-des-erreurs"><a class="header" href="#gestion-des-erreurs">Gestion des erreurs</a></h2>
 <p>Les nouvelles tentatives au sein d’un même fournisseur se déclenchent sur :</p>
@@ -6620,7 +6620,7 @@ web/dist directory.
 <h2 id="multi-agent-dès-le-départ"><a class="header" href="#multi-agent-dès-le-départ">Multi-agent dès le départ</a></h2>
 <p>Il n’existe pas d’agent privilégié, « l’agent ». Le runtime maintient une map d’agents indexée par alias ; une installation mono-agent n’est qu’une map de taille un. Vous ne commencez pas avec un bot pour en greffer d’autres plus tard, vous ajoutez des agents et câblez chacun d’eux, et ils coexistent dès la première ligne de configuration.</p>
 <p>Parce que chaque agent joint ses propres références et son propre système de fichiers, les agents peuvent partager certains axes et diverger sur d’autres de manière indépendante. Deux agents peuvent partager un même fournisseur de modèle mais s’exécuter sous des profils de risque différents, répondre sur des canaux différents et conserver une mémoire entièrement séparée.</p>
-<p>Les agents communiquent entre eux de deux manières, chacune contrôlée séparément : ils peuvent <strong>envoyer des messages</strong> sur un canal où ils partagent un <a href="#groupes-de-pairs">groupe de pairs</a>, et ils peuvent <strong><a href="#délégation-et-sous-agents">déléguer</a></strong> une tâche l’un à l’autre uniquement lorsque le profil de risque de l’appelant autorise la délégation et que les deux agents partagent le même profil de risque (voir <a href="#coexistence-and-isolation">Exécution des agents</a>).</p>
+<p>Agents reach each other two ways, each gated separately: they can <strong>message</strong> on a channel where they share a <a href="#groupes-de-pairs">peer group</a>, and they can <strong><a href="#délégation-et-sous-agents">delegate</a></strong> a task to one another only when the caller’s risk profile permits delegation and the target is in the caller’s reachable set (a same-profile peer, or an explicit cross-profile entry in the caller’s <code>delegates</code> list; see <a href="#coexistence-and-isolation">Running agents</a>).</p>
 <pre><code class="language-text">                    agents.researcher          agents.support
                     ─────────────────          ──────────────
   model provider     openrouter.prod ◀───────── openrouter.prod   (same one)
@@ -6699,18 +6699,56 @@ web/dist directory.
 
 </details>
 <details class="cfg-field">
+<summary><code>delegate_same_risk_profile</code> <span class="cfg-field-meta"><code>bool</code> · default <code>true</code></span></summary>
+<p>Auto-allow delegation to every agent sharing this agent’s risk profile. Default <code>true</code> preserves the historical reach where any same-profile peer is a delegation target. Set <code>false</code> to opt this agent out so only the explicit <code>delegates</code> list is reachable. Gating (whether delegation is permitted at all) still lives on the risk profile’s <code>delegation_policy.mode</code>; this only narrows reach.</p>
+<p><strong>Posez-le sur n’importe quelle surface :</strong></p>
+<div class="os-tabs-src">
+<h4 id="tableau-de-bord-de-la-passerelle-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-3">Tableau de bord de la passerelle</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> and set the <code>agents.&lt;alias&gt;.delegate_same_risk_profile</code> field.</p>
+<h4 id="zerocode-3-1"><a class="header" href="#zerocode-3-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>agents.&lt;alias&gt;.delegate_same_risk_profile</code> field.</p>
+<h4 id="zeroclaw-config-3"><a class="header" href="#zeroclaw-config-3">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.delegate_same_risk_profile &lt;value&gt;
+</code></pre>
+<h4 id="variable-denvironnement-3"><a class="header" href="#variable-denvironnement-3">Variable d’environnement</a></h4>
+<p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
+<pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__delegate_same_risk_profile=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
+<summary><code>delegates</code> <span class="cfg-field-meta"><code>string[]</code> · default <code>[]</code></span></summary>
+<p>Explicit delegate roster: additional agent aliases this agent may delegate to, beyond same-profile peers. Possibly empty. Entries may name agents on a different risk profile; such cross-profile targets run under the target’s own resolved policy and tool registry. <code>Config::validate()</code> fails loud on a dangling alias or a self-reference.</p>
+<p><strong>Posez-le sur n’importe quelle surface :</strong></p>
+<div class="os-tabs-src">
+<h4 id="tableau-de-bord-de-la-passerelle-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-4">Tableau de bord de la passerelle</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> and set the <code>agents.&lt;alias&gt;.delegates</code> field.</p>
+<h4 id="zerocode-4-1"><a class="header" href="#zerocode-4-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>agents.&lt;alias&gt;.delegates</code> field.</p>
+<h4 id="zeroclaw-config-4"><a class="header" href="#zeroclaw-config-4">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.delegates &lt;value&gt;
+</code></pre>
+<h4 id="variable-denvironnement-4"><a class="header" href="#variable-denvironnement-4">Variable d’environnement</a></h4>
+<p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
+<pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__delegates=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>identity</code> <span class="cfg-field-meta"><code>IdentityConfig</code> · default <code>{"aieos_inline":null,"aieos_path":null,"format":"openclaw"}</code></span></summary>
 <p>Format d’identité par agent (<code>[agents.&lt;alias&gt;.identity]</code>). Chaque agent génère son propre IDENTITY.md / SOUL.md dans son espace de travail individuel ; ce bloc sélectionne le format (OpenClaw ou AIEOS) ainsi que la source optionnelle, en ligne ou par fichier, du document d’identité de l’agent.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-3">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-5">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.identity</code>.</p>
-<h4 id="zerocode-3-1"><a class="header" href="#zerocode-3-1">zerocode</a></h4>
+<h4 id="zerocode-5"><a class="header" href="#zerocode-5">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.identity</code>.</p>
-<h4 id="zeroclaw-config-3"><a class="header" href="#zeroclaw-config-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-5"><a class="header" href="#zeroclaw-config-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.identity &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-3"><a class="header" href="#variable-denvironnement-3">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-5"><a class="header" href="#variable-denvironnement-5">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__identity=
 </code></pre>
@@ -6722,14 +6760,14 @@ web/dist directory.
 <p>Alias des bundles de connaissances. Additif : l’agent charge chaque bundle listé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-6">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.knowledge_bundles</code>.</p>
-<h4 id="zerocode-4-1"><a class="header" href="#zerocode-4-1">zerocode</a></h4>
+<h4 id="zerocode-6"><a class="header" href="#zerocode-6">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.knowledge_bundles</code>.</p>
-<h4 id="zeroclaw-config-4"><a class="header" href="#zeroclaw-config-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-6"><a class="header" href="#zeroclaw-config-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.knowledge_bundles &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-4"><a class="header" href="#variable-denvironnement-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-6"><a class="header" href="#variable-denvironnement-6">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__knowledge_bundles=
 </code></pre>
@@ -6741,14 +6779,14 @@ web/dist directory.
 <p>Alias de bundles MCP. Chaque entrée référence <code>mcp_bundles[key]</code>, lui-même un groupe nommé de serveurs MCP ; les agents choisissent quels bundles charger.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-5">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-7">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.mcp_bundles</code>.</p>
-<h4 id="zerocode-5"><a class="header" href="#zerocode-5">zerocode</a></h4>
+<h4 id="zerocode-7"><a class="header" href="#zerocode-7">zerocode</a></h4>
 <p>Dans le panneau <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.mcp_bundles</code>.</p>
-<h4 id="zeroclaw-config-5"><a class="header" href="#zeroclaw-config-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-7"><a class="header" href="#zeroclaw-config-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.mcp_bundles &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-5"><a class="header" href="#variable-denvironnement-5">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-7"><a class="header" href="#variable-denvironnement-7">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__mcp_bundles=
 </code></pre>
@@ -6760,14 +6798,14 @@ web/dist directory.
 <p>Sélection du backend de mémoire par agent (<code>[agents.&lt;alias&gt;.memory]</code>). Le champ <code>backend</code> est verrouillé à la création de l’agent et immuable lors des chargements suivants. La valeur par défaut est <code>Sqlite</code>. Voir <code>crate::multi_agent::AgentMemoryConfig</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-6">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-8"><a class="header" href="#tableau-de-bord-de-la-passerelle-8">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.memory</code>.</p>
-<h4 id="zerocode-6"><a class="header" href="#zerocode-6">zerocode</a></h4>
+<h4 id="zerocode-8"><a class="header" href="#zerocode-8">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.memory</code>.</p>
-<h4 id="zeroclaw-config-6"><a class="header" href="#zeroclaw-config-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-8"><a class="header" href="#zeroclaw-config-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.memory &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-6"><a class="header" href="#variable-denvironnement-6">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-8"><a class="header" href="#variable-denvironnement-8">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__memory=
 </code></pre>
@@ -6779,14 +6817,14 @@ web/dist directory.
 <p>Alias de fournisseur de modèle en notation pointée (p. ex. <code>"anthropic.&lt;alias&gt;"</code>). Résolu via <code>model_providers.&lt;type&gt;.&lt;alias&gt;</code> à l’exécution ; <code>Config::validate()</code> échoue de manière explicite en cas de références pendantes.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-7">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-9"><a class="header" href="#tableau-de-bord-de-la-passerelle-9">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.model_provider</code>.</p>
-<h4 id="zerocode-7"><a class="header" href="#zerocode-7">zerocode</a></h4>
+<h4 id="zerocode-9"><a class="header" href="#zerocode-9">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.model_provider</code>.</p>
-<h4 id="zeroclaw-config-7"><a class="header" href="#zeroclaw-config-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-9"><a class="header" href="#zeroclaw-config-9">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.model_provider &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-7"><a class="header" href="#variable-denvironnement-7">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-9"><a class="header" href="#variable-denvironnement-9">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__model_provider=
 </code></pre>
@@ -6798,14 +6836,14 @@ web/dist directory.
 <p>Alias de profil de risque (p. ex. <code>"default"</code>). Résout les garde-fous de délégation à l’exécution.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-8"><a class="header" href="#tableau-de-bord-de-la-passerelle-8">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-10"><a class="header" href="#tableau-de-bord-de-la-passerelle-10">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.risk_profile</code>.</p>
-<h4 id="zerocode-8"><a class="header" href="#zerocode-8">zerocode</a></h4>
+<h4 id="zerocode-10"><a class="header" href="#zerocode-10">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.risk_profile</code>.</p>
-<h4 id="zeroclaw-config-8"><a class="header" href="#zeroclaw-config-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-10"><a class="header" href="#zeroclaw-config-10">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.risk_profile &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-8"><a class="header" href="#variable-denvironnement-8">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-10"><a class="header" href="#variable-denvironnement-10">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__risk_profile=
 </code></pre>
@@ -6817,14 +6855,14 @@ web/dist directory.
 <p>Alias de profil d’exécution (par ex. <code>"default"</code>). Résout les paramètres d’agentique et d’itération.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-9"><a class="header" href="#tableau-de-bord-de-la-passerelle-9">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-11"><a class="header" href="#tableau-de-bord-de-la-passerelle-11">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.runtime_profile</code>.</p>
-<h4 id="zerocode-9"><a class="header" href="#zerocode-9">zerocode</a></h4>
+<h4 id="zerocode-11"><a class="header" href="#zerocode-11">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.runtime_profile</code>.</p>
-<h4 id="zeroclaw-config-9"><a class="header" href="#zeroclaw-config-9">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-11"><a class="header" href="#zeroclaw-config-11">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.runtime_profile &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-9"><a class="header" href="#variable-denvironnement-9">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-11"><a class="header" href="#variable-denvironnement-11">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__runtime_profile=
 </code></pre>
@@ -6836,14 +6874,14 @@ web/dist directory.
 <p>Alias des lots de compétences. Chaque entrée est résolue en <code>skill_bundles[key].directory</code> à l’exécution ; l’agent charge chaque lot répertorié.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-10"><a class="header" href="#tableau-de-bord-de-la-passerelle-10">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-12"><a class="header" href="#tableau-de-bord-de-la-passerelle-12">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.skill_bundles</code>.</p>
-<h4 id="zerocode-10"><a class="header" href="#zerocode-10">zerocode</a></h4>
+<h4 id="zerocode-12"><a class="header" href="#zerocode-12">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.skill_bundles</code>.</p>
-<h4 id="zeroclaw-config-10"><a class="header" href="#zeroclaw-config-10">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12"><a class="header" href="#zeroclaw-config-12">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.skill_bundles &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-10"><a class="header" href="#variable-denvironnement-10">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-12"><a class="header" href="#variable-denvironnement-12">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__skill_bundles=
 </code></pre>
@@ -6855,14 +6893,14 @@ web/dist directory.
 <p>Fournisseur de transcription / STT sous forme de référence d’alias en notation pointée (<code>&lt;type&gt;.&lt;alias&gt;</code>, p. ex. <code>"groq.&lt;alias&gt;"</code>). Résolu via <code>transcription_providers.&lt;type&gt;.&lt;alias&gt;</code>. Vide = l’agent n’a pas de préférence de transcription ; les canaux qui ingèrent de la voix ont tout de même besoin d’un fournisseur résolu (il n’existe pas de valeur par défaut globale), donc un flux vocal entrant vers un agent avec un <code>transcription_provider</code> vide échoue bruyamment à la frontière du canal.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-11"><a class="header" href="#tableau-de-bord-de-la-passerelle-11">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-13"><a class="header" href="#tableau-de-bord-de-la-passerelle-13">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.transcription_provider</code>.</p>
-<h4 id="zerocode-11"><a class="header" href="#zerocode-11">zerocode</a></h4>
+<h4 id="zerocode-13"><a class="header" href="#zerocode-13">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.transcription_provider</code>.</p>
-<h4 id="zeroclaw-config-11"><a class="header" href="#zeroclaw-config-11">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13"><a class="header" href="#zeroclaw-config-13">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.transcription_provider &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-11"><a class="header" href="#variable-denvironnement-11">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-13"><a class="header" href="#variable-denvironnement-13">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__transcription_provider=
 </code></pre>
@@ -6874,14 +6912,14 @@ web/dist directory.
 <p>Fournisseur TTS sous forme de référence d’alias en notation pointée (<code>&lt;type&gt;.&lt;alias&gt;</code>, p. ex. <code>"openai.&lt;alias&gt;"</code>). Résolu via <code>tts_providers.&lt;type&gt;.&lt;alias&gt;</code>. Vide = pas de TTS pour cet agent (il n’existe pas de concept de fournisseur global par défaut ; chaque agent qui souhaite utiliser le TTS définit son propre <code>tts_provider</code>).</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-12"><a class="header" href="#tableau-de-bord-de-la-passerelle-12">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-14"><a class="header" href="#tableau-de-bord-de-la-passerelle-14">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.tts_provider</code>.</p>
-<h4 id="zerocode-12"><a class="header" href="#zerocode-12">zerocode</a></h4>
+<h4 id="zerocode-14"><a class="header" href="#zerocode-14">zerocode</a></h4>
 <p>Dans le panneau <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.tts_provider</code>.</p>
-<h4 id="zeroclaw-config-12"><a class="header" href="#zeroclaw-config-12">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14"><a class="header" href="#zeroclaw-config-14">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.tts_provider &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-12"><a class="header" href="#variable-denvironnement-12">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-14"><a class="header" href="#variable-denvironnement-14">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__tts_provider=
 </code></pre>
@@ -6893,14 +6931,14 @@ web/dist directory.
 <p>Bloc de workspace par agent (<code>[agents.&lt;alias&gt;.workspace]</code>). Contient le chemin du système de fichiers de l’agent, la liste d’autorisation d’accès inter-agents, le booléen d’échappement du système de fichiers et la liste d’autorisation de mémoire inter-agents. Par défaut, l’agent est entièrement confiné (aucun accès inter-agents). Voir <code>crate::multi_agent::AgentWorkspaceConfig</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-13"><a class="header" href="#tableau-de-bord-de-la-passerelle-13">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-15"><a class="header" href="#tableau-de-bord-de-la-passerelle-15">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.workspace</code>.</p>
-<h4 id="zerocode-13"><a class="header" href="#zerocode-13">zerocode</a></h4>
+<h4 id="zerocode-15"><a class="header" href="#zerocode-15">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.workspace</code>.</p>
-<h4 id="zeroclaw-config-13"><a class="header" href="#zeroclaw-config-13">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15"><a class="header" href="#zeroclaw-config-15">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.workspace &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-13"><a class="header" href="#variable-denvironnement-13">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-15"><a class="header" href="#variable-denvironnement-15">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__workspace=
 </code></pre>
@@ -6958,14 +6996,14 @@ web/dist directory.
 <p>Liste d’autorisation du système de fichiers inter-agents (déclaration entrante). La clé est l’alias de l’agent frère cible ; la valeur est le mode accordé. Map vide = cloisonné (espace de travail propre uniquement).</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-14"><a class="header" href="#tableau-de-bord-de-la-passerelle-14">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-16"><a class="header" href="#tableau-de-bord-de-la-passerelle-16">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> et définissez le champ <code>agents.&lt;alias&gt;.workspace.access</code>.</p>
-<h4 id="zerocode-14"><a class="header" href="#zerocode-14">zerocode</a></h4>
+<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>agents.&lt;alias&gt;.workspace.access</code>.</p>
-<h4 id="zeroclaw-config-14"><a class="header" href="#zeroclaw-config-14">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.workspace.access &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-14"><a class="header" href="#variable-denvironnement-14">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16"><a class="header" href="#variable-denvironnement-16">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__workspace__access=
 </code></pre>
@@ -7264,12 +7302,22 @@ web/dist directory.
 <p>Ceci est modifiable dans le tableau de bord de la passerelle et zerocode dans <strong>Config → Risk profiles → <code>&lt;profile&gt;</code> → <code>delegation_policy.mode</code></strong> (un sélecteur forbidden/allow).</p>
 </li>
 <li>
-<p><strong>Profil de risque partagé</strong> : l’agent cible doit utiliser le <strong>même</strong> profil de risque que l’appelant. La délégation ne traverse pas les niveaux de confiance : un agent en <code>hardened</code> ne peut pas déléguer à un agent en <code>permissive</code>. Lorsqu’ils diffèrent, le refus est :</p>
-<pre><code class="language-text">la cible de délégation « &lt;target&gt; » utilise le profil de risque « &lt;target_profile&gt; », mais la délégation requiert le même profil de risque que l'appelant (« &lt;caller_profile&gt; »)
+<p><strong>Reachability</strong>: the target agent must be in the caller’s reachable set, resolved by <code>Config::reachable_delegate_targets</code>. The reachable set is the union of two per-agent sources on <code>[agents.&lt;caller&gt;]</code>, minus the caller itself:</p>
+<ul>
+<li><strong>same-profile peers</strong>: every other agent sharing the caller’s risk profile, included while <code>delegate_same_risk_profile = true</code> (the default). Set it <code>false</code> to opt the caller out of auto-allowing peers.</li>
+<li><strong>explicit roster</strong>: <code>delegates</code>, a possibly-empty list of agent aliases the caller may delegate to even across risk profiles.
+When the target is outside that set the refusal is:</li>
+</ul>
+<pre><code class="language-text">delegate target "&lt;target&gt;" is not reachable from "&lt;caller&gt;"; add it to [agents.&lt;caller&gt;].delegates or share a risk profile with delegate_same_risk_profile enabled
+</code></pre>
+<p>A same-profile target inherits the caller’s session workspace boundary and shares its action/cost tracker. An explicit <strong>cross-profile</strong> target runs under its own resolved policy and must pass <code>ensure_no_escalation_beyond</code> the caller: a listed delegate that would widen privilege (broader autonomy, extra roots, higher budgets, etc.) is refused with:</p>
+<pre><code class="language-text">delegate target "&lt;target&gt;" (risk profile "&lt;target_profile&gt;") would escalate beyond the caller (risk profile "&lt;caller_profile&gt;"): &lt;violation&gt;
 </code></pre>
 </li>
 </ol>
-<p>Étant donné que l’accessibilité est conditionnée par le profil de risque partagé, la liste annoncée (l’enum du paramètre <code>agent</code> dans le schéma de l’outil) ne répertorie que les agents configurés qui partagent le profil de risque de l’appelant, à l’exclusion de l’appelant lui-même, et uniquement lorsque <code>delegation_policy.mode = "allow"</code>. Il n’existe pas de liste d’autorisation distincte par agent : le profil partagé <em>est</em> la liste d’autorisation.</p>
+<p>The advertised roster (the <code>agent</code> parameter’s enum in the tool schema) lists exactly this reachable set, and only when <code>delegation_policy.mode = "allow"</code>. Disabled agents (<code>enabled = false</code>) are never reachable, whether as same-profile peers or explicit <code>delegates</code> entries.</p>
+<p>In agentic delegation the sub-agent’s tools are drawn from the caller’s already-policy-filtered registry, intersected with the target’s own <code>allowed_tools</code>. An <strong>empty</strong> <code>allowed_tools</code> on the target means “inherit”: the sub-agent runs with the caller’s full delegatable registry rather than being rejected. A non-empty list intersects with that registry. Either way the caller’s registry is the ceiling: a cross-profile target whose risk profile names a tool the caller was never granted does not receive it. This is the invariant that keeps <code>ensure_no_escalation_beyond</code> (which does not itself diff tool allowlists) sufficient, since the target can never exceed the caller’s tool surface.</p>
+<p>Depth is capped per the parent’s <code>runtime_profile.max_delegation_depth</code>. Set it to <code>1</code> to allow the top agent a single delegation hop with no further sub-delegation.</p>
 <h3 id="delegate--chaînes-de-sortie-que-le-modèle-voit"><a class="header" href="#delegate--chaînes-de-sortie-que-le-modèle-voit"><code>delegate</code> : chaînes de sortie que le modèle voit</a></h3>
 <p>Exact, provenant de <code>crates/zeroclaw-runtime/src/tools/delegate.rs</code>.</p>
 <ol>
@@ -7321,14 +7369,14 @@ Use action='check_result' with task_id='&lt;uuid&gt;' to retrieve the result.
 <tr><th></th><th><code>spawn_subagent</code></th><th><code>delegate</code></th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Identité</strong></td><td>Identique au parent (même UUID, même profil de risque)</td><td>Identité de l’agent cible (alias différent, <strong>même</strong> profil de risque, la délégation l’exige)</td></tr>
-<tr><td><strong>Modèle d’autorisation</strong></td><td>Politique du parent telle quelle (ou sous-ensemble restreint)</td><td>Stratégie propre de l’agent cible (au sein du profil de risque partagé)</td></tr>
+<tr><td><strong>Identité</strong></td><td>Identique au parent (même UUID, même profil de risque)</td><td>Target agent’s identity (different alias; same-profile peer or an explicit cross-profile delegate)</td></tr>
+<tr><td><strong>Modèle d’autorisation</strong></td><td>Politique du parent telle quelle (ou sous-ensemble restreint)</td><td>Target agent’s own policy (same-profile, or a cross-profile delegate validated non-escalating)</td></tr>
 <tr><td><strong>Fournisseur de modèle</strong></td><td>Parent</td><td>Fournisseur configuré de l’agent cible</td></tr>
 <tr><td><strong>Profondeur de génération</strong></td><td>Limite stricte à 1</td><td>Jusqu’à <code>runtime_profile.max_delegation_depth</code> (3 par défaut)</td></tr>
 <tr><td><strong>Mode arrière-plan</strong></td><td>Non pris en charge</td><td><code>background: true</code> retourne un <code>task_id</code></td></tr>
 <tr><td><strong>Distribution en parallèle</strong></td><td>Aucun argument intégré ; plusieurs appels dans un même tour s’exécutent simultanément lorsque <code>parallel_tools = true</code></td><td><code>parallel: [...]</code> exécute plusieurs cibles simultanément</td></tr>
-<tr><td><strong>Contrôle d’accès</strong></td><td><code>risk_profile.allowed_tools</code> doit lister <code>spawn_subagent</code></td><td><code>allowed_tools</code> doit lister <code>delegate</code>, le <code>delegation_policy mode = "allow"</code> de l’appelant, et la cible partage le profil de risque de l’appelant</td></tr>
-<tr><td><strong>À utiliser quand</strong></td><td>Sous-tâche interne qui doit rester au sein de la même identité</td><td>Vous souhaitez qu’un autre spécialiste (modèle différent, alias différent) du <strong>même niveau de confiance</strong> se charge de la tâche</td></tr>
+<tr><td><strong>Contrôle d’accès</strong></td><td><code>risk_profile.allowed_tools</code> doit lister <code>spawn_subagent</code></td><td><code>allowed_tools</code> must list <code>delegate</code>, caller’s <code>delegation_policy mode = "allow"</code>, and the target is in the caller’s reachable set (same-profile peer or explicit <code>delegates</code> entry)</td></tr>
+<tr><td><strong>À utiliser quand</strong></td><td>Sous-tâche interne qui doit rester au sein de la même identité</td><td>Want a different specialist (different model, different alias) to handle the task, on the same trust tier or an explicitly-allowed stricter/cross-profile one</td></tr>
 </tbody>
 </table>
 </div>
@@ -7385,9 +7433,9 @@ Use action='check_result' with task_id='&lt;uuid&gt;' to retrieve the result.
 <p>Les fournisseurs sont typés par famille, adressés sous la forme <code>providers.models.&lt;type&gt;.&lt;alias&gt;</code>. <code>&lt;type&gt;</code> est un emplacement de famille canonique (consultez le <a href="#all-slots">Catalogue</a> pour la liste de tous les emplacements). Il existe un seul emplacement par éditeur, sans synonymes : <code>azure_openai</code>, <code>azure-openai</code> et <code>claude</code> (pour Anthropic) ne sont pas acceptés.</p>
 <p><code>&lt;alias&gt;</code> est le nom d’instance attribué par votre opérateur, et vous pouvez définir <strong>autant d’alias par type que vous le souhaitez</strong>. Exécutez plusieurs profils de la même famille de fournisseurs côte à côte : même <code>type</code>, des alias différents, chacun avec sa propre clé, son propre modèle et ses propres paramètres. Par exemple, deux comptes Anthropic en tant que <code>anthropic.personal</code> et <code>anthropic.work</code> (chacun avec son propre <code>api_key</code> et <code>model</code>), où un agent en choisit un avec <code>model_provider = "anthropic.personal"</code> (ou <code>"anthropic.work"</code>). Ajoutez et modifiez ces éléments via les interfaces ci-dessous, et non manuellement :</p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-15"><a class="header" href="#tableau-de-bord-de-la-passerelle-15">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17"><a class="header" href="#tableau-de-bord-de-la-passerelle-17">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models"><code>/config/providers.models</code></a> dans le tableau de bord web.</p>
-<h4 id="zerocode-15"><a class="header" href="#zerocode-15">zerocode</a></h4>
+<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, sous <strong>Model providers</strong>.</p>
 </div>
 
@@ -7456,14 +7504,14 @@ api_key = "..."
 <p>Jeton d’API secret pour ce model_provider. Récupérez-le depuis le tableau de bord du model_provider (plateforme OpenAI, console Anthropic, page des clés OpenRouter, etc.). Stocké via le trousseau de clés du système d’exploitation lorsque c’est possible ; ne le validez jamais directement dans config.toml.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-16"><a class="header" href="#tableau-de-bord-de-la-passerelle-16">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18"><a class="header" href="#tableau-de-bord-de-la-passerelle-18">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> et définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.api_key</code>.</p>
-<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
+<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.api_key</code>.</p>
-<h4 id="zeroclaw-config-15"><a class="header" href="#zeroclaw-config-15">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.api_key    # entrée masquée, stockée chiffrée
 </code></pre>
-<h4 id="variable-denvironnement-15"><a class="header" href="#variable-denvironnement-15">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17"><a class="header" href="#variable-denvironnement-17">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__api_key=
 </code></pre>
@@ -7764,10 +7812,10 @@ api_key = "..."
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
 <h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
-<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16"><a class="header" href="#variable-denvironnement-16">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-1"><a class="header" href="#variable-denvironnement-16-1">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__tls_ca_cert_path=
 </code></pre>
@@ -7779,14 +7827,14 @@ api_key = "..."
 <p>URI du point de terminaison auquel le client accède. Remplacez le point de terminaison par défaut de la famille lorsque vous ciblez une passerelle auto-hébergée (LiteLLM, vLLM, Ollama), un proxy personnalisé ou toute URL non standard. Laissez non défini pour utiliser l’URI par défaut de la famille issu de son implémentation <code>ModelEndpoint</code>. Définissez ici l’URL COMPLÈTE du point de terminaison ; il n’existe pas de champ séparé pour le suffixe de chemin.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17"><a class="header" href="#tableau-de-bord-de-la-passerelle-17">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-1"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-1">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> et définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.uri</code>.</p>
-<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
+<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.uri</code>.</p>
-<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17"><a class="header" href="#variable-denvironnement-17">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-1"><a class="header" href="#variable-denvironnement-17-1">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__uri=
 </code></pre>
@@ -7798,9 +7846,9 @@ api_key = "..."
 <p>Variante de protocole filaire pour le client model_provider. <code>responses</code> route via l’API Codex/Responses d’OpenAI (<code>POST /v1/responses</code>) ; <code>chat_completions</code> route via l’ancien point de terminaison <code>/v1/chat/completions</code> (ou le point de terminaison compatible chat-completions de la famille). Sélection automatique par famille si non défini.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18"><a class="header" href="#tableau-de-bord-de-la-passerelle-18">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-1"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-1">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> et définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code>.</p>
-<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
+<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code>.</p>
 <h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.wire_api &lt;value&gt;
@@ -9111,10 +9159,10 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
 <h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
-<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-2"><a class="header" href="#zeroclaw-config-16-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-1"><a class="header" href="#variable-denvironnement-16-1">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-2"><a class="header" href="#variable-denvironnement-16-2">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__tls_ca_cert_path=
 </code></pre>
@@ -9126,14 +9174,14 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <p>URI du point de terminaison auquel le client accède. Remplacez le point de terminaison par défaut de la famille lorsque vous ciblez une passerelle auto-hébergée (LiteLLM, vLLM, Ollama), un proxy personnalisé ou toute URL non standard. Laissez non défini pour utiliser l’URI par défaut de la famille issu de son implémentation <code>ModelEndpoint</code>. Définissez ici l’URL COMPLÈTE du point de terminaison ; il n’existe pas de champ séparé pour le suffixe de chemin.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-1"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-1">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-2">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> et définissez le champ <code>providers.models.custom.&lt;alias&gt;.uri</code>.</p>
-<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
+<h4 id="zerocode-17-2"><a class="header" href="#zerocode-17-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>providers.models.custom.&lt;alias&gt;.uri</code>.</p>
-<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17-1"><a class="header" href="#variable-denvironnement-17-1">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-2"><a class="header" href="#variable-denvironnement-17-2">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__uri=
 </code></pre>
@@ -9144,9 +9192,9 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <summary><code>wire_api</code> <span class="cfg-field-meta"><code>WireApi</code> · default <code>—</code></span></summary>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-1"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-1">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-2">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> et définissez le champ <code>providers.models.custom.&lt;alias&gt;.wire_api</code>.</p>
-<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>providers.models.custom.&lt;alias&gt;.wire_api</code>.</p>
 <h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.wire_api &lt;value&gt;
@@ -9945,14 +9993,14 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>Mode streaming pour la livraison progressive des réponses. <code>"off"</code> (par défaut) : message unique. <code>"partial"</code> : brouillon modifié sur place. <code>"multi_message"</code> : livraison fractionnée par paragraphes.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-2">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-3">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> et définissez le champ <code>channels.matrix.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zerocode-17-2"><a class="header" href="#zerocode-17-2">zerocode</a></h4>
+<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.matrix.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zeroclaw-config-16-2"><a class="header" href="#zeroclaw-config-16-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-2"><a class="header" href="#variable-denvironnement-16-2">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-3"><a class="header" href="#variable-denvironnement-16-3">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -9964,14 +10012,14 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>ID utilisateur Matrix facultatif (p. ex. <code>"@bot:matrix.org"</code>).</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-2"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-2">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-3">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> et définissez le champ <code>channels.matrix.&lt;alias&gt;.user_id</code>.</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.matrix.&lt;alias&gt;.user_id</code>.</p>
-<h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.user_id &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17-2"><a class="header" href="#variable-denvironnement-17-2">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-3"><a class="header" href="#variable-denvironnement-17-3">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__user_id=
 </code></pre>
@@ -10665,9 +10713,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Profondeur de la file d’attente de régulation sortante par (canal, destinataire). Plage : <code>0..=REPLY_QUEUE_DEPTH_CEILING</code>. Lorsque <code>reply_min_interval_secs &gt; 0</code> et que cette valeur est <code>0</code>, le wrapper de régulation substitue <code>DEFAULT_REPLY_QUEUE_DEPTH</code> (16). Lorsque la file d’attente est pleine, l’envoi le plus récent est abandonné et un <code>WARN</code> est journalisé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-3">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
-<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
+<h4 id="zerocode-17-4"><a class="header" href="#zerocode-17-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
 <h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
@@ -10684,11 +10732,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Délai d’expiration du chien de garde anti-blocage en secondes. Lorsqu’il est différent de zéro, le bot abandonne et réessaie si aucune progression n’est constatée pendant cette durée. 0 = désactivé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-3"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-3">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-4">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code>.</p>
-<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
+<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code>.</p>
-<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-15-4"><a class="header" href="#variable-denvironnement-15-4">Variable d’environnement</a></h4>
@@ -10707,10 +10755,10 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> et définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
 <h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.discord.&lt;alias&gt;.stream_mode</code>.</p>
-<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-4"><a class="header" href="#zeroclaw-config-17-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-3"><a class="header" href="#variable-denvironnement-16-3">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-4"><a class="header" href="#variable-denvironnement-16-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -11117,9 +11165,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Lorsque la valeur est true (par défaut), les réponses restent dans le fil de discussion Slack d’origine. Lorsque la valeur est false, les réponses sont envoyées à la racine du canal à la place.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-5">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> et définissez le champ <code>channels.slack.&lt;alias&gt;.thread_replies</code>.</p>
-<h4 id="zerocode-17-4"><a class="header" href="#zerocode-17-4">zerocode</a></h4>
+<h4 id="zerocode-17-5"><a class="header" href="#zerocode-17-5">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.slack.&lt;alias&gt;.thread_replies</code>.</p>
 <h4 id="zeroclaw-config-15-5"><a class="header" href="#zeroclaw-config-15-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies &lt;value&gt;
@@ -11136,11 +11184,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Utilisez le type de bloc Slack <code>markdown</code> plus récent (limite de 12 000 caractères, mise en forme plus riche). La valeur par défaut est false (utilise les blocs <code>section</code> avec <code>mrkdwn</code>, pris en charge universellement). Activez cette option uniquement si votre espace de travail Slack prend en charge le type de bloc <code>markdown</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-4"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-4">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-5">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> et définissez le champ <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code>.</p>
-<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
+<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code>.</p>
-<h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.use_markdown_blocks &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-15-5"><a class="header" href="#variable-denvironnement-15-5">Variable d’environnement</a></h4>
@@ -11167,7 +11215,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # ré
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> et activez/désactivez le champ <code>channels.slack.&lt;alias&gt;.thread_replies</code>.</p>
 <h4 id="zerocode-19-3"><a class="header" href="#zerocode-19-3">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.slack.&lt;alias&gt;.thread_replies</code>.</p>
-<h4 id="zeroclaw-config-17-4"><a class="header" href="#zeroclaw-config-17-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies true     # réponses en fil de discussion activées
 zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies false    # réponses à la racine du canal
 </code></pre>
@@ -12762,14 +12810,14 @@ zeroclaw channel start
 <p>Profondeur de la file d’attente de régulation sortante par (canal, destinataire). Plage : <code>0..=REPLY_QUEUE_DEPTH_CEILING</code>. Lorsque <code>reply_min_interval_secs &gt; 0</code> et que cette valeur est <code>0</code>, le wrapper de régulation substitue <code>DEFAULT_REPLY_QUEUE_DEPTH</code> (16). Lorsque la file d’attente est pleine, l’envoi le plus récent est abandonné et un <code>WARN</code> est journalisé.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-5">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-6">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> et définissez le champ <code>channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
-<h4 id="zerocode-17-5"><a class="header" href="#zerocode-17-5">zerocode</a></h4>
+<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max</code>.</p>
-<h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-4"><a class="header" href="#variable-denvironnement-16-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-5"><a class="header" href="#variable-denvironnement-16-5">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -12781,14 +12829,14 @@ zeroclaw channel start
 <p>Lorsque la valeur est true et que mode = “personal”, répond toujours aux messages dans la discussion personnelle de l’utilisateur (Notes to Self). La valeur par défaut est false.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-5"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-5">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-6">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> et définissez le champ <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code>.</p>
-<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
+<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code>.</p>
-<h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.self_chat_mode &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17-3"><a class="header" href="#variable-denvironnement-17-3">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-4"><a class="header" href="#variable-denvironnement-17-4">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__self_chat_mode=
 </code></pre>
@@ -13314,14 +13362,14 @@ zeroclaw channel start
 <summary><code>smtp_tls</code> <span class="cfg-field-meta"><code>bool</code> · default <code>true</code></span></summary>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-6">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-7">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> et définissez le champ <code>channels.email.&lt;alias&gt;.smtp_tls</code>.</p>
-<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
+<h4 id="zerocode-17-7"><a class="header" href="#zerocode-17-7">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.email.&lt;alias&gt;.smtp_tls</code>.</p>
-<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-7"><a class="header" href="#zeroclaw-config-16-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-5"><a class="header" href="#variable-denvironnement-16-5">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-6"><a class="header" href="#variable-denvironnement-16-6">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13332,14 +13380,14 @@ zeroclaw channel start
 <summary><code>smtp_username</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-6"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-6">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-7">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> et définissez le champ <code>channels.email.&lt;alias&gt;.smtp_username</code>.</p>
-<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
+<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.email.&lt;alias&gt;.smtp_username</code>.</p>
-<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_username &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17-4"><a class="header" href="#variable-denvironnement-17-4">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-5"><a class="header" href="#variable-denvironnement-17-5">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_username=
 </code></pre>
@@ -13861,7 +13909,7 @@ zeroclaw channel start
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/voice_call"><code>/config/channels/voice_call</code></a> et définissez le champ <code>channels.voice_call.&lt;alias&gt;.webhook_base_url</code>.</p>
 <h4 id="zerocode-16-9"><a class="header" href="#zerocode-16-9">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.voice_call.&lt;alias&gt;.webhook_base_url</code>.</p>
-<h4 id="zeroclaw-config-16-7"><a class="header" href="#zeroclaw-config-16-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-8"><a class="header" href="#zeroclaw-config-16-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_base_url &lt;value&gt;
 </code></pre>
 <h4 id="variable-denvironnement-15-8"><a class="header" href="#variable-denvironnement-15-8">Variable d’environnement</a></h4>
@@ -13875,14 +13923,14 @@ zeroclaw channel start
 <summary><code>webhook_port</code> <span class="cfg-field-meta"><code>integer</code> · default <code>8090</code></span></summary>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-17-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-7">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-17-8"><a class="header" href="#tableau-de-bord-de-la-passerelle-17-8">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/voice_call"><code>/config/channels/voice_call</code></a> et définissez le champ <code>channels.voice_call.&lt;alias&gt;.webhook_port</code>.</p>
-<h4 id="zerocode-17-7"><a class="header" href="#zerocode-17-7">zerocode</a></h4>
+<h4 id="zerocode-17-8"><a class="header" href="#zerocode-17-8">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.voice_call.&lt;alias&gt;.webhook_port</code>.</p>
-<h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-8"><a class="header" href="#zeroclaw-config-17-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_port &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-16-6"><a class="header" href="#variable-denvironnement-16-6">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-16-7"><a class="header" href="#variable-denvironnement-16-7">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_call__&lt;alias&gt;__webhook_port=
 </code></pre>
@@ -13905,14 +13953,14 @@ zeroclaw channel start
 <p>Seuil d’énergie RMS pour la détection d’activité vocale. Les échantillons en dessous de ce niveau sont traités comme du silence. Valeur par défaut : <code>0.01</code>.</p>
 <p><strong>Posez-le sur n’importe quelle surface :</strong></p>
 <div class="os-tabs-src">
-<h4 id="tableau-de-bord-de-la-passerelle-18-7"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-7">Tableau de bord de la passerelle</a></h4>
+<h4 id="tableau-de-bord-de-la-passerelle-18-8"><a class="header" href="#tableau-de-bord-de-la-passerelle-18-8">Tableau de bord de la passerelle</a></h4>
 <p>Ouvrez <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> et définissez le champ <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code>.</p>
-<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
+<h4 id="zerocode-18-8"><a class="header" href="#zerocode-18-8">zerocode</a></h4>
 <p>Dans le volet <strong>Config</strong>, définissez le champ <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code>.</p>
 <h4 id="zeroclaw-config-18-7"><a class="header" href="#zeroclaw-config-18-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
-<h4 id="variable-denvironnement-17-5"><a class="header" href="#variable-denvironnement-17-5">Variable d’environnement</a></h4>
+<h4 id="variable-denvironnement-17-6"><a class="header" href="#variable-denvironnement-17-6">Variable d’environnement</a></h4>
 <p>Exportez le remplacement (shells POSIX ; à placer dans <code>~/.bashrc</code>, <code>~/.zshrc</code>, <code>.env</code> ou un Dockerfile). Remplacez <code>&lt;alias&gt;</code> par l’alias littéral :</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_wake__&lt;alias&gt;__energy_threshold=
 </code></pre>

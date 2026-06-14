@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-948c9753.js";
+            window.path_to_searchindex_js = "searchindex-ea198e59.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-e415489f.js"></script>
@@ -666,7 +666,7 @@ keep_tool_context_turns  = 1
 </ul>
 <p>With Ollama, this is a no-text-fallback profile: authorized tools remain configured in <code>risk_profile</code>, but text-form tool markup from the model is not executed. Use it for chat-first local agents, or for providers that return native/structured tool calls. If a local model must use ZeroClaw’s text fallback tool syntax, set <code>strict_tool_parsing = false</code> and keep the other small-model limits.</p>
 <h2 id="成本分级需要时使用重型模型其他情况使用快速模型"><a class="header" href="#成本分级需要时使用重型模型其他情况使用快速模型">成本分级：需要时使用重型模型，其他情况使用快速模型</a></h2>
-<p>运行两个 agent，并将通道路由到合适的层级。<code>delegate</code> 工具允许一个 agent 在对话中途移交给另一个 agent。<a href="#委派与子代理">委派</a>是受限的：调用方的风险配置必须将 <code>delegation_policy mode = "allow"</code>，并且<strong>两个 agent 必须共享相同的风险配置</strong>（委派不会跨越信任层级）。因此下面的前线 agent 和重型 agent 运行在_相同_的 <code>trusted</code> 风险配置上，它们的区别在于模型和运行时配置（迭代预算），而非信任面。</p>
+<p>Run two agents and route channels to the appropriate tier. The <code>delegate</code> tool lets one agent hand off to another mid-conversation. <a href="#委派与子代理">Delegation</a> is gated: the caller’s risk profile must set <code>delegation_policy mode = "allow"</code>, and the target must be reachable from the caller (a same-profile peer, or an explicit entry in the caller’s <code>delegates</code> list). The frontline and heavy agents below run on the <em>same</em> <code>trusted</code> risk profile, so they reach each other as same-profile peers; they differ in model and runtime profile (iteration budget), not in trust surface.</p>
 <p>前线智能体使用 Haiku 处理每一条入站消息。当需要更深入的推理时，它会调用 <code>delegate</code> 工具并设置 <code>agent = "heavy"</code>；由于两个智能体共享 <code>trusted</code> 风险配置，且该配置允许委派，因此更重量级的智能体将使用 Opus 接管该子任务。</p>
 <h2 id="错误处理"><a class="header" href="#错误处理">错误处理</a></h2>
 <p>单个提供程序内部的重试会在以下情况触发：</p>
@@ -6622,7 +6622,7 @@ web/dist directory.
 <h2 id="一开始就采用多智能体"><a class="header" href="#一开始就采用多智能体">一开始就采用多智能体</a></h2>
 <p>不存在所谓特权的“那个智能体“。运行时持有一个以别名为键的智能体映射；单智能体安装只是大小为一的映射。你不是先从一个机器人开始、之后再硬加更多，而是添加多个智能体并分别接线，它们从配置的第一行起就共存。</p>
 <p>由于每个 agent 都连接自己的引用和自己的文件系统，因此 agent 可以共享某些维度，并在其他维度上各自独立地产生差异。两个 agent 可能共享同一个模型提供方，但在不同的风险配置下运行、在不同的渠道上响应，并保持完全独立的内存。</p>
-<p>Agent 之间通过两种方式相互通信，每种方式分别受控：它们可以在共享<a href="#对等组">对等组</a>的频道上<strong>发送消息</strong>，也可以仅在调用方的风险配置允许委派且两个 Agent 共享相同风险配置时，将任务**<a href="#委派与子代理">委派</a>**给彼此（参见<a href="#coexistence-and-isolation">运行 Agent</a>）。</p>
+<p>Agents reach each other two ways, each gated separately: they can <strong>message</strong> on a channel where they share a <a href="#对等组">peer group</a>, and they can <strong><a href="#委派与子代理">delegate</a></strong> a task to one another only when the caller’s risk profile permits delegation and the target is in the caller’s reachable set (a same-profile peer, or an explicit cross-profile entry in the caller’s <code>delegates</code> list; see <a href="#coexistence-and-isolation">Running agents</a>).</p>
 <pre><code class="language-text">                    agents.researcher          agents.support
                     ─────────────────          ──────────────
   model provider     openrouter.prod ◀───────── openrouter.prod   (same one)
@@ -6701,18 +6701,56 @@ web/dist directory.
 
 </details>
 <details class="cfg-field">
+<summary><code>delegate_same_risk_profile</code> <span class="cfg-field-meta"><code>bool</code> · default <code>true</code></span></summary>
+<p>Auto-allow delegation to every agent sharing this agent’s risk profile. Default <code>true</code> preserves the historical reach where any same-profile peer is a delegation target. Set <code>false</code> to opt this agent out so only the explicit <code>delegates</code> list is reachable. Gating (whether delegation is permitted at all) still lives on the risk profile’s <code>delegation_policy.mode</code>; this only narrows reach.</p>
+<p><strong>将它放置在任何表面上：</strong></p>
+<div class="os-tabs-src">
+<h4 id="网关仪表板-3"><a class="header" href="#网关仪表板-3">网关仪表板</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> and set the <code>agents.&lt;alias&gt;.delegate_same_risk_profile</code> field.</p>
+<h4 id="zerocode-3-1"><a class="header" href="#zerocode-3-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>agents.&lt;alias&gt;.delegate_same_risk_profile</code> field.</p>
+<h4 id="zeroclaw-config-3"><a class="header" href="#zeroclaw-config-3">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.delegate_same_risk_profile &lt;value&gt;
+</code></pre>
+<h4 id="环境变量-3"><a class="header" href="#环境变量-3">环境变量</a></h4>
+<p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
+<pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__delegate_same_risk_profile=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
+<summary><code>delegates</code> <span class="cfg-field-meta"><code>string[]</code> · default <code>[]</code></span></summary>
+<p>Explicit delegate roster: additional agent aliases this agent may delegate to, beyond same-profile peers. Possibly empty. Entries may name agents on a different risk profile; such cross-profile targets run under the target’s own resolved policy and tool registry. <code>Config::validate()</code> fails loud on a dangling alias or a self-reference.</p>
+<p><strong>将它放置在任何表面上：</strong></p>
+<div class="os-tabs-src">
+<h4 id="网关仪表板-4"><a class="header" href="#网关仪表板-4">网关仪表板</a></h4>
+<p>Open <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> and set the <code>agents.&lt;alias&gt;.delegates</code> field.</p>
+<h4 id="zerocode-4-1"><a class="header" href="#zerocode-4-1">zerocode</a></h4>
+<p>In the <strong>Config</strong> pane, set the <code>agents.&lt;alias&gt;.delegates</code> field.</p>
+<h4 id="zeroclaw-config-4"><a class="header" href="#zeroclaw-config-4">zeroclaw config</a></h4>
+<pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.delegates &lt;value&gt;
+</code></pre>
+<h4 id="环境变量-4"><a class="header" href="#环境变量-4">环境变量</a></h4>
+<p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
+<pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__delegates=
+</code></pre>
+</div>
+
+</details>
+<details class="cfg-field">
 <summary><code>identity</code> <span class="cfg-field-meta"><code>IdentityConfig</code> · default <code>{"aieos_inline":null,"aieos_path":null,"format":"openclaw"}</code></span></summary>
 <p>每个代理的身份格式（<code>[agents.&lt;alias&gt;.identity]</code>）。每个代理在其各自的代理工作区内渲染自己的 IDENTITY.md / SOUL.md；此区块用于选择格式（OpenClaw 或 AIEOS）以及代理身份文档的可选内联/文件来源。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-3"><a class="header" href="#网关仪表板-3">网关仪表板</a></h4>
+<h4 id="网关仪表板-5"><a class="header" href="#网关仪表板-5">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.identity</code> 字段。</p>
-<h4 id="zerocode-3-1"><a class="header" href="#zerocode-3-1">zerocode</a></h4>
+<h4 id="zerocode-5"><a class="header" href="#zerocode-5">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.identity</code> 字段。</p>
-<h4 id="zeroclaw-config-3"><a class="header" href="#zeroclaw-config-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-5"><a class="header" href="#zeroclaw-config-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.identity &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-3"><a class="header" href="#环境变量-3">环境变量</a></h4>
+<h4 id="环境变量-5"><a class="header" href="#环境变量-5">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__identity=
 </code></pre>
@@ -6724,14 +6762,14 @@ web/dist directory.
 <p>知识包别名。增量式：代理会加载列出的每一个知识包。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-4"><a class="header" href="#网关仪表板-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-6"><a class="header" href="#网关仪表板-6">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.knowledge_bundles</code> 字段。</p>
-<h4 id="zerocode-4-1"><a class="header" href="#zerocode-4-1">zerocode</a></h4>
+<h4 id="zerocode-6"><a class="header" href="#zerocode-6">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.knowledge_bundles</code> 字段。</p>
-<h4 id="zeroclaw-config-4"><a class="header" href="#zeroclaw-config-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-6"><a class="header" href="#zeroclaw-config-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.knowledge_bundles &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-4"><a class="header" href="#环境变量-4">环境变量</a></h4>
+<h4 id="环境变量-6"><a class="header" href="#环境变量-6">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__knowledge_bundles=
 </code></pre>
@@ -6743,14 +6781,14 @@ web/dist directory.
 <p>MCP 捆绑包别名。每个条目引用 <code>mcp_bundles[key]</code>，它本身是一组命名的 MCP 服务器；代理选择要加载哪些捆绑包。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-5"><a class="header" href="#网关仪表板-5">网关仪表板</a></h4>
+<h4 id="网关仪表板-7"><a class="header" href="#网关仪表板-7">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.mcp_bundles</code> 字段。</p>
-<h4 id="zerocode-5"><a class="header" href="#zerocode-5">zerocode</a></h4>
+<h4 id="zerocode-7"><a class="header" href="#zerocode-7">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.mcp_bundles</code> 字段。</p>
-<h4 id="zeroclaw-config-5"><a class="header" href="#zeroclaw-config-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-7"><a class="header" href="#zeroclaw-config-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.mcp_bundles &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-5"><a class="header" href="#环境变量-5">环境变量</a></h4>
+<h4 id="环境变量-7"><a class="header" href="#环境变量-7">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__mcp_bundles=
 </code></pre>
@@ -6762,14 +6800,14 @@ web/dist directory.
 <p>每个 agent 的内存后端选择（<code>[agents.&lt;alias&gt;.memory]</code>）。<code>backend</code> 字段在 agent 创建时锁定，后续加载时不可变。默认为 <code>Sqlite</code>。参见 <code>crate::multi_agent::AgentMemoryConfig</code>。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-6"><a class="header" href="#网关仪表板-6">网关仪表板</a></h4>
+<h4 id="网关仪表板-8"><a class="header" href="#网关仪表板-8">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.memory</code> 字段。</p>
-<h4 id="zerocode-6"><a class="header" href="#zerocode-6">zerocode</a></h4>
+<h4 id="zerocode-8"><a class="header" href="#zerocode-8">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.memory</code> 字段。</p>
-<h4 id="zeroclaw-config-6"><a class="header" href="#zeroclaw-config-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-8"><a class="header" href="#zeroclaw-config-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.memory &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-6"><a class="header" href="#环境变量-6">环境变量</a></h4>
+<h4 id="环境变量-8"><a class="header" href="#环境变量-8">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__memory=
 </code></pre>
@@ -6781,14 +6819,14 @@ web/dist directory.
 <p>带点的模型提供方别名（例如 <code>"anthropic.&lt;alias&gt;"</code>）。运行时通过 <code>model_providers.&lt;type&gt;.&lt;alias&gt;</code> 进行解析；<code>Config::validate()</code> 会对悬空引用直接报错。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-7"><a class="header" href="#网关仪表板-7">网关仪表板</a></h4>
+<h4 id="网关仪表板-9"><a class="header" href="#网关仪表板-9">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.model_provider</code> 字段。</p>
-<h4 id="zerocode-7"><a class="header" href="#zerocode-7">zerocode</a></h4>
+<h4 id="zerocode-9"><a class="header" href="#zerocode-9">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.model_provider</code> 字段。</p>
-<h4 id="zeroclaw-config-7"><a class="header" href="#zeroclaw-config-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-9"><a class="header" href="#zeroclaw-config-9">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.model_provider &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-7"><a class="header" href="#环境变量-7">环境变量</a></h4>
+<h4 id="环境变量-9"><a class="header" href="#环境变量-9">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__model_provider=
 </code></pre>
@@ -6800,14 +6838,14 @@ web/dist directory.
 <p>风险配置文件别名（例如 <code>"default"</code>）。在运行时解析委派防护规则。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-8"><a class="header" href="#网关仪表板-8">网关仪表板</a></h4>
+<h4 id="网关仪表板-10"><a class="header" href="#网关仪表板-10">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.risk_profile</code> 字段。</p>
-<h4 id="zerocode-8"><a class="header" href="#zerocode-8">zerocode</a></h4>
+<h4 id="zerocode-10"><a class="header" href="#zerocode-10">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.risk_profile</code> 字段。</p>
-<h4 id="zeroclaw-config-8"><a class="header" href="#zeroclaw-config-8">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-10"><a class="header" href="#zeroclaw-config-10">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.risk_profile &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-8"><a class="header" href="#环境变量-8">环境变量</a></h4>
+<h4 id="环境变量-10"><a class="header" href="#环境变量-10">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__risk_profile=
 </code></pre>
@@ -6819,14 +6857,14 @@ web/dist directory.
 <p>运行时配置别名（例如 <code>"default"</code>）。用于解析 agentic/迭代设置。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-9"><a class="header" href="#网关仪表板-9">网关仪表板</a></h4>
+<h4 id="网关仪表板-11"><a class="header" href="#网关仪表板-11">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.runtime_profile</code> 字段。</p>
-<h4 id="zerocode-9"><a class="header" href="#zerocode-9">zerocode</a></h4>
+<h4 id="zerocode-11"><a class="header" href="#zerocode-11">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.runtime_profile</code> 字段。</p>
-<h4 id="zeroclaw-config-9"><a class="header" href="#zeroclaw-config-9">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-11"><a class="header" href="#zeroclaw-config-11">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.runtime_profile &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-9"><a class="header" href="#环境变量-9">环境变量</a></h4>
+<h4 id="环境变量-11"><a class="header" href="#环境变量-11">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__runtime_profile=
 </code></pre>
@@ -6838,14 +6876,14 @@ web/dist directory.
 <p>技能包别名。每个条目在运行时解析为 <code>skill_bundles[key].directory</code>；代理会加载列出的每个包。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-10"><a class="header" href="#网关仪表板-10">网关仪表板</a></h4>
+<h4 id="网关仪表板-12"><a class="header" href="#网关仪表板-12">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.skill_bundles</code> 字段。</p>
-<h4 id="zerocode-10"><a class="header" href="#zerocode-10">zerocode</a></h4>
+<h4 id="zerocode-12"><a class="header" href="#zerocode-12">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.skill_bundles</code> 字段。</p>
-<h4 id="zeroclaw-config-10"><a class="header" href="#zeroclaw-config-10">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-12"><a class="header" href="#zeroclaw-config-12">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.skill_bundles &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-10"><a class="header" href="#环境变量-10">环境变量</a></h4>
+<h4 id="环境变量-12"><a class="header" href="#环境变量-12">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__skill_bundles=
 </code></pre>
@@ -6857,14 +6895,14 @@ web/dist directory.
 <p>转录 / STT 提供方，以点分隔的别名引用形式（<code>&lt;type&gt;.&lt;alias&gt;</code>，例如 <code>"groq.&lt;alias&gt;"</code>）。通过 <code>transcription_providers.&lt;type&gt;.&lt;alias&gt;</code> 解析。留空 = agent 没有转录偏好；接入语音的渠道仍需要一个已解析的提供方（没有全局默认值），因此当入站语音流进入一个 <code>transcription_provider</code> 为空的 agent 时，会在渠道边界处显式报错。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-11"><a class="header" href="#网关仪表板-11">网关仪表板</a></h4>
+<h4 id="网关仪表板-13"><a class="header" href="#网关仪表板-13">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.transcription_provider</code> 字段。</p>
-<h4 id="zerocode-11"><a class="header" href="#zerocode-11">zerocode</a></h4>
+<h4 id="zerocode-13"><a class="header" href="#zerocode-13">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.transcription_provider</code> 字段。</p>
-<h4 id="zeroclaw-config-11"><a class="header" href="#zeroclaw-config-11">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-13"><a class="header" href="#zeroclaw-config-13">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.transcription_provider &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-11"><a class="header" href="#环境变量-11">环境变量</a></h4>
+<h4 id="环境变量-13"><a class="header" href="#环境变量-13">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__transcription_provider=
 </code></pre>
@@ -6876,14 +6914,14 @@ web/dist directory.
 <p>TTS 提供方采用点号别名引用形式（<code>&lt;type&gt;.&lt;alias&gt;</code>，例如 <code>"openai.&lt;alias&gt;"</code>）。通过 <code>tts_providers.&lt;type&gt;.&lt;alias&gt;</code> 进行解析。留空 = 此 agent 不启用 TTS（不存在全局默认提供方的概念；每个需要 TTS 的 agent 都要自行设置 <code>tts_provider</code>）。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-12"><a class="header" href="#网关仪表板-12">网关仪表板</a></h4>
+<h4 id="网关仪表板-14"><a class="header" href="#网关仪表板-14">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.tts_provider</code> 字段。</p>
-<h4 id="zerocode-12"><a class="header" href="#zerocode-12">zerocode</a></h4>
+<h4 id="zerocode-14"><a class="header" href="#zerocode-14">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.tts_provider</code> 字段。</p>
-<h4 id="zeroclaw-config-12"><a class="header" href="#zeroclaw-config-12">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-14"><a class="header" href="#zeroclaw-config-14">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.tts_provider &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-12"><a class="header" href="#环境变量-12">环境变量</a></h4>
+<h4 id="环境变量-14"><a class="header" href="#环境变量-14">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__tts_provider=
 </code></pre>
@@ -6895,14 +6933,14 @@ web/dist directory.
 <p>每个 agent 的工作区块（<code>[agents.&lt;alias&gt;.workspace]</code>）。保存该 agent 的文件系统路径、跨 agent 访问允许列表、文件系统逃逸布尔值以及跨 agent 内存允许列表。默认完全隔离（无跨 agent 访问）。参见 <code>crate::multi_agent::AgentWorkspaceConfig</code>。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-13"><a class="header" href="#网关仪表板-13">网关仪表板</a></h4>
+<h4 id="网关仪表板-15"><a class="header" href="#网关仪表板-15">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.workspace</code> 字段。</p>
-<h4 id="zerocode-13"><a class="header" href="#zerocode-13">zerocode</a></h4>
+<h4 id="zerocode-15"><a class="header" href="#zerocode-15">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.workspace</code> 字段。</p>
-<h4 id="zeroclaw-config-13"><a class="header" href="#zeroclaw-config-13">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-15"><a class="header" href="#zeroclaw-config-15">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.workspace &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-13"><a class="header" href="#环境变量-13">环境变量</a></h4>
+<h4 id="环境变量-15"><a class="header" href="#环境变量-15">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__workspace=
 </code></pre>
@@ -6960,14 +6998,14 @@ web/dist directory.
 <p>跨代理文件系统白名单（入站声明）。键为目标同级代理别名；值为授予的访问模式。空映射 = 隔离（仅限自身工作空间）。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-14"><a class="header" href="#网关仪表板-14">网关仪表板</a></h4>
+<h4 id="网关仪表板-16"><a class="header" href="#网关仪表板-16">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/agents"><code>/config/agents</code></a> 并设置 <code>agents.&lt;alias&gt;.workspace.access</code> 字段。</p>
-<h4 id="zerocode-14"><a class="header" href="#zerocode-14">zerocode</a></h4>
+<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>agents.&lt;alias&gt;.workspace.access</code> 字段。</p>
-<h4 id="zeroclaw-config-14"><a class="header" href="#zeroclaw-config-14">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set agents.&lt;alias&gt;.workspace.access &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-14"><a class="header" href="#环境变量-14">环境变量</a></h4>
+<h4 id="环境变量-16"><a class="header" href="#环境变量-16">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_agents__&lt;alias&gt;__workspace__access=
 </code></pre>
@@ -7266,11 +7304,22 @@ web/dist directory.
 <p>此项可在网关仪表盘和 zerocode 中通过 <strong>Config → Risk profiles → <code>&lt;profile&gt;</code> → <code>delegation_policy.mode</code></strong> 编辑（一个 forbidden/allow 选择项）。</p>
 </li>
 <li>
-<p><strong>共享风险配置</strong>：目标代理必须使用与调用方<strong>相同</strong>的风险配置。委托不能跨越信任层级：<code>hardened</code> 上的代理不能委托给 <code>permissive</code> 上的代理。当两者不同时，将拒绝执行：</p>
-<p>委托目标“<target>”使用风险配置文件“&lt;target_profile&gt;”，但委托要求与调用方使用相同的风险配置文件（“&lt;caller_profile&gt;”）</target></p>
+<p><strong>Reachability</strong>: the target agent must be in the caller’s reachable set, resolved by <code>Config::reachable_delegate_targets</code>. The reachable set is the union of two per-agent sources on <code>[agents.&lt;caller&gt;]</code>, minus the caller itself:</p>
+<ul>
+<li><strong>same-profile peers</strong>: every other agent sharing the caller’s risk profile, included while <code>delegate_same_risk_profile = true</code> (the default). Set it <code>false</code> to opt the caller out of auto-allowing peers.</li>
+<li><strong>explicit roster</strong>: <code>delegates</code>, a possibly-empty list of agent aliases the caller may delegate to even across risk profiles.
+When the target is outside that set the refusal is:</li>
+</ul>
+<pre><code class="language-text">delegate target "&lt;target&gt;" is not reachable from "&lt;caller&gt;"; add it to [agents.&lt;caller&gt;].delegates or share a risk profile with delegate_same_risk_profile enabled
+</code></pre>
+<p>A same-profile target inherits the caller’s session workspace boundary and shares its action/cost tracker. An explicit <strong>cross-profile</strong> target runs under its own resolved policy and must pass <code>ensure_no_escalation_beyond</code> the caller: a listed delegate that would widen privilege (broader autonomy, extra roots, higher budgets, etc.) is refused with:</p>
+<pre><code class="language-text">delegate target "&lt;target&gt;" (risk profile "&lt;target_profile&gt;") would escalate beyond the caller (risk profile "&lt;caller_profile&gt;"): &lt;violation&gt;
+</code></pre>
 </li>
 </ol>
-<p>由于可达性受共享风险配置文件的约束，所公布的名单（工具 schema 中 <code>agent</code> 参数的枚举值）仅列出与调用方共享风险配置文件的已配置 agent，并排除调用方自身，且仅当 <code>delegation_policy.mode = "allow"</code> 时才会列出。不存在单独的按 agent 配置的允许列表：共享配置文件_即_是允许列表。</p>
+<p>The advertised roster (the <code>agent</code> parameter’s enum in the tool schema) lists exactly this reachable set, and only when <code>delegation_policy.mode = "allow"</code>. Disabled agents (<code>enabled = false</code>) are never reachable, whether as same-profile peers or explicit <code>delegates</code> entries.</p>
+<p>In agentic delegation the sub-agent’s tools are drawn from the caller’s already-policy-filtered registry, intersected with the target’s own <code>allowed_tools</code>. An <strong>empty</strong> <code>allowed_tools</code> on the target means “inherit”: the sub-agent runs with the caller’s full delegatable registry rather than being rejected. A non-empty list intersects with that registry. Either way the caller’s registry is the ceiling: a cross-profile target whose risk profile names a tool the caller was never granted does not receive it. This is the invariant that keeps <code>ensure_no_escalation_beyond</code> (which does not itself diff tool allowlists) sufficient, since the target can never exceed the caller’s tool surface.</p>
+<p>Depth is capped per the parent’s <code>runtime_profile.max_delegation_depth</code>. Set it to <code>1</code> to allow the top agent a single delegation hop with no further sub-delegation.</p>
 <h3 id="delegate模型看到的输出字符串"><a class="header" href="#delegate模型看到的输出字符串"><code>delegate</code>：模型看到的输出字符串</a></h3>
 <p>精确，来源于 <code>crates/zeroclaw-runtime/src/tools/delegate.rs</code>。</p>
 <ol>
@@ -7322,14 +7371,14 @@ Use action='check_result' with task_id='&lt;uuid&gt;' to retrieve the result.
 <tr><th></th><th><code>spawn_subagent</code></th><th><code>delegate</code></th></tr>
 </thead>
 <tbody>
-<tr><td><strong>身份</strong></td><td>与父级相同（相同 UUID，相同风险概况）</td><td>目标代理的身份（不同的别名，<strong>相同</strong>的风险等级，委派操作需要它）</td></tr>
-<tr><td><strong>权限模型</strong></td><td>父级策略的逐字内容（或缩小后的子集）</td><td>目标智能体自身的策略（在共享风险配置文件范围内）</td></tr>
+<tr><td><strong>身份</strong></td><td>与父级相同（相同 UUID，相同风险概况）</td><td>Target agent’s identity (different alias; same-profile peer or an explicit cross-profile delegate)</td></tr>
+<tr><td><strong>权限模型</strong></td><td>父级策略的逐字内容（或缩小后的子集）</td><td>Target agent’s own policy (same-profile, or a cross-profile delegate validated non-escalating)</td></tr>
 <tr><td><strong>模型提供商</strong></td><td>父级</td><td>目标智能体配置的提供商</td></tr>
 <tr><td><strong>生成深度</strong></td><td>硬性上限为 1</td><td>最多 <code>runtime_profile.max_delegation_depth</code>（默认值为 3）</td></tr>
 <tr><td><strong>后台模式</strong></td><td>不支持</td><td><code>background: true</code> 返回一个 <code>task_id</code></td></tr>
 <tr><td><strong>并行分发</strong></td><td>无内置参数；当 <code>parallel_tools = true</code> 时，单轮中的多次调用会并发执行</td><td><code>parallel: [...]</code> 并发运行多个目标</td></tr>
-<tr><td><strong>门控</strong></td><td><code>risk_profile.allowed_tools</code> 必须列出 <code>spawn_subagent</code></td><td><code>allowed_tools</code> 必须列出 <code>delegate</code>，调用方的 <code>delegation_policy mode = "allow"</code>，且目标共享调用方的风险配置</td></tr>
-<tr><td><strong>使用场景</strong></td><td>应保持在同一身份内的内部子任务</td><td>想让<strong>同一信任层级</strong>中不同的专家（不同模型、不同别名）来处理该任务</td></tr>
+<tr><td><strong>门控</strong></td><td><code>risk_profile.allowed_tools</code> 必须列出 <code>spawn_subagent</code></td><td><code>allowed_tools</code> must list <code>delegate</code>, caller’s <code>delegation_policy mode = "allow"</code>, and the target is in the caller’s reachable set (same-profile peer or explicit <code>delegates</code> entry)</td></tr>
+<tr><td><strong>使用场景</strong></td><td>应保持在同一身份内的内部子任务</td><td>Want a different specialist (different model, different alias) to handle the task, on the same trust tier or an explicitly-allowed stricter/cross-profile one</td></tr>
 </tbody>
 </table>
 </div>
@@ -7386,9 +7435,9 @@ Use action='check_result' with task_id='&lt;uuid&gt;' to retrieve the result.
 <p>提供程序按系列进行类型化，通过 <code>providers.models.&lt;type&gt;.&lt;alias&gt;</code> 进行寻址。<code>&lt;type&gt;</code> 是规范的系列槽位（每个槽位的详细信息请参阅<a href="#all-slots">目录</a>）。每个供应商对应一个槽位，没有同义词：不接受 <code>azure_openai</code>、<code>azure-openai</code> 和 <code>claude</code>（用于 Anthropic）。</p>
 <p><code>&lt;alias&gt;</code> 是你为实例指定的操作员名称，并且<strong>每种类型可以定义任意数量的别名</strong>。你可以并行运行同一供应商家族的多个配置：相同的 <code>type</code>、不同的别名，每个别名拥有自己的密钥、模型和设置。例如，将两个 Anthropic 账户设为 <code>anthropic.personal</code> 和 <code>anthropic.work</code>（各自拥有独立的 <code>api_key</code> 和 <code>model</code>），代理通过 <code>model_provider = "anthropic.personal"</code>（或 <code>"anthropic.work"</code>）来选择其中之一。请通过下面的界面来添加和编辑这些配置，而不要手动操作：</p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-15"><a class="header" href="#网关仪表板-15">网关仪表板</a></h4>
+<h4 id="网关仪表板-17"><a class="header" href="#网关仪表板-17">网关仪表板</a></h4>
 <p>在 Web 仪表板中打开 <a href="http://127.0.0.1:42617/config/providers.models"><code>/config/providers.models</code></a>。</p>
-<h4 id="zerocode-15"><a class="header" href="#zerocode-15">zerocode</a></h4>
+<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中的 <strong>Model providers</strong> 下。</p>
 </div>
 
@@ -7457,14 +7506,14 @@ api_key = "..."
 <p>此 model_provider 的密钥 API 令牌。请从 model_provider 的控制台获取（OpenAI platform、Anthropic console、OpenRouter keys 页面等）。尽可能通过操作系统密钥环存储；切勿直接将其提交到 config.toml 中。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-16"><a class="header" href="#网关仪表板-16">网关仪表板</a></h4>
+<h4 id="网关仪表板-18"><a class="header" href="#网关仪表板-18">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> 并设置 <code>providers.models.openrouter.&lt;alias&gt;.api_key</code> 字段。</p>
-<h4 id="zerocode-16"><a class="header" href="#zerocode-16">zerocode</a></h4>
+<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>providers.models.openrouter.&lt;alias&gt;.api_key</code> 字段。</p>
-<h4 id="zeroclaw-config-15"><a class="header" href="#zeroclaw-config-15">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.api_key    # 掩码输入，加密存储
 </code></pre>
-<h4 id="环境变量-15"><a class="header" href="#环境变量-15">环境变量</a></h4>
+<h4 id="环境变量-17"><a class="header" href="#环境变量-17">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__api_key=
 </code></pre>
@@ -7765,10 +7814,10 @@ api_key = "..."
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> and set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
 <h4 id="zerocode-16-1"><a class="header" href="#zerocode-16-1">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
-<h4 id="zeroclaw-config-16"><a class="header" href="#zeroclaw-config-16">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16"><a class="header" href="#环境变量-16">环境变量</a></h4>
+<h4 id="环境变量-16-1"><a class="header" href="#环境变量-16-1">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__tls_ca_cert_path=
 </code></pre>
@@ -7780,14 +7829,14 @@ api_key = "..."
 <p>客户端访问的端点 URI。当指向自托管网关（LiteLLM、vLLM、Ollama）、自定义代理或任何非标准 URL 时，可覆盖该系列的默认端点。保持未设置则使用该系列 <code>ModelEndpoint</code> 实现中的默认 URI。请将此项设置为完整的端点 URL；不存在单独的路径后缀字段。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17"><a class="header" href="#网关仪表板-17">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-1"><a class="header" href="#网关仪表板-17-1">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> 并设置 <code>providers.models.openrouter.&lt;alias&gt;.uri</code> 字段。</p>
-<h4 id="zerocode-17"><a class="header" href="#zerocode-17">zerocode</a></h4>
+<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>providers.models.openrouter.&lt;alias&gt;.uri</code> 字段。</p>
-<h4 id="zeroclaw-config-17"><a class="header" href="#zeroclaw-config-17">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17"><a class="header" href="#环境变量-17">环境变量</a></h4>
+<h4 id="环境变量-17-1"><a class="header" href="#环境变量-17-1">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__openrouter__&lt;alias&gt;__uri=
 </code></pre>
@@ -7799,9 +7848,9 @@ api_key = "..."
 <p>model_provider 客户端的传输协议类型。<code>responses</code> 通过 OpenAI 的 Codex/Responses API（<code>POST /v1/responses</code>）路由；<code>chat_completions</code> 通过传统的 <code>/v1/chat/completions</code>（或该系列兼容 chat-completions 的端点）路由。未设置时按系列自动选择。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18"><a class="header" href="#网关仪表板-18">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-1"><a class="header" href="#网关仪表板-18-1">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/providers.models/openrouter"><code>/config/providers.models/openrouter</code></a> 并设置 <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> 字段。</p>
-<h4 id="zerocode-18"><a class="header" href="#zerocode-18">zerocode</a></h4>
+<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>providers.models.openrouter.&lt;alias&gt;.wire_api</code> 字段。</p>
 <h4 id="zeroclaw-config-18"><a class="header" href="#zeroclaw-config-18">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.openrouter.&lt;alias&gt;.wire_api &lt;value&gt;
@@ -9112,10 +9161,10 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <p>Open <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> and set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
 <h4 id="zerocode-16-2"><a class="header" href="#zerocode-16-2">zerocode</a></h4>
 <p>In the <strong>Config</strong> pane, set the <code>providers.models.custom.&lt;alias&gt;.tls_ca_cert_path</code> field.</p>
-<h4 id="zeroclaw-config-16-1"><a class="header" href="#zeroclaw-config-16-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-2"><a class="header" href="#zeroclaw-config-16-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.tls_ca_cert_path &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-1"><a class="header" href="#环境变量-16-1">环境变量</a></h4>
+<h4 id="环境变量-16-2"><a class="header" href="#环境变量-16-2">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__tls_ca_cert_path=
 </code></pre>
@@ -9127,14 +9176,14 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <p>客户端访问的端点 URI。当指向自托管网关（LiteLLM、vLLM、Ollama）、自定义代理或任何非标准 URL 时，可覆盖该系列的默认端点。保持未设置则使用该系列 <code>ModelEndpoint</code> 实现中的默认 URI。请将此项设置为完整的端点 URL；不存在单独的路径后缀字段。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-1"><a class="header" href="#网关仪表板-17-1">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-2"><a class="header" href="#网关仪表板-17-2">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> 并设置 <code>providers.models.custom.&lt;alias&gt;.uri</code> 字段。</p>
-<h4 id="zerocode-17-1"><a class="header" href="#zerocode-17-1">zerocode</a></h4>
+<h4 id="zerocode-17-2"><a class="header" href="#zerocode-17-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>providers.models.custom.&lt;alias&gt;.uri</code> 字段。</p>
-<h4 id="zeroclaw-config-17-1"><a class="header" href="#zeroclaw-config-17-1">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.uri &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17-1"><a class="header" href="#环境变量-17-1">环境变量</a></h4>
+<h4 id="环境变量-17-2"><a class="header" href="#环境变量-17-2">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_providers__models__custom__&lt;alias&gt;__uri=
 </code></pre>
@@ -9145,9 +9194,9 @@ INFO model_provider=anthropic.haiku stream complete tokens={input=512, output=12
 <summary><code>wire_api</code> <span class="cfg-field-meta"><code>WireApi</code> · default <code>—</code></span></summary>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-1"><a class="header" href="#网关仪表板-18-1">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-2"><a class="header" href="#网关仪表板-18-2">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/providers.models/custom"><code>/config/providers.models/custom</code></a> 并设置 <code>providers.models.custom.&lt;alias&gt;.wire_api</code> 字段。</p>
-<h4 id="zerocode-18-1"><a class="header" href="#zerocode-18-1">zerocode</a></h4>
+<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>providers.models.custom.&lt;alias&gt;.wire_api</code> 字段。</p>
 <h4 id="zeroclaw-config-18-1"><a class="header" href="#zeroclaw-config-18-1">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set providers.models.custom.&lt;alias&gt;.wire_api &lt;value&gt;
@@ -9942,14 +9991,14 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>渐进式响应传送的流式模式。<code>"off"</code>（默认）：单条消息。<code>"partial"</code>：原位编辑草稿。<code>"multi_message"</code>：按段落拆分传送。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-2"><a class="header" href="#网关仪表板-17-2">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-3"><a class="header" href="#网关仪表板-17-3">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> 并设置 <code>channels.matrix.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zerocode-17-2"><a class="header" href="#zerocode-17-2">zerocode</a></h4>
+<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.matrix.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zeroclaw-config-16-2"><a class="header" href="#zeroclaw-config-16-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-2"><a class="header" href="#环境变量-16-2">环境变量</a></h4>
+<h4 id="环境变量-16-3"><a class="header" href="#环境变量-16-3">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -9961,14 +10010,14 @@ cargo build --no-default-features --features agent-runtime,gateway,channel-disco
 <p>可选的 Matrix 用户 ID（例如 <code>"@bot:matrix.org"</code>）。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-2"><a class="header" href="#网关仪表板-18-2">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-3"><a class="header" href="#网关仪表板-18-3">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/matrix"><code>/config/channels/matrix</code></a> 并设置 <code>channels.matrix.&lt;alias&gt;.user_id</code> 字段。</p>
-<h4 id="zerocode-18-2"><a class="header" href="#zerocode-18-2">zerocode</a></h4>
+<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.matrix.&lt;alias&gt;.user_id</code> 字段。</p>
-<h4 id="zeroclaw-config-17-2"><a class="header" href="#zeroclaw-config-17-2">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.matrix.&lt;alias&gt;.user_id &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17-2"><a class="header" href="#环境变量-17-2">环境变量</a></h4>
+<h4 id="环境变量-17-3"><a class="header" href="#环境变量-17-3">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__matrix__&lt;alias&gt;__user_id=
 </code></pre>
@@ -10666,9 +10715,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>每个（channel, recipient）出站节流队列的深度。取值范围：<code>0..=REPLY_QUEUE_DEPTH_CEILING</code>。当 <code>reply_min_interval_secs &gt; 0</code> 且此值为 <code>0</code> 时，节流封装器会使用 <code>DEFAULT_REPLY_QUEUE_DEPTH</code>（16）作为替代值。当队列已满时，最新的发送会被丢弃，并记录一条 <code>WARN</code> 日志。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-3"><a class="header" href="#网关仪表板-17-3">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-4"><a class="header" href="#网关仪表板-17-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
-<h4 id="zerocode-17-3"><a class="header" href="#zerocode-17-3">zerocode</a></h4>
+<h4 id="zerocode-17-4"><a class="header" href="#zerocode-17-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
 <h4 id="zeroclaw-config-15-4"><a class="header" href="#zeroclaw-config-15-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
@@ -10685,11 +10734,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>停滞监视器超时时间（秒）。当值非零时，如果在此时间内没有进展，机器人将中止并重试。0 = 禁用。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-3"><a class="header" href="#网关仪表板-18-3">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-4"><a class="header" href="#网关仪表板-18-4">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> 字段。</p>
-<h4 id="zerocode-18-3"><a class="header" href="#zerocode-18-3">zerocode</a></h4>
+<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.stall_timeout_secs</code> 字段。</p>
-<h4 id="zeroclaw-config-16-3"><a class="header" href="#zeroclaw-config-16-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stall_timeout_secs &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-15-4"><a class="header" href="#环境变量-15-4">环境变量</a></h4>
@@ -10708,10 +10757,10 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/discord"><code>/config/channels/discord</code></a> 并设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
 <h4 id="zerocode-19-2"><a class="header" href="#zerocode-19-2">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.discord.&lt;alias&gt;.stream_mode</code> 字段。</p>
-<h4 id="zeroclaw-config-17-3"><a class="header" href="#zeroclaw-config-17-3">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-4"><a class="header" href="#zeroclaw-config-17-4">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.discord.&lt;alias&gt;.stream_mode &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-3"><a class="header" href="#环境变量-16-3">环境变量</a></h4>
+<h4 id="环境变量-16-4"><a class="header" href="#环境变量-16-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__discord__&lt;alias&gt;__stream_mode=
 </code></pre>
@@ -11118,9 +11167,9 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>为 true 时（默认），回复将保留在原始的 Slack 线程中。为 false 时，回复将改为发送到频道根目录。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-4"><a class="header" href="#网关仪表板-17-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-5"><a class="header" href="#网关仪表板-17-5">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> 并设置 <code>channels.slack.&lt;alias&gt;.thread_replies</code> 字段。</p>
-<h4 id="zerocode-17-4"><a class="header" href="#zerocode-17-4">zerocode</a></h4>
+<h4 id="zerocode-17-5"><a class="header" href="#zerocode-17-5">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.slack.&lt;alias&gt;.thread_replies</code> 字段。</p>
 <h4 id="zeroclaw-config-15-5"><a class="header" href="#zeroclaw-config-15-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies &lt;value&gt;
@@ -11137,11 +11186,11 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>使用较新的 Slack <code>markdown</code> 块类型（12 000 字符上限，格式更丰富）。默认为 false（使用普遍支持的 <code>section</code> 块和 <code>mrkdwn</code>）。仅当你的 Slack 工作区支持 <code>markdown</code> 块类型时才启用此选项。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-4"><a class="header" href="#网关仪表板-18-4">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-5"><a class="header" href="#网关仪表板-18-5">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> 并设置 <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> 字段。</p>
-<h4 id="zerocode-18-4"><a class="header" href="#zerocode-18-4">zerocode</a></h4>
+<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.slack.&lt;alias&gt;.use_markdown_blocks</code> 字段。</p>
-<h4 id="zeroclaw-config-16-4"><a class="header" href="#zeroclaw-config-16-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.use_markdown_blocks &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-15-5"><a class="header" href="#环境变量-15-5">环境变量</a></h4>
@@ -11168,7 +11217,7 @@ zeroclaw config set channels.matrix.&lt;alias&gt;.reply_in_thread false    # 频
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/slack"><code>/config/channels/slack</code></a> 并切换 <code>channels.slack.&lt;alias&gt;.thread_replies</code> 字段。</p>
 <h4 id="zerocode-19-3"><a class="header" href="#zerocode-19-3">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.slack.&lt;alias&gt;.thread_replies</code> 字段。</p>
-<h4 id="zeroclaw-config-17-4"><a class="header" href="#zeroclaw-config-17-4">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.slack.&lt;alias&gt;.thread_replies true     以下消息的回复
 
 Wait — let me reconsider. The phrase "thread replies on" appears to be a UI label, likely a toggle. Let me provide a more accurate translation.
@@ -12771,14 +12820,14 @@ zeroclaw channel start
 <p>每个（channel, recipient）出站节流队列的深度。取值范围：<code>0..=REPLY_QUEUE_DEPTH_CEILING</code>。当 <code>reply_min_interval_secs &gt; 0</code> 且此值为 <code>0</code> 时，节流封装器会使用 <code>DEFAULT_REPLY_QUEUE_DEPTH</code>（16）作为替代值。当队列已满时，最新的发送会被丢弃，并记录一条 <code>WARN</code> 日志。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-5"><a class="header" href="#网关仪表板-17-5">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-6"><a class="header" href="#网关仪表板-17-6">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> 并设置 <code>channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
-<h4 id="zerocode-17-5"><a class="header" href="#zerocode-17-5">zerocode</a></h4>
+<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max</code> 字段。</p>
-<h4 id="zeroclaw-config-16-5"><a class="header" href="#zeroclaw-config-16-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.reply_queue_depth_max &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-4"><a class="header" href="#环境变量-16-4">环境变量</a></h4>
+<h4 id="环境变量-16-5"><a class="header" href="#环境变量-16-5">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__reply_queue_depth_max=
 </code></pre>
@@ -12790,14 +12839,14 @@ zeroclaw channel start
 <p>当设为 true 且 mode = “personal” 时，始终在用户自己的私聊（Notes to Self）中回复消息。默认为 false。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-5"><a class="header" href="#网关仪表板-18-5">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-6"><a class="header" href="#网关仪表板-18-6">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/whatsapp"><code>/config/channels/whatsapp</code></a> 并设置 <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> 字段。</p>
-<h4 id="zerocode-18-5"><a class="header" href="#zerocode-18-5">zerocode</a></h4>
+<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.whatsapp.&lt;alias&gt;.self_chat_mode</code> 字段。</p>
-<h4 id="zeroclaw-config-17-5"><a class="header" href="#zeroclaw-config-17-5">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.whatsapp.&lt;alias&gt;.self_chat_mode &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17-3"><a class="header" href="#环境变量-17-3">环境变量</a></h4>
+<h4 id="环境变量-17-4"><a class="header" href="#环境变量-17-4">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__whatsapp__&lt;alias&gt;__self_chat_mode=
 </code></pre>
@@ -13323,14 +13372,14 @@ zeroclaw channel start
 <summary><code>smtp_tls</code> <span class="cfg-field-meta"><code>bool</code> · default <code>true</code></span></summary>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-6"><a class="header" href="#网关仪表板-17-6">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-7"><a class="header" href="#网关仪表板-17-7">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> 并设置 <code>channels.email.&lt;alias&gt;.smtp_tls</code> 字段。</p>
-<h4 id="zerocode-17-6"><a class="header" href="#zerocode-17-6">zerocode</a></h4>
+<h4 id="zerocode-17-7"><a class="header" href="#zerocode-17-7">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.email.&lt;alias&gt;.smtp_tls</code> 字段。</p>
-<h4 id="zeroclaw-config-16-6"><a class="header" href="#zeroclaw-config-16-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-7"><a class="header" href="#zeroclaw-config-16-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_tls &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-5"><a class="header" href="#环境变量-16-5">环境变量</a></h4>
+<h4 id="环境变量-16-6"><a class="header" href="#环境变量-16-6">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_tls=
 </code></pre>
@@ -13341,14 +13390,14 @@ zeroclaw channel start
 <summary><code>smtp_username</code> <span class="cfg-field-meta"><code>string?</code> · default <code>null</code></span></summary>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-6"><a class="header" href="#网关仪表板-18-6">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-7"><a class="header" href="#网关仪表板-18-7">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/email"><code>/config/channels/email</code></a> 并设置 <code>channels.email.&lt;alias&gt;.smtp_username</code> 字段。</p>
-<h4 id="zerocode-18-6"><a class="header" href="#zerocode-18-6">zerocode</a></h4>
+<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.email.&lt;alias&gt;.smtp_username</code> 字段。</p>
-<h4 id="zeroclaw-config-17-6"><a class="header" href="#zeroclaw-config-17-6">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.email.&lt;alias&gt;.smtp_username &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17-4"><a class="header" href="#环境变量-17-4">环境变量</a></h4>
+<h4 id="环境变量-17-5"><a class="header" href="#环境变量-17-5">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__email__&lt;alias&gt;__smtp_username=
 </code></pre>
@@ -13870,7 +13919,7 @@ zeroclaw channel start
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/voice_call"><code>/config/channels/voice_call</code></a> 并设置 <code>channels.voice_call.&lt;alias&gt;.webhook_base_url</code> 字段。</p>
 <h4 id="zerocode-16-9"><a class="header" href="#zerocode-16-9">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.voice_call.&lt;alias&gt;.webhook_base_url</code> 字段。</p>
-<h4 id="zeroclaw-config-16-7"><a class="header" href="#zeroclaw-config-16-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-16-8"><a class="header" href="#zeroclaw-config-16-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_base_url &lt;value&gt;
 </code></pre>
 <h4 id="环境变量-15-8"><a class="header" href="#环境变量-15-8">环境变量</a></h4>
@@ -13884,14 +13933,14 @@ zeroclaw channel start
 <summary><code>webhook_port</code> <span class="cfg-field-meta"><code>integer</code> · default <code>8090</code></span></summary>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-17-7"><a class="header" href="#网关仪表板-17-7">网关仪表板</a></h4>
+<h4 id="网关仪表板-17-8"><a class="header" href="#网关仪表板-17-8">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/voice_call"><code>/config/channels/voice_call</code></a> 并设置 <code>channels.voice_call.&lt;alias&gt;.webhook_port</code> 字段。</p>
-<h4 id="zerocode-17-7"><a class="header" href="#zerocode-17-7">zerocode</a></h4>
+<h4 id="zerocode-17-8"><a class="header" href="#zerocode-17-8">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.voice_call.&lt;alias&gt;.webhook_port</code> 字段。</p>
-<h4 id="zeroclaw-config-17-7"><a class="header" href="#zeroclaw-config-17-7">zeroclaw config</a></h4>
+<h4 id="zeroclaw-config-17-8"><a class="header" href="#zeroclaw-config-17-8">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_call.&lt;alias&gt;.webhook_port &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-16-6"><a class="header" href="#环境变量-16-6">环境变量</a></h4>
+<h4 id="环境变量-16-7"><a class="header" href="#环境变量-16-7">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_call__&lt;alias&gt;__webhook_port=
 </code></pre>
@@ -13914,14 +13963,14 @@ zeroclaw channel start
 <p>用于语音活动检测的 RMS 能量阈值。低于此电平的采样将被视为静音。默认值：<code>0.01</code>。</p>
 <p><strong>将它放置在任何表面上：</strong></p>
 <div class="os-tabs-src">
-<h4 id="网关仪表板-18-7"><a class="header" href="#网关仪表板-18-7">网关仪表板</a></h4>
+<h4 id="网关仪表板-18-8"><a class="header" href="#网关仪表板-18-8">网关仪表板</a></h4>
 <p>打开 <a href="http://127.0.0.1:42617/config/channels/voice_wake"><code>/config/channels/voice_wake</code></a> 并设置 <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> 字段。</p>
-<h4 id="zerocode-18-7"><a class="header" href="#zerocode-18-7">zerocode</a></h4>
+<h4 id="zerocode-18-8"><a class="header" href="#zerocode-18-8">zerocode</a></h4>
 <p>在 <strong>Config</strong> 窗格中，设置 <code>channels.voice_wake.&lt;alias&gt;.energy_threshold</code> 字段。</p>
 <h4 id="zeroclaw-config-18-7"><a class="header" href="#zeroclaw-config-18-7">zeroclaw config</a></h4>
 <pre><code class="language-sh">zeroclaw config set channels.voice_wake.&lt;alias&gt;.energy_threshold &lt;value&gt;
 </code></pre>
-<h4 id="环境变量-17-5"><a class="header" href="#环境变量-17-5">环境变量</a></h4>
+<h4 id="环境变量-17-6"><a class="header" href="#环境变量-17-6">环境变量</a></h4>
 <p>导出此覆盖配置（POSIX shell；可放入 <code>~/.bashrc</code>、<code>~/.zshrc</code>、<code>.env</code> 或 Dockerfile 中）。将 <code>&lt;alias&gt;</code> 替换为实际的别名：</p>
 <pre><code class="language-sh">export ZEROCLAW_channels__voice_wake__&lt;alias&gt;__energy_threshold=
 </code></pre>
