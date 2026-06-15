@@ -2840,184 +2840,185 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../../" d
 <a href=#2838 id=2838 data-nosnippet>2838</a>            args: HashMap::new(),
 <a href=#2839 id=2839 data-nosnippet>2839</a>            target: <span class="prelude-val">None</span>,
 <a href=#2840 id=2840 data-nosnippet>2840</a>            locked_args: HashMap::new(),
-<a href=#2841 id=2841 data-nosnippet>2841</a>        }
-<a href=#2842 id=2842 data-nosnippet>2842</a>    }
-<a href=#2843 id=2843 data-nosnippet>2843</a>
-<a href=#2844 id=2844 data-nosnippet>2844</a>    <span class="doccomment">/// The skills prompt must advertise the exact same callable name the tool
-<a href=#2845 id=2845 data-nosnippet>2845</a>    /// spec registers (both via `composed_tool_name`). A plugin-namespaced skill
-<a href=#2846 id=2846 data-nosnippet>2846</a>    /// with a dotted tool name would otherwise render a raw `skill__tool` the
-<a href=#2847 id=2847 data-nosnippet>2847</a>    /// model cannot invoke, which is the prompt half of #6678.
-<a href=#2848 id=2848 data-nosnippet>2848</a>    </span><span class="attr">#[test]
-<a href=#2849 id=2849 data-nosnippet>2849</a>    </span><span class="kw">fn </span>prompt_callable_name_matches_registered_tool_name() {
-<a href=#2850 id=2850 data-nosnippet>2850</a>        <span class="kw">let </span>skill = Skill {
-<a href=#2851 id=2851 data-nosnippet>2851</a>            name: <span class="string">"pr-review-toolkit:code-reviewer"</span>.to_string(),
-<a href=#2852 id=2852 data-nosnippet>2852</a>            description: <span class="string">"review"</span>.to_string(),
-<a href=#2853 id=2853 data-nosnippet>2853</a>            version: <span class="string">"1.0.0"</span>.to_string(),
-<a href=#2854 id=2854 data-nosnippet>2854</a>            author: <span class="prelude-val">None</span>,
-<a href=#2855 id=2855 data-nosnippet>2855</a>            tags: Vec::new(),
-<a href=#2856 id=2856 data-nosnippet>2856</a>            tools: <span class="macro">vec!</span>[tool(<span class="string">"run.lint"</span>, <span class="string">"shell"</span>)],
-<a href=#2857 id=2857 data-nosnippet>2857</a>            prompts: Vec::new(),
-<a href=#2858 id=2858 data-nosnippet>2858</a>            location: <span class="prelude-val">None</span>,
-<a href=#2859 id=2859 data-nosnippet>2859</a>        };
-<a href=#2860 id=2860 data-nosnippet>2860</a>
-<a href=#2861 id=2861 data-nosnippet>2861</a>        <span class="kw">let </span>prompt = skills_to_prompt_with_mode(
-<a href=#2862 id=2862 data-nosnippet>2862</a>            std::slice::from_ref(<span class="kw-2">&amp;</span>skill),
-<a href=#2863 id=2863 data-nosnippet>2863</a>            Path::new(<span class="string">"/tmp"</span>),
-<a href=#2864 id=2864 data-nosnippet>2864</a>            zeroclaw_config::schema::SkillsPromptInjectionMode::Full,
-<a href=#2865 id=2865 data-nosnippet>2865</a>        );
-<a href=#2866 id=2866 data-nosnippet>2866</a>
-<a href=#2867 id=2867 data-nosnippet>2867</a>        <span class="kw">let </span>registered =
-<a href=#2868 id=2868 data-nosnippet>2868</a>            <span class="kw">crate</span>::tools::skill_tool::composed_tool_name(<span class="kw-2">&amp;</span>skill.name, <span class="kw-2">&amp;</span>skill.tools[<span class="number">0</span>].name);
-<a href=#2869 id=2869 data-nosnippet>2869</a>        <span class="macro">assert!</span>(
-<a href=#2870 id=2870 data-nosnippet>2870</a>            prompt.contains(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"&lt;name&gt;{registered}&lt;/name&gt;"</span>)),
-<a href=#2871 id=2871 data-nosnippet>2871</a>            <span class="string">"prompt is missing the sanitized callable name `{registered}`:\n{prompt}"</span>,
-<a href=#2872 id=2872 data-nosnippet>2872</a>        );
-<a href=#2873 id=2873 data-nosnippet>2873</a>        <span class="comment">// The raw, provider-invalid composed name must never reach the prompt.
-<a href=#2874 id=2874 data-nosnippet>2874</a>        </span><span class="macro">assert!</span>(
-<a href=#2875 id=2875 data-nosnippet>2875</a>            !prompt.contains(<span class="string">"pr-review-toolkit:code-reviewer__run.lint"</span>),
-<a href=#2876 id=2876 data-nosnippet>2876</a>            <span class="string">"prompt advertised the raw, unsanitized composed name:\n{prompt}"</span>,
-<a href=#2877 id=2877 data-nosnippet>2877</a>        );
-<a href=#2878 id=2878 data-nosnippet>2878</a>    }
-<a href=#2879 id=2879 data-nosnippet>2879</a>}
-<a href=#2880 id=2880 data-nosnippet>2880</a>
-<a href=#2881 id=2881 data-nosnippet>2881</a><span class="attr">#[cfg(test)]
-<a href=#2882 id=2882 data-nosnippet>2882</a></span><span class="kw">mod </span>workspace_dir_regression_tests {
-<a href=#2883 id=2883 data-nosnippet>2883</a>    <span class="kw">use </span>super::<span class="kw-2">*</span>;
-<a href=#2884 id=2884 data-nosnippet>2884</a>    <span class="kw">use </span>tempfile::TempDir;
-<a href=#2885 id=2885 data-nosnippet>2885</a>
-<a href=#2886 id=2886 data-nosnippet>2886</a>    <span class="kw">fn </span>make_config_with_agent_workspace(
-<a href=#2887 id=2887 data-nosnippet>2887</a>        install_root: <span class="kw-2">&amp;</span>Path,
-<a href=#2888 id=2888 data-nosnippet>2888</a>        data_dir: <span class="kw-2">&amp;</span>Path,
-<a href=#2889 id=2889 data-nosnippet>2889</a>        agent_alias: <span class="kw-2">&amp;</span>str,
-<a href=#2890 id=2890 data-nosnippet>2890</a>        workspace_path: PathBuf,
-<a href=#2891 id=2891 data-nosnippet>2891</a>    ) -&gt; zeroclaw_config::schema::Config {
-<a href=#2892 id=2892 data-nosnippet>2892</a>        <span class="kw">let </span><span class="kw-2">mut </span>config = zeroclaw_config::schema::Config {
-<a href=#2893 id=2893 data-nosnippet>2893</a>            config_path: install_root.join(<span class="string">"config.toml"</span>),
-<a href=#2894 id=2894 data-nosnippet>2894</a>            data_dir: data_dir.to_path_buf(),
-<a href=#2895 id=2895 data-nosnippet>2895</a>            ..Default::default()
-<a href=#2896 id=2896 data-nosnippet>2896</a>        };
-<a href=#2897 id=2897 data-nosnippet>2897</a>
-<a href=#2898 id=2898 data-nosnippet>2898</a>        <span class="kw">let </span>agent = zeroclaw_config::schema::AliasedAgentConfig {
-<a href=#2899 id=2899 data-nosnippet>2899</a>            workspace: zeroclaw_config::multi_agent::AgentWorkspaceConfig {
-<a href=#2900 id=2900 data-nosnippet>2900</a>                path: <span class="prelude-val">Some</span>(workspace_path),
-<a href=#2901 id=2901 data-nosnippet>2901</a>                ..Default::default()
-<a href=#2902 id=2902 data-nosnippet>2902</a>            },
-<a href=#2903 id=2903 data-nosnippet>2903</a>            ..Default::default()
-<a href=#2904 id=2904 data-nosnippet>2904</a>        };
-<a href=#2905 id=2905 data-nosnippet>2905</a>
-<a href=#2906 id=2906 data-nosnippet>2906</a>        config.agents.insert(agent_alias.to_string(), agent);
-<a href=#2907 id=2907 data-nosnippet>2907</a>        config
-<a href=#2908 id=2908 data-nosnippet>2908</a>    }
-<a href=#2909 id=2909 data-nosnippet>2909</a>
-<a href=#2910 id=2910 data-nosnippet>2910</a>    <span class="kw">fn </span>write_test_skill(workspace: <span class="kw-2">&amp;</span>Path, skill_name: <span class="kw-2">&amp;</span>str) {
-<a href=#2911 id=2911 data-nosnippet>2911</a>        <span class="kw">let </span>skill_dir = workspace.join(<span class="string">"skills"</span>).join(skill_name);
-<a href=#2912 id=2912 data-nosnippet>2912</a>        std::fs::create_dir_all(<span class="kw-2">&amp;</span>skill_dir).unwrap();
-<a href=#2913 id=2913 data-nosnippet>2913</a>        std::fs::write(
-<a href=#2914 id=2914 data-nosnippet>2914</a>            skill_dir.join(<span class="string">"SKILL.toml"</span>),
-<a href=#2915 id=2915 data-nosnippet>2915</a>            <span class="macro">format!</span>(
-<a href=#2916 id=2916 data-nosnippet>2916</a>                <span class="string">r#"[skill]
-<a href=#2917 id=2917 data-nosnippet>2917</a>name = "{skill_name}"
-<a href=#2918 id=2918 data-nosnippet>2918</a>description = "regression test skill"
-<a href=#2919 id=2919 data-nosnippet>2919</a>version = "0.1.0"
-<a href=#2920 id=2920 data-nosnippet>2920</a>"#
-<a href=#2921 id=2921 data-nosnippet>2921</a>            </span>),
-<a href=#2922 id=2922 data-nosnippet>2922</a>        )
-<a href=#2923 id=2923 data-nosnippet>2923</a>        .unwrap();
-<a href=#2924 id=2924 data-nosnippet>2924</a>    }
-<a href=#2925 id=2925 data-nosnippet>2925</a>
-<a href=#2926 id=2926 data-nosnippet>2926</a>    <span class="doccomment">/// Regression test for #7236: `load_skills_for_agent_from_config` must
-<a href=#2927 id=2927 data-nosnippet>2927</a>    /// load skills from the per-agent workspace directory, not from `data_dir`.
-<a href=#2928 id=2928 data-nosnippet>2928</a>    ///
-<a href=#2929 id=2929 data-nosnippet>2929</a>    /// The bug: three call sites passed `&amp;config.data_dir` instead of
-<a href=#2930 id=2930 data-nosnippet>2930</a>    /// `&amp;config.agent_workspace_dir(agent_alias)`, causing skills placed in
-<a href=#2931 id=2931 data-nosnippet>2931</a>    /// `&lt;install&gt;/agents/&lt;alias&gt;/workspace/skills/` to be silently ignored.
-<a href=#2932 id=2932 data-nosnippet>2932</a>    ///
-<a href=#2933 id=2933 data-nosnippet>2933</a>    /// This test constructs a config where `data_dir` and
-<a href=#2934 id=2934 data-nosnippet>2934</a>    /// `agent_workspace_dir(agent_alias)` are distinct paths, places a skill
-<a href=#2935 id=2935 data-nosnippet>2935</a>    /// only in the agent workspace, and verifies:
-<a href=#2936 id=2936 data-nosnippet>2936</a>    /// 1. `load_skills_for_agent_from_config` finds the skill (correct behavior)
-<a href=#2937 id=2937 data-nosnippet>2937</a>    /// 2. Calling `load_skills_for_agent` with `data_dir` does NOT find the skill (the bug)
-<a href=#2938 id=2938 data-nosnippet>2938</a>    ///
-<a href=#2939 id=2939 data-nosnippet>2939</a>    /// The test would fail if `load_skills_for_agent_from_config` reverted to
-<a href=#2940 id=2940 data-nosnippet>2940</a>    /// using `config.data_dir` instead of `config.agent_workspace_dir(agent_alias)`.
-<a href=#2941 id=2941 data-nosnippet>2941</a>    </span><span class="attr">#[test]
-<a href=#2942 id=2942 data-nosnippet>2942</a>    </span><span class="kw">fn </span>load_skills_for_agent_from_config_uses_workspace_dir_not_data_dir() {
-<a href=#2943 id=2943 data-nosnippet>2943</a>        <span class="kw">let </span>install_root = TempDir::new().unwrap();
-<a href=#2944 id=2944 data-nosnippet>2944</a>        <span class="kw">let </span>data_dir = TempDir::new().unwrap();
-<a href=#2945 id=2945 data-nosnippet>2945</a>        <span class="kw">let </span>agent_workspace = TempDir::new().unwrap();
-<a href=#2946 id=2946 data-nosnippet>2946</a>
-<a href=#2947 id=2947 data-nosnippet>2947</a>        <span class="kw">let </span>agent_alias = <span class="string">"test-agent"</span>;
-<a href=#2948 id=2948 data-nosnippet>2948</a>        <span class="kw">let </span>skill_name = <span class="string">"workspace-only-regression-skill"</span>;
-<a href=#2949 id=2949 data-nosnippet>2949</a>
-<a href=#2950 id=2950 data-nosnippet>2950</a>        write_test_skill(agent_workspace.path(), skill_name);
-<a href=#2951 id=2951 data-nosnippet>2951</a>
-<a href=#2952 id=2952 data-nosnippet>2952</a>        <span class="kw">let </span>config = make_config_with_agent_workspace(
-<a href=#2953 id=2953 data-nosnippet>2953</a>            install_root.path(),
-<a href=#2954 id=2954 data-nosnippet>2954</a>            data_dir.path(),
-<a href=#2955 id=2955 data-nosnippet>2955</a>            agent_alias,
-<a href=#2956 id=2956 data-nosnippet>2956</a>            agent_workspace.path().to_path_buf(),
-<a href=#2957 id=2957 data-nosnippet>2957</a>        );
-<a href=#2958 id=2958 data-nosnippet>2958</a>
-<a href=#2959 id=2959 data-nosnippet>2959</a>        <span class="kw">let </span>workspace_dir = config.agent_workspace_dir(agent_alias);
-<a href=#2960 id=2960 data-nosnippet>2960</a>        <span class="macro">assert_eq!</span>(
-<a href=#2961 id=2961 data-nosnippet>2961</a>            workspace_dir,
-<a href=#2962 id=2962 data-nosnippet>2962</a>            agent_workspace.path(),
-<a href=#2963 id=2963 data-nosnippet>2963</a>            <span class="string">"agent_workspace_dir must resolve to the custom workspace path"
-<a href=#2964 id=2964 data-nosnippet>2964</a>        </span>);
-<a href=#2965 id=2965 data-nosnippet>2965</a>        <span class="macro">assert_ne!</span>(
-<a href=#2966 id=2966 data-nosnippet>2966</a>            workspace_dir, config.data_dir,
-<a href=#2967 id=2967 data-nosnippet>2967</a>            <span class="string">"workspace_dir and data_dir must be distinct for this test to be meaningful"
-<a href=#2968 id=2968 data-nosnippet>2968</a>        </span>);
-<a href=#2969 id=2969 data-nosnippet>2969</a>
-<a href=#2970 id=2970 data-nosnippet>2970</a>        <span class="comment">// Test the production helper — this is what the three call sites use.
-<a href=#2971 id=2971 data-nosnippet>2971</a>        </span><span class="kw">let </span>skills_from_helper = load_skills_for_agent_from_config(<span class="kw-2">&amp;</span>config, agent_alias);
-<a href=#2972 id=2972 data-nosnippet>2972</a>        <span class="kw">let </span>helper_skill_names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; =
-<a href=#2973 id=2973 data-nosnippet>2973</a>            skills_from_helper.iter().map(|s| s.name.as_str()).collect();
-<a href=#2974 id=2974 data-nosnippet>2974</a>        <span class="macro">assert!</span>(
-<a href=#2975 id=2975 data-nosnippet>2975</a>            helper_skill_names.contains(<span class="kw-2">&amp;</span>skill_name),
-<a href=#2976 id=2976 data-nosnippet>2976</a>            <span class="string">"load_skills_for_agent_from_config must load skills from agent workspace; got: {helper_skill_names:?}"
-<a href=#2977 id=2977 data-nosnippet>2977</a>        </span>);
-<a href=#2978 id=2978 data-nosnippet>2978</a>
-<a href=#2979 id=2979 data-nosnippet>2979</a>        <span class="comment">// Verify that using data_dir directly would NOT find the skill (the bug).
-<a href=#2980 id=2980 data-nosnippet>2980</a>        </span><span class="kw">let </span>skills_from_data_dir = load_skills_for_agent(<span class="kw-2">&amp;</span>config.data_dir, <span class="kw-2">&amp;</span>config, agent_alias);
-<a href=#2981 id=2981 data-nosnippet>2981</a>        <span class="kw">let </span>data_dir_skill_names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = skills_from_data_dir
-<a href=#2982 id=2982 data-nosnippet>2982</a>            .iter()
-<a href=#2983 id=2983 data-nosnippet>2983</a>            .map(|s| s.name.as_str())
-<a href=#2984 id=2984 data-nosnippet>2984</a>            .collect();
-<a href=#2985 id=2985 data-nosnippet>2985</a>        <span class="macro">assert!</span>(
-<a href=#2986 id=2986 data-nosnippet>2986</a>            !data_dir_skill_names.contains(<span class="kw-2">&amp;</span>skill_name),
-<a href=#2987 id=2987 data-nosnippet>2987</a>            <span class="string">"skill in agent workspace must NOT be loaded when passing data_dir (this was the bug); got: {data_dir_skill_names:?}"
-<a href=#2988 id=2988 data-nosnippet>2988</a>        </span>);
-<a href=#2989 id=2989 data-nosnippet>2989</a>    }
-<a href=#2990 id=2990 data-nosnippet>2990</a>
-<a href=#2991 id=2991 data-nosnippet>2991</a>    <span class="doccomment">/// Verifies that `load_skills_for_agent_from_config` with an empty
-<a href=#2992 id=2992 data-nosnippet>2992</a>    /// `skill_bundles` list falls back to the install-wide skill set from
-<a href=#2993 id=2993 data-nosnippet>2993</a>    /// the workspace dir. This pins the contract that the helper resolves
-<a href=#2994 id=2994 data-nosnippet>2994</a>    /// the correct workspace directory regardless of bundle configuration.
-<a href=#2995 id=2995 data-nosnippet>2995</a>    </span><span class="attr">#[test]
-<a href=#2996 id=2996 data-nosnippet>2996</a>    </span><span class="kw">fn </span>load_skills_for_agent_from_config_empty_bundles_uses_workspace_dir() {
-<a href=#2997 id=2997 data-nosnippet>2997</a>        <span class="kw">let </span>install_root = TempDir::new().unwrap();
-<a href=#2998 id=2998 data-nosnippet>2998</a>        <span class="kw">let </span>data_dir = TempDir::new().unwrap();
-<a href=#2999 id=2999 data-nosnippet>2999</a>        <span class="kw">let </span>agent_workspace = TempDir::new().unwrap();
-<a href=#3000 id=3000 data-nosnippet>3000</a>
-<a href=#3001 id=3001 data-nosnippet>3001</a>        <span class="kw">let </span>agent_alias = <span class="string">"bundle-fallback-agent"</span>;
-<a href=#3002 id=3002 data-nosnippet>3002</a>        <span class="kw">let </span>skill_name = <span class="string">"workspace-fallback-skill"</span>;
-<a href=#3003 id=3003 data-nosnippet>3003</a>
-<a href=#3004 id=3004 data-nosnippet>3004</a>        write_test_skill(agent_workspace.path(), skill_name);
-<a href=#3005 id=3005 data-nosnippet>3005</a>
-<a href=#3006 id=3006 data-nosnippet>3006</a>        <span class="kw">let </span>config = make_config_with_agent_workspace(
-<a href=#3007 id=3007 data-nosnippet>3007</a>            install_root.path(),
-<a href=#3008 id=3008 data-nosnippet>3008</a>            data_dir.path(),
-<a href=#3009 id=3009 data-nosnippet>3009</a>            agent_alias,
-<a href=#3010 id=3010 data-nosnippet>3010</a>            agent_workspace.path().to_path_buf(),
-<a href=#3011 id=3011 data-nosnippet>3011</a>        );
-<a href=#3012 id=3012 data-nosnippet>3012</a>
-<a href=#3013 id=3013 data-nosnippet>3013</a>        <span class="kw">let </span>skills = load_skills_for_agent_from_config(<span class="kw-2">&amp;</span>config, agent_alias);
-<a href=#3014 id=3014 data-nosnippet>3014</a>        <span class="kw">let </span>names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = skills.iter().map(|s| s.name.as_str()).collect();
-<a href=#3015 id=3015 data-nosnippet>3015</a>        <span class="macro">assert!</span>(
-<a href=#3016 id=3016 data-nosnippet>3016</a>            names.contains(<span class="kw-2">&amp;</span>skill_name),
-<a href=#3017 id=3017 data-nosnippet>3017</a>            <span class="string">"with empty skill_bundles, workspace skills must still load; got: {names:?}"
-<a href=#3018 id=3018 data-nosnippet>3018</a>        </span>);
-<a href=#3019 id=3019 data-nosnippet>3019</a>    }
-<a href=#3020 id=3020 data-nosnippet>3020</a>}
+<a href=#2841 id=2841 data-nosnippet>2841</a>            timeout_secs: <span class="prelude-val">None</span>,
+<a href=#2842 id=2842 data-nosnippet>2842</a>        }
+<a href=#2843 id=2843 data-nosnippet>2843</a>    }
+<a href=#2844 id=2844 data-nosnippet>2844</a>
+<a href=#2845 id=2845 data-nosnippet>2845</a>    <span class="doccomment">/// The skills prompt must advertise the exact same callable name the tool
+<a href=#2846 id=2846 data-nosnippet>2846</a>    /// spec registers (both via `composed_tool_name`). A plugin-namespaced skill
+<a href=#2847 id=2847 data-nosnippet>2847</a>    /// with a dotted tool name would otherwise render a raw `skill__tool` the
+<a href=#2848 id=2848 data-nosnippet>2848</a>    /// model cannot invoke, which is the prompt half of #6678.
+<a href=#2849 id=2849 data-nosnippet>2849</a>    </span><span class="attr">#[test]
+<a href=#2850 id=2850 data-nosnippet>2850</a>    </span><span class="kw">fn </span>prompt_callable_name_matches_registered_tool_name() {
+<a href=#2851 id=2851 data-nosnippet>2851</a>        <span class="kw">let </span>skill = Skill {
+<a href=#2852 id=2852 data-nosnippet>2852</a>            name: <span class="string">"pr-review-toolkit:code-reviewer"</span>.to_string(),
+<a href=#2853 id=2853 data-nosnippet>2853</a>            description: <span class="string">"review"</span>.to_string(),
+<a href=#2854 id=2854 data-nosnippet>2854</a>            version: <span class="string">"1.0.0"</span>.to_string(),
+<a href=#2855 id=2855 data-nosnippet>2855</a>            author: <span class="prelude-val">None</span>,
+<a href=#2856 id=2856 data-nosnippet>2856</a>            tags: Vec::new(),
+<a href=#2857 id=2857 data-nosnippet>2857</a>            tools: <span class="macro">vec!</span>[tool(<span class="string">"run.lint"</span>, <span class="string">"shell"</span>)],
+<a href=#2858 id=2858 data-nosnippet>2858</a>            prompts: Vec::new(),
+<a href=#2859 id=2859 data-nosnippet>2859</a>            location: <span class="prelude-val">None</span>,
+<a href=#2860 id=2860 data-nosnippet>2860</a>        };
+<a href=#2861 id=2861 data-nosnippet>2861</a>
+<a href=#2862 id=2862 data-nosnippet>2862</a>        <span class="kw">let </span>prompt = skills_to_prompt_with_mode(
+<a href=#2863 id=2863 data-nosnippet>2863</a>            std::slice::from_ref(<span class="kw-2">&amp;</span>skill),
+<a href=#2864 id=2864 data-nosnippet>2864</a>            Path::new(<span class="string">"/tmp"</span>),
+<a href=#2865 id=2865 data-nosnippet>2865</a>            zeroclaw_config::schema::SkillsPromptInjectionMode::Full,
+<a href=#2866 id=2866 data-nosnippet>2866</a>        );
+<a href=#2867 id=2867 data-nosnippet>2867</a>
+<a href=#2868 id=2868 data-nosnippet>2868</a>        <span class="kw">let </span>registered =
+<a href=#2869 id=2869 data-nosnippet>2869</a>            <span class="kw">crate</span>::tools::skill_tool::composed_tool_name(<span class="kw-2">&amp;</span>skill.name, <span class="kw-2">&amp;</span>skill.tools[<span class="number">0</span>].name);
+<a href=#2870 id=2870 data-nosnippet>2870</a>        <span class="macro">assert!</span>(
+<a href=#2871 id=2871 data-nosnippet>2871</a>            prompt.contains(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"&lt;name&gt;{registered}&lt;/name&gt;"</span>)),
+<a href=#2872 id=2872 data-nosnippet>2872</a>            <span class="string">"prompt is missing the sanitized callable name `{registered}`:\n{prompt}"</span>,
+<a href=#2873 id=2873 data-nosnippet>2873</a>        );
+<a href=#2874 id=2874 data-nosnippet>2874</a>        <span class="comment">// The raw, provider-invalid composed name must never reach the prompt.
+<a href=#2875 id=2875 data-nosnippet>2875</a>        </span><span class="macro">assert!</span>(
+<a href=#2876 id=2876 data-nosnippet>2876</a>            !prompt.contains(<span class="string">"pr-review-toolkit:code-reviewer__run.lint"</span>),
+<a href=#2877 id=2877 data-nosnippet>2877</a>            <span class="string">"prompt advertised the raw, unsanitized composed name:\n{prompt}"</span>,
+<a href=#2878 id=2878 data-nosnippet>2878</a>        );
+<a href=#2879 id=2879 data-nosnippet>2879</a>    }
+<a href=#2880 id=2880 data-nosnippet>2880</a>}
+<a href=#2881 id=2881 data-nosnippet>2881</a>
+<a href=#2882 id=2882 data-nosnippet>2882</a><span class="attr">#[cfg(test)]
+<a href=#2883 id=2883 data-nosnippet>2883</a></span><span class="kw">mod </span>workspace_dir_regression_tests {
+<a href=#2884 id=2884 data-nosnippet>2884</a>    <span class="kw">use </span>super::<span class="kw-2">*</span>;
+<a href=#2885 id=2885 data-nosnippet>2885</a>    <span class="kw">use </span>tempfile::TempDir;
+<a href=#2886 id=2886 data-nosnippet>2886</a>
+<a href=#2887 id=2887 data-nosnippet>2887</a>    <span class="kw">fn </span>make_config_with_agent_workspace(
+<a href=#2888 id=2888 data-nosnippet>2888</a>        install_root: <span class="kw-2">&amp;</span>Path,
+<a href=#2889 id=2889 data-nosnippet>2889</a>        data_dir: <span class="kw-2">&amp;</span>Path,
+<a href=#2890 id=2890 data-nosnippet>2890</a>        agent_alias: <span class="kw-2">&amp;</span>str,
+<a href=#2891 id=2891 data-nosnippet>2891</a>        workspace_path: PathBuf,
+<a href=#2892 id=2892 data-nosnippet>2892</a>    ) -&gt; zeroclaw_config::schema::Config {
+<a href=#2893 id=2893 data-nosnippet>2893</a>        <span class="kw">let </span><span class="kw-2">mut </span>config = zeroclaw_config::schema::Config {
+<a href=#2894 id=2894 data-nosnippet>2894</a>            config_path: install_root.join(<span class="string">"config.toml"</span>),
+<a href=#2895 id=2895 data-nosnippet>2895</a>            data_dir: data_dir.to_path_buf(),
+<a href=#2896 id=2896 data-nosnippet>2896</a>            ..Default::default()
+<a href=#2897 id=2897 data-nosnippet>2897</a>        };
+<a href=#2898 id=2898 data-nosnippet>2898</a>
+<a href=#2899 id=2899 data-nosnippet>2899</a>        <span class="kw">let </span>agent = zeroclaw_config::schema::AliasedAgentConfig {
+<a href=#2900 id=2900 data-nosnippet>2900</a>            workspace: zeroclaw_config::multi_agent::AgentWorkspaceConfig {
+<a href=#2901 id=2901 data-nosnippet>2901</a>                path: <span class="prelude-val">Some</span>(workspace_path),
+<a href=#2902 id=2902 data-nosnippet>2902</a>                ..Default::default()
+<a href=#2903 id=2903 data-nosnippet>2903</a>            },
+<a href=#2904 id=2904 data-nosnippet>2904</a>            ..Default::default()
+<a href=#2905 id=2905 data-nosnippet>2905</a>        };
+<a href=#2906 id=2906 data-nosnippet>2906</a>
+<a href=#2907 id=2907 data-nosnippet>2907</a>        config.agents.insert(agent_alias.to_string(), agent);
+<a href=#2908 id=2908 data-nosnippet>2908</a>        config
+<a href=#2909 id=2909 data-nosnippet>2909</a>    }
+<a href=#2910 id=2910 data-nosnippet>2910</a>
+<a href=#2911 id=2911 data-nosnippet>2911</a>    <span class="kw">fn </span>write_test_skill(workspace: <span class="kw-2">&amp;</span>Path, skill_name: <span class="kw-2">&amp;</span>str) {
+<a href=#2912 id=2912 data-nosnippet>2912</a>        <span class="kw">let </span>skill_dir = workspace.join(<span class="string">"skills"</span>).join(skill_name);
+<a href=#2913 id=2913 data-nosnippet>2913</a>        std::fs::create_dir_all(<span class="kw-2">&amp;</span>skill_dir).unwrap();
+<a href=#2914 id=2914 data-nosnippet>2914</a>        std::fs::write(
+<a href=#2915 id=2915 data-nosnippet>2915</a>            skill_dir.join(<span class="string">"SKILL.toml"</span>),
+<a href=#2916 id=2916 data-nosnippet>2916</a>            <span class="macro">format!</span>(
+<a href=#2917 id=2917 data-nosnippet>2917</a>                <span class="string">r#"[skill]
+<a href=#2918 id=2918 data-nosnippet>2918</a>name = "{skill_name}"
+<a href=#2919 id=2919 data-nosnippet>2919</a>description = "regression test skill"
+<a href=#2920 id=2920 data-nosnippet>2920</a>version = "0.1.0"
+<a href=#2921 id=2921 data-nosnippet>2921</a>"#
+<a href=#2922 id=2922 data-nosnippet>2922</a>            </span>),
+<a href=#2923 id=2923 data-nosnippet>2923</a>        )
+<a href=#2924 id=2924 data-nosnippet>2924</a>        .unwrap();
+<a href=#2925 id=2925 data-nosnippet>2925</a>    }
+<a href=#2926 id=2926 data-nosnippet>2926</a>
+<a href=#2927 id=2927 data-nosnippet>2927</a>    <span class="doccomment">/// Regression test for #7236: `load_skills_for_agent_from_config` must
+<a href=#2928 id=2928 data-nosnippet>2928</a>    /// load skills from the per-agent workspace directory, not from `data_dir`.
+<a href=#2929 id=2929 data-nosnippet>2929</a>    ///
+<a href=#2930 id=2930 data-nosnippet>2930</a>    /// The bug: three call sites passed `&amp;config.data_dir` instead of
+<a href=#2931 id=2931 data-nosnippet>2931</a>    /// `&amp;config.agent_workspace_dir(agent_alias)`, causing skills placed in
+<a href=#2932 id=2932 data-nosnippet>2932</a>    /// `&lt;install&gt;/agents/&lt;alias&gt;/workspace/skills/` to be silently ignored.
+<a href=#2933 id=2933 data-nosnippet>2933</a>    ///
+<a href=#2934 id=2934 data-nosnippet>2934</a>    /// This test constructs a config where `data_dir` and
+<a href=#2935 id=2935 data-nosnippet>2935</a>    /// `agent_workspace_dir(agent_alias)` are distinct paths, places a skill
+<a href=#2936 id=2936 data-nosnippet>2936</a>    /// only in the agent workspace, and verifies:
+<a href=#2937 id=2937 data-nosnippet>2937</a>    /// 1. `load_skills_for_agent_from_config` finds the skill (correct behavior)
+<a href=#2938 id=2938 data-nosnippet>2938</a>    /// 2. Calling `load_skills_for_agent` with `data_dir` does NOT find the skill (the bug)
+<a href=#2939 id=2939 data-nosnippet>2939</a>    ///
+<a href=#2940 id=2940 data-nosnippet>2940</a>    /// The test would fail if `load_skills_for_agent_from_config` reverted to
+<a href=#2941 id=2941 data-nosnippet>2941</a>    /// using `config.data_dir` instead of `config.agent_workspace_dir(agent_alias)`.
+<a href=#2942 id=2942 data-nosnippet>2942</a>    </span><span class="attr">#[test]
+<a href=#2943 id=2943 data-nosnippet>2943</a>    </span><span class="kw">fn </span>load_skills_for_agent_from_config_uses_workspace_dir_not_data_dir() {
+<a href=#2944 id=2944 data-nosnippet>2944</a>        <span class="kw">let </span>install_root = TempDir::new().unwrap();
+<a href=#2945 id=2945 data-nosnippet>2945</a>        <span class="kw">let </span>data_dir = TempDir::new().unwrap();
+<a href=#2946 id=2946 data-nosnippet>2946</a>        <span class="kw">let </span>agent_workspace = TempDir::new().unwrap();
+<a href=#2947 id=2947 data-nosnippet>2947</a>
+<a href=#2948 id=2948 data-nosnippet>2948</a>        <span class="kw">let </span>agent_alias = <span class="string">"test-agent"</span>;
+<a href=#2949 id=2949 data-nosnippet>2949</a>        <span class="kw">let </span>skill_name = <span class="string">"workspace-only-regression-skill"</span>;
+<a href=#2950 id=2950 data-nosnippet>2950</a>
+<a href=#2951 id=2951 data-nosnippet>2951</a>        write_test_skill(agent_workspace.path(), skill_name);
+<a href=#2952 id=2952 data-nosnippet>2952</a>
+<a href=#2953 id=2953 data-nosnippet>2953</a>        <span class="kw">let </span>config = make_config_with_agent_workspace(
+<a href=#2954 id=2954 data-nosnippet>2954</a>            install_root.path(),
+<a href=#2955 id=2955 data-nosnippet>2955</a>            data_dir.path(),
+<a href=#2956 id=2956 data-nosnippet>2956</a>            agent_alias,
+<a href=#2957 id=2957 data-nosnippet>2957</a>            agent_workspace.path().to_path_buf(),
+<a href=#2958 id=2958 data-nosnippet>2958</a>        );
+<a href=#2959 id=2959 data-nosnippet>2959</a>
+<a href=#2960 id=2960 data-nosnippet>2960</a>        <span class="kw">let </span>workspace_dir = config.agent_workspace_dir(agent_alias);
+<a href=#2961 id=2961 data-nosnippet>2961</a>        <span class="macro">assert_eq!</span>(
+<a href=#2962 id=2962 data-nosnippet>2962</a>            workspace_dir,
+<a href=#2963 id=2963 data-nosnippet>2963</a>            agent_workspace.path(),
+<a href=#2964 id=2964 data-nosnippet>2964</a>            <span class="string">"agent_workspace_dir must resolve to the custom workspace path"
+<a href=#2965 id=2965 data-nosnippet>2965</a>        </span>);
+<a href=#2966 id=2966 data-nosnippet>2966</a>        <span class="macro">assert_ne!</span>(
+<a href=#2967 id=2967 data-nosnippet>2967</a>            workspace_dir, config.data_dir,
+<a href=#2968 id=2968 data-nosnippet>2968</a>            <span class="string">"workspace_dir and data_dir must be distinct for this test to be meaningful"
+<a href=#2969 id=2969 data-nosnippet>2969</a>        </span>);
+<a href=#2970 id=2970 data-nosnippet>2970</a>
+<a href=#2971 id=2971 data-nosnippet>2971</a>        <span class="comment">// Test the production helper — this is what the three call sites use.
+<a href=#2972 id=2972 data-nosnippet>2972</a>        </span><span class="kw">let </span>skills_from_helper = load_skills_for_agent_from_config(<span class="kw-2">&amp;</span>config, agent_alias);
+<a href=#2973 id=2973 data-nosnippet>2973</a>        <span class="kw">let </span>helper_skill_names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; =
+<a href=#2974 id=2974 data-nosnippet>2974</a>            skills_from_helper.iter().map(|s| s.name.as_str()).collect();
+<a href=#2975 id=2975 data-nosnippet>2975</a>        <span class="macro">assert!</span>(
+<a href=#2976 id=2976 data-nosnippet>2976</a>            helper_skill_names.contains(<span class="kw-2">&amp;</span>skill_name),
+<a href=#2977 id=2977 data-nosnippet>2977</a>            <span class="string">"load_skills_for_agent_from_config must load skills from agent workspace; got: {helper_skill_names:?}"
+<a href=#2978 id=2978 data-nosnippet>2978</a>        </span>);
+<a href=#2979 id=2979 data-nosnippet>2979</a>
+<a href=#2980 id=2980 data-nosnippet>2980</a>        <span class="comment">// Verify that using data_dir directly would NOT find the skill (the bug).
+<a href=#2981 id=2981 data-nosnippet>2981</a>        </span><span class="kw">let </span>skills_from_data_dir = load_skills_for_agent(<span class="kw-2">&amp;</span>config.data_dir, <span class="kw-2">&amp;</span>config, agent_alias);
+<a href=#2982 id=2982 data-nosnippet>2982</a>        <span class="kw">let </span>data_dir_skill_names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = skills_from_data_dir
+<a href=#2983 id=2983 data-nosnippet>2983</a>            .iter()
+<a href=#2984 id=2984 data-nosnippet>2984</a>            .map(|s| s.name.as_str())
+<a href=#2985 id=2985 data-nosnippet>2985</a>            .collect();
+<a href=#2986 id=2986 data-nosnippet>2986</a>        <span class="macro">assert!</span>(
+<a href=#2987 id=2987 data-nosnippet>2987</a>            !data_dir_skill_names.contains(<span class="kw-2">&amp;</span>skill_name),
+<a href=#2988 id=2988 data-nosnippet>2988</a>            <span class="string">"skill in agent workspace must NOT be loaded when passing data_dir (this was the bug); got: {data_dir_skill_names:?}"
+<a href=#2989 id=2989 data-nosnippet>2989</a>        </span>);
+<a href=#2990 id=2990 data-nosnippet>2990</a>    }
+<a href=#2991 id=2991 data-nosnippet>2991</a>
+<a href=#2992 id=2992 data-nosnippet>2992</a>    <span class="doccomment">/// Verifies that `load_skills_for_agent_from_config` with an empty
+<a href=#2993 id=2993 data-nosnippet>2993</a>    /// `skill_bundles` list falls back to the install-wide skill set from
+<a href=#2994 id=2994 data-nosnippet>2994</a>    /// the workspace dir. This pins the contract that the helper resolves
+<a href=#2995 id=2995 data-nosnippet>2995</a>    /// the correct workspace directory regardless of bundle configuration.
+<a href=#2996 id=2996 data-nosnippet>2996</a>    </span><span class="attr">#[test]
+<a href=#2997 id=2997 data-nosnippet>2997</a>    </span><span class="kw">fn </span>load_skills_for_agent_from_config_empty_bundles_uses_workspace_dir() {
+<a href=#2998 id=2998 data-nosnippet>2998</a>        <span class="kw">let </span>install_root = TempDir::new().unwrap();
+<a href=#2999 id=2999 data-nosnippet>2999</a>        <span class="kw">let </span>data_dir = TempDir::new().unwrap();
+<a href=#3000 id=3000 data-nosnippet>3000</a>        <span class="kw">let </span>agent_workspace = TempDir::new().unwrap();
+<a href=#3001 id=3001 data-nosnippet>3001</a>
+<a href=#3002 id=3002 data-nosnippet>3002</a>        <span class="kw">let </span>agent_alias = <span class="string">"bundle-fallback-agent"</span>;
+<a href=#3003 id=3003 data-nosnippet>3003</a>        <span class="kw">let </span>skill_name = <span class="string">"workspace-fallback-skill"</span>;
+<a href=#3004 id=3004 data-nosnippet>3004</a>
+<a href=#3005 id=3005 data-nosnippet>3005</a>        write_test_skill(agent_workspace.path(), skill_name);
+<a href=#3006 id=3006 data-nosnippet>3006</a>
+<a href=#3007 id=3007 data-nosnippet>3007</a>        <span class="kw">let </span>config = make_config_with_agent_workspace(
+<a href=#3008 id=3008 data-nosnippet>3008</a>            install_root.path(),
+<a href=#3009 id=3009 data-nosnippet>3009</a>            data_dir.path(),
+<a href=#3010 id=3010 data-nosnippet>3010</a>            agent_alias,
+<a href=#3011 id=3011 data-nosnippet>3011</a>            agent_workspace.path().to_path_buf(),
+<a href=#3012 id=3012 data-nosnippet>3012</a>        );
+<a href=#3013 id=3013 data-nosnippet>3013</a>
+<a href=#3014 id=3014 data-nosnippet>3014</a>        <span class="kw">let </span>skills = load_skills_for_agent_from_config(<span class="kw-2">&amp;</span>config, agent_alias);
+<a href=#3015 id=3015 data-nosnippet>3015</a>        <span class="kw">let </span>names: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = skills.iter().map(|s| s.name.as_str()).collect();
+<a href=#3016 id=3016 data-nosnippet>3016</a>        <span class="macro">assert!</span>(
+<a href=#3017 id=3017 data-nosnippet>3017</a>            names.contains(<span class="kw-2">&amp;</span>skill_name),
+<a href=#3018 id=3018 data-nosnippet>3018</a>            <span class="string">"with empty skill_bundles, workspace skills must still load; got: {names:?}"
+<a href=#3019 id=3019 data-nosnippet>3019</a>        </span>);
+<a href=#3020 id=3020 data-nosnippet>3020</a>    }
+<a href=#3021 id=3021 data-nosnippet>3021</a>}
 </code></pre></div></section></main></body></html>
