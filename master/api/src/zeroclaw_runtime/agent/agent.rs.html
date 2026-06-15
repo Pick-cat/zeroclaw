@@ -6225,225 +6225,226 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../../" d
 <a href=#6223 id=6223 data-nosnippet>6223</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
 <a href=#6224 id=6224 data-nosnippet>6224</a>        );
 <a href=#6225 id=6225 data-nosnippet>6225</a>
-<a href=#6226 id=6226 data-nosnippet>6226</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent_a = Agent::builder()
-<a href=#6227 id=6227 data-nosnippet>6227</a>            .model_provider(Box::new(MockModelProvider {
-<a href=#6228 id=6228 data-nosnippet>6228</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
-<a href=#6229 id=6229 data-nosnippet>6229</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"cached answer"</span>.into()),
-<a href=#6230 id=6230 data-nosnippet>6230</a>                    tool_calls: <span class="macro">vec!</span>[],
-<a href=#6231 id=6231 data-nosnippet>6231</a>                    usage: <span class="prelude-val">Some</span>(zeroclaw_providers::traits::TokenUsage {
-<a href=#6232 id=6232 data-nosnippet>6232</a>                        input_tokens: <span class="prelude-val">Some</span>(<span class="number">10</span>),
-<a href=#6233 id=6233 data-nosnippet>6233</a>                        cached_input_tokens: <span class="prelude-val">None</span>,
-<a href=#6234 id=6234 data-nosnippet>6234</a>                        output_tokens: <span class="prelude-val">Some</span>(<span class="number">5</span>),
-<a href=#6235 id=6235 data-nosnippet>6235</a>                    }),
-<a href=#6236 id=6236 data-nosnippet>6236</a>                    reasoning_content: <span class="prelude-val">None</span>,
-<a href=#6237 id=6237 data-nosnippet>6237</a>                }]),
-<a href=#6238 id=6238 data-nosnippet>6238</a>            }))
-<a href=#6239 id=6239 data-nosnippet>6239</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
-<a href=#6240 id=6240 data-nosnippet>6240</a>            .memory(mem_a)
-<a href=#6241 id=6241 data-nosnippet>6241</a>            .observer(Arc::from(<span class="kw">crate</span>::observability::NoopObserver {}) <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>Observer&gt;)
-<a href=#6242 id=6242 data-nosnippet>6242</a>            .response_cache(<span class="prelude-val">Some</span>(cache.clone()))
-<a href=#6243 id=6243 data-nosnippet>6243</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
-<a href=#6244 id=6244 data-nosnippet>6244</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
-<a href=#6245 id=6245 data-nosnippet>6245</a>            .model_name(<span class="string">"test-model"</span>.into())
-<a href=#6246 id=6246 data-nosnippet>6246</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
-<a href=#6247 id=6247 data-nosnippet>6247</a>            .build()
-<a href=#6248 id=6248 data-nosnippet>6248</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
-<a href=#6249 id=6249 data-nosnippet>6249</a>
-<a href=#6250 id=6250 data-nosnippet>6250</a>        <span class="macro">assert_eq!</span>(agent_a.turn(<span class="string">"seed"</span>).<span class="kw">await</span>.unwrap(), <span class="string">"cached answer"</span>);
-<a href=#6251 id=6251 data-nosnippet>6251</a>
-<a href=#6252 id=6252 data-nosnippet>6252</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
-<a href=#6253 id=6253 data-nosnippet>6253</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
-<a href=#6254 id=6254 data-nosnippet>6254</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent_b = Agent::builder()
-<a href=#6255 id=6255 data-nosnippet>6255</a>            .model_provider(Box::new(MockModelProvider {
-<a href=#6256 id=6256 data-nosnippet>6256</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
-<a href=#6257 id=6257 data-nosnippet>6257</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"uncached answer"</span>.into()),
-<a href=#6258 id=6258 data-nosnippet>6258</a>                    tool_calls: <span class="macro">vec!</span>[],
-<a href=#6259 id=6259 data-nosnippet>6259</a>                    usage: <span class="prelude-val">None</span>,
-<a href=#6260 id=6260 data-nosnippet>6260</a>                    reasoning_content: <span class="prelude-val">None</span>,
-<a href=#6261 id=6261 data-nosnippet>6261</a>                }]),
-<a href=#6262 id=6262 data-nosnippet>6262</a>            }))
-<a href=#6263 id=6263 data-nosnippet>6263</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
-<a href=#6264 id=6264 data-nosnippet>6264</a>            .memory(mem_b)
-<a href=#6265 id=6265 data-nosnippet>6265</a>            .observer(observer)
-<a href=#6266 id=6266 data-nosnippet>6266</a>            .response_cache(<span class="prelude-val">Some</span>(cache))
-<a href=#6267 id=6267 data-nosnippet>6267</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
-<a href=#6268 id=6268 data-nosnippet>6268</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
-<a href=#6269 id=6269 data-nosnippet>6269</a>            .model_name(<span class="string">"test-model"</span>.into())
-<a href=#6270 id=6270 data-nosnippet>6270</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
-<a href=#6271 id=6271 data-nosnippet>6271</a>            .build()
-<a href=#6272 id=6272 data-nosnippet>6272</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
-<a href=#6273 id=6273 data-nosnippet>6273</a>
-<a href=#6274 id=6274 data-nosnippet>6274</a>        <span class="macro">assert_eq!</span>(agent_b.turn(<span class="string">"seed"</span>).<span class="kw">await</span>.unwrap(), <span class="string">"cached answer"</span>);
-<a href=#6275 id=6275 data-nosnippet>6275</a>
-<a href=#6276 id=6276 data-nosnippet>6276</a>        <span class="kw">let </span>events = capturing.events.lock();
-<a href=#6277 id=6277 data-nosnippet>6277</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
-<a href=#6278 id=6278 data-nosnippet>6278</a>        <span class="macro">assert!</span>(agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).is_none());
-<a href=#6279 id=6279 data-nosnippet>6279</a>        <span class="macro">assert!</span>(
-<a href=#6280 id=6280 data-nosnippet>6280</a>            !events
-<a href=#6281 id=6281 data-nosnippet>6281</a>                .iter()
-<a href=#6282 id=6282 data-nosnippet>6282</a>                .any(|event| <span class="macro">matches!</span>(event, ObserverEvent::LlmRequest { .. })),
-<a href=#6283 id=6283 data-nosnippet>6283</a>            <span class="string">"cache hit should not call the LLM"
-<a href=#6284 id=6284 data-nosnippet>6284</a>        </span>);
-<a href=#6285 id=6285 data-nosnippet>6285</a>    }
-<a href=#6286 id=6286 data-nosnippet>6286</a>
-<a href=#6287 id=6287 data-nosnippet>6287</a>    <span class="attr">#[tokio::test]
-<a href=#6288 id=6288 data-nosnippet>6288</a>    </span><span class="kw">async fn </span>turn_streamed_cancel_during_tool_execution_emits_agent_end_with_tokens() {
-<a href=#6289 id=6289 data-nosnippet>6289</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
-<a href=#6290 id=6290 data-nosnippet>6290</a>            backend: <span class="string">"none"</span>.into(),
-<a href=#6291 id=6291 data-nosnippet>6291</a>            ..zeroclaw_config::schema::MemoryConfig::default()
-<a href=#6292 id=6292 data-nosnippet>6292</a>        };
-<a href=#6293 id=6293 data-nosnippet>6293</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
-<a href=#6294 id=6294 data-nosnippet>6294</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
-<a href=#6295 id=6295 data-nosnippet>6295</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
-<a href=#6296 id=6296 data-nosnippet>6296</a>        );
-<a href=#6297 id=6297 data-nosnippet>6297</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
-<a href=#6298 id=6298 data-nosnippet>6298</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
-<a href=#6299 id=6299 data-nosnippet>6299</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
-<a href=#6300 id=6300 data-nosnippet>6300</a>            .model_provider(Box::new(MockModelProvider {
-<a href=#6301 id=6301 data-nosnippet>6301</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
-<a href=#6302 id=6302 data-nosnippet>6302</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"I will echo."</span>.into()),
-<a href=#6303 id=6303 data-nosnippet>6303</a>                    tool_calls: <span class="macro">vec!</span>[zeroclaw_providers::ToolCall {
-<a href=#6304 id=6304 data-nosnippet>6304</a>                        id: <span class="string">"tc1"</span>.into(),
-<a href=#6305 id=6305 data-nosnippet>6305</a>                        name: <span class="string">"echo"</span>.into(),
-<a href=#6306 id=6306 data-nosnippet>6306</a>                        arguments: <span class="string">"{}"</span>.into(),
-<a href=#6307 id=6307 data-nosnippet>6307</a>                        extra_content: <span class="prelude-val">None</span>,
-<a href=#6308 id=6308 data-nosnippet>6308</a>                    }],
-<a href=#6309 id=6309 data-nosnippet>6309</a>                    usage: <span class="prelude-val">Some</span>(zeroclaw_providers::traits::TokenUsage {
-<a href=#6310 id=6310 data-nosnippet>6310</a>                        input_tokens: <span class="prelude-val">Some</span>(<span class="number">10</span>),
-<a href=#6311 id=6311 data-nosnippet>6311</a>                        cached_input_tokens: <span class="prelude-val">None</span>,
-<a href=#6312 id=6312 data-nosnippet>6312</a>                        output_tokens: <span class="prelude-val">Some</span>(<span class="number">5</span>),
-<a href=#6313 id=6313 data-nosnippet>6313</a>                    }),
-<a href=#6314 id=6314 data-nosnippet>6314</a>                    reasoning_content: <span class="prelude-val">None</span>,
-<a href=#6315 id=6315 data-nosnippet>6315</a>                }]),
-<a href=#6316 id=6316 data-nosnippet>6316</a>            }))
-<a href=#6317 id=6317 data-nosnippet>6317</a>            .tools(<span class="macro">vec!</span>[Box::new(SlowTool)])
-<a href=#6318 id=6318 data-nosnippet>6318</a>            .memory(mem)
-<a href=#6319 id=6319 data-nosnippet>6319</a>            .observer(observer)
-<a href=#6320 id=6320 data-nosnippet>6320</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
-<a href=#6321 id=6321 data-nosnippet>6321</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
-<a href=#6322 id=6322 data-nosnippet>6322</a>            .build()
-<a href=#6323 id=6323 data-nosnippet>6323</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
-<a href=#6324 id=6324 data-nosnippet>6324</a>
-<a href=#6325 id=6325 data-nosnippet>6325</a>        <span class="kw">let </span>(event_tx, <span class="kw-2">mut </span>event_rx) = tokio::sync::mpsc::channel::&lt;TurnEvent&gt;(<span class="number">64</span>);
-<a href=#6326 id=6326 data-nosnippet>6326</a>        <span class="kw">let </span>cancel_token = tokio_util::sync::CancellationToken::new();
-<a href=#6327 id=6327 data-nosnippet>6327</a>        <span class="kw">let </span>cancel_for_task = cancel_token.clone();
-<a href=#6328 id=6328 data-nosnippet>6328</a>        <span class="kw">let </span>handle = <span class="macro">zeroclaw_spawn::spawn!</span>(<span class="kw">async move </span>{
-<a href=#6329 id=6329 data-nosnippet>6329</a>            agent
-<a href=#6330 id=6330 data-nosnippet>6330</a>                .turn_streamed_with_steering_state(
-<a href=#6331 id=6331 data-nosnippet>6331</a>                    <span class="string">"use echo"</span>,
-<a href=#6332 id=6332 data-nosnippet>6332</a>                    event_tx,
-<a href=#6333 id=6333 data-nosnippet>6333</a>                    <span class="prelude-val">Some</span>(cancel_for_task),
-<a href=#6334 id=6334 data-nosnippet>6334</a>                    <span class="prelude-val">None</span>,
-<a href=#6335 id=6335 data-nosnippet>6335</a>                )
-<a href=#6336 id=6336 data-nosnippet>6336</a>                .<span class="kw">await
-<a href=#6337 id=6337 data-nosnippet>6337</a>        </span>});
-<a href=#6338 id=6338 data-nosnippet>6338</a>
-<a href=#6339 id=6339 data-nosnippet>6339</a>        <span class="kw">while let </span><span class="prelude-val">Some</span>(event) = event_rx.recv().<span class="kw">await </span>{
-<a href=#6340 id=6340 data-nosnippet>6340</a>            <span class="kw">if </span><span class="macro">matches!</span>(event, TurnEvent::Usage { .. }) {
-<a href=#6341 id=6341 data-nosnippet>6341</a>                cancel_token.cancel();
-<a href=#6342 id=6342 data-nosnippet>6342</a>                <span class="kw">break</span>;
-<a href=#6343 id=6343 data-nosnippet>6343</a>            }
-<a href=#6344 id=6344 data-nosnippet>6344</a>        }
-<a href=#6345 id=6345 data-nosnippet>6345</a>
-<a href=#6346 id=6346 data-nosnippet>6346</a>        handle
-<a href=#6347 id=6347 data-nosnippet>6347</a>            .<span class="kw">await
-<a href=#6348 id=6348 data-nosnippet>6348</a>            </span>.expect(<span class="string">"turn task should finish"</span>)
-<a href=#6349 id=6349 data-nosnippet>6349</a>            .expect_err(<span class="string">"turn should be cancelled before tool execution completes"</span>);
-<a href=#6350 id=6350 data-nosnippet>6350</a>
-<a href=#6351 id=6351 data-nosnippet>6351</a>        <span class="kw">let </span>events = capturing.events.lock();
-<a href=#6352 id=6352 data-nosnippet>6352</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
-<a href=#6353 id=6353 data-nosnippet>6353</a>        <span class="kw">let </span>tokens = agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).expect(<span class="string">"AgentEnd should include tokens"</span>);
-<a href=#6354 id=6354 data-nosnippet>6354</a>        <span class="macro">assert_eq!</span>(tokens.input_tokens, <span class="number">10</span>);
-<a href=#6355 id=6355 data-nosnippet>6355</a>        <span class="macro">assert_eq!</span>(tokens.output_tokens, <span class="number">5</span>);
-<a href=#6356 id=6356 data-nosnippet>6356</a>        <span class="kw">let </span>llm_response_idx = events
-<a href=#6357 id=6357 data-nosnippet>6357</a>            .iter()
-<a href=#6358 id=6358 data-nosnippet>6358</a>            .position(|event| <span class="macro">matches!</span>(event, ObserverEvent::LlmResponse { success: <span class="bool-val">true</span>, .. }))
-<a href=#6359 id=6359 data-nosnippet>6359</a>            .expect(<span class="string">"successful LlmResponse should be recorded"</span>);
-<a href=#6360 id=6360 data-nosnippet>6360</a>        <span class="macro">assert!</span>(
-<a href=#6361 id=6361 data-nosnippet>6361</a>            llm_response_idx &lt; end_idx,
-<a href=#6362 id=6362 data-nosnippet>6362</a>            <span class="string">"AgentEnd must follow LlmResponse"
-<a href=#6363 id=6363 data-nosnippet>6363</a>        </span>);
-<a href=#6364 id=6364 data-nosnippet>6364</a>    }
-<a href=#6365 id=6365 data-nosnippet>6365</a>
-<a href=#6366 id=6366 data-nosnippet>6366</a>    <span class="attr">#[tokio::test]
-<a href=#6367 id=6367 data-nosnippet>6367</a>    </span><span class="kw">async fn </span>turn_llm_error_emits_agent_end() {
-<a href=#6368 id=6368 data-nosnippet>6368</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
-<a href=#6369 id=6369 data-nosnippet>6369</a>            backend: <span class="string">"none"</span>.into(),
-<a href=#6370 id=6370 data-nosnippet>6370</a>            ..zeroclaw_config::schema::MemoryConfig::default()
-<a href=#6371 id=6371 data-nosnippet>6371</a>        };
-<a href=#6372 id=6372 data-nosnippet>6372</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
-<a href=#6373 id=6373 data-nosnippet>6373</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
-<a href=#6374 id=6374 data-nosnippet>6374</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
-<a href=#6375 id=6375 data-nosnippet>6375</a>        );
-<a href=#6376 id=6376 data-nosnippet>6376</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
-<a href=#6377 id=6377 data-nosnippet>6377</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
-<a href=#6378 id=6378 data-nosnippet>6378</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
-<a href=#6379 id=6379 data-nosnippet>6379</a>            .model_provider(Box::new(FailingModelProvider))
-<a href=#6380 id=6380 data-nosnippet>6380</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
-<a href=#6381 id=6381 data-nosnippet>6381</a>            .memory(mem)
-<a href=#6382 id=6382 data-nosnippet>6382</a>            .observer(observer)
-<a href=#6383 id=6383 data-nosnippet>6383</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
-<a href=#6384 id=6384 data-nosnippet>6384</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
-<a href=#6385 id=6385 data-nosnippet>6385</a>            .model_name(<span class="string">"test-model"</span>.into())
-<a href=#6386 id=6386 data-nosnippet>6386</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
-<a href=#6387 id=6387 data-nosnippet>6387</a>            .build()
-<a href=#6388 id=6388 data-nosnippet>6388</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
-<a href=#6389 id=6389 data-nosnippet>6389</a>
-<a href=#6390 id=6390 data-nosnippet>6390</a>        <span class="kw">let </span>result = agent.turn(<span class="string">"hello"</span>).<span class="kw">await</span>;
-<a href=#6391 id=6391 data-nosnippet>6391</a>        <span class="macro">assert!</span>(
-<a href=#6392 id=6392 data-nosnippet>6392</a>            result.is_err(),
-<a href=#6393 id=6393 data-nosnippet>6393</a>            <span class="string">"turn should fail when provider is unavailable"
-<a href=#6394 id=6394 data-nosnippet>6394</a>        </span>);
-<a href=#6395 id=6395 data-nosnippet>6395</a>
-<a href=#6396 id=6396 data-nosnippet>6396</a>        <span class="kw">let </span>events = capturing.events.lock();
-<a href=#6397 id=6397 data-nosnippet>6397</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
-<a href=#6398 id=6398 data-nosnippet>6398</a>        <span class="macro">assert!</span>(
-<a href=#6399 id=6399 data-nosnippet>6399</a>            agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).is_none(),
-<a href=#6400 id=6400 data-nosnippet>6400</a>            <span class="string">"AgentEnd should have tokens_used: None on LLM error"
-<a href=#6401 id=6401 data-nosnippet>6401</a>        </span>);
-<a href=#6402 id=6402 data-nosnippet>6402</a>    }
-<a href=#6403 id=6403 data-nosnippet>6403</a>
-<a href=#6404 id=6404 data-nosnippet>6404</a>    <span class="attr">#[tokio::test]
-<a href=#6405 id=6405 data-nosnippet>6405</a>    </span><span class="kw">async fn </span>turn_events_share_consistent_turn_id() {
-<a href=#6406 id=6406 data-nosnippet>6406</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
-<a href=#6407 id=6407 data-nosnippet>6407</a>            backend: <span class="string">"none"</span>.into(),
-<a href=#6408 id=6408 data-nosnippet>6408</a>            ..zeroclaw_config::schema::MemoryConfig::default()
-<a href=#6409 id=6409 data-nosnippet>6409</a>        };
-<a href=#6410 id=6410 data-nosnippet>6410</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
-<a href=#6411 id=6411 data-nosnippet>6411</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
-<a href=#6412 id=6412 data-nosnippet>6412</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
-<a href=#6413 id=6413 data-nosnippet>6413</a>        );
-<a href=#6414 id=6414 data-nosnippet>6414</a>
-<a href=#6415 id=6415 data-nosnippet>6415</a>        <span class="kw">let </span>model_provider = Box::new(MockModelProvider {
-<a href=#6416 id=6416 data-nosnippet>6416</a>            responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
-<a href=#6417 id=6417 data-nosnippet>6417</a>                text: <span class="prelude-val">Some</span>(<span class="string">"done"</span>.into()),
-<a href=#6418 id=6418 data-nosnippet>6418</a>                tool_calls: <span class="macro">vec!</span>[],
-<a href=#6419 id=6419 data-nosnippet>6419</a>                usage: <span class="prelude-val">None</span>,
-<a href=#6420 id=6420 data-nosnippet>6420</a>                reasoning_content: <span class="prelude-val">None</span>,
-<a href=#6421 id=6421 data-nosnippet>6421</a>            }]),
-<a href=#6422 id=6422 data-nosnippet>6422</a>        });
-<a href=#6423 id=6423 data-nosnippet>6423</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
-<a href=#6424 id=6424 data-nosnippet>6424</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
-<a href=#6425 id=6425 data-nosnippet>6425</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
-<a href=#6426 id=6426 data-nosnippet>6426</a>            .model_provider(model_provider)
-<a href=#6427 id=6427 data-nosnippet>6427</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
-<a href=#6428 id=6428 data-nosnippet>6428</a>            .memory(mem)
-<a href=#6429 id=6429 data-nosnippet>6429</a>            .observer(observer)
-<a href=#6430 id=6430 data-nosnippet>6430</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
-<a href=#6431 id=6431 data-nosnippet>6431</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
-<a href=#6432 id=6432 data-nosnippet>6432</a>            .build()
-<a href=#6433 id=6433 data-nosnippet>6433</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
-<a href=#6434 id=6434 data-nosnippet>6434</a>
-<a href=#6435 id=6435 data-nosnippet>6435</a>        <span class="kw">let _ </span>= agent.turn(<span class="string">"test"</span>).<span class="kw">await</span>.expect(<span class="string">"turn should succeed"</span>);
-<a href=#6436 id=6436 data-nosnippet>6436</a>
-<a href=#6437 id=6437 data-nosnippet>6437</a>        <span class="kw">let </span>events = capturing.events.lock();
-<a href=#6438 id=6438 data-nosnippet>6438</a>        <span class="kw">let </span>turn_ids: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = events.iter().filter_map(observer_event_turn_id).collect();
-<a href=#6439 id=6439 data-nosnippet>6439</a>        <span class="macro">assert!</span>(!turn_ids.is_empty(), <span class="string">"turn events should carry turn_id"</span>);
-<a href=#6440 id=6440 data-nosnippet>6440</a>        <span class="kw">let </span>first = turn_ids[<span class="number">0</span>];
-<a href=#6441 id=6441 data-nosnippet>6441</a>        <span class="macro">assert!</span>(
-<a href=#6442 id=6442 data-nosnippet>6442</a>            turn_ids.iter().all(|turn_id| <span class="kw-2">*</span>turn_id == first),
-<a href=#6443 id=6443 data-nosnippet>6443</a>            <span class="string">"all turn_ids should be consistent"
-<a href=#6444 id=6444 data-nosnippet>6444</a>        </span>);
-<a href=#6445 id=6445 data-nosnippet>6445</a>    }
-<a href=#6446 id=6446 data-nosnippet>6446</a>}
+<a href=#6226 id=6226 data-nosnippet>6226</a>        <span class="kw">let </span>ws_dir = tmp.path().to_path_buf();
+<a href=#6227 id=6227 data-nosnippet>6227</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent_a = Agent::builder()
+<a href=#6228 id=6228 data-nosnippet>6228</a>            .model_provider(Box::new(MockModelProvider {
+<a href=#6229 id=6229 data-nosnippet>6229</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
+<a href=#6230 id=6230 data-nosnippet>6230</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"cached answer"</span>.into()),
+<a href=#6231 id=6231 data-nosnippet>6231</a>                    tool_calls: <span class="macro">vec!</span>[],
+<a href=#6232 id=6232 data-nosnippet>6232</a>                    usage: <span class="prelude-val">Some</span>(zeroclaw_providers::traits::TokenUsage {
+<a href=#6233 id=6233 data-nosnippet>6233</a>                        input_tokens: <span class="prelude-val">Some</span>(<span class="number">10</span>),
+<a href=#6234 id=6234 data-nosnippet>6234</a>                        cached_input_tokens: <span class="prelude-val">None</span>,
+<a href=#6235 id=6235 data-nosnippet>6235</a>                        output_tokens: <span class="prelude-val">Some</span>(<span class="number">5</span>),
+<a href=#6236 id=6236 data-nosnippet>6236</a>                    }),
+<a href=#6237 id=6237 data-nosnippet>6237</a>                    reasoning_content: <span class="prelude-val">None</span>,
+<a href=#6238 id=6238 data-nosnippet>6238</a>                }]),
+<a href=#6239 id=6239 data-nosnippet>6239</a>            }))
+<a href=#6240 id=6240 data-nosnippet>6240</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
+<a href=#6241 id=6241 data-nosnippet>6241</a>            .memory(mem_a)
+<a href=#6242 id=6242 data-nosnippet>6242</a>            .observer(Arc::from(<span class="kw">crate</span>::observability::NoopObserver {}) <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>Observer&gt;)
+<a href=#6243 id=6243 data-nosnippet>6243</a>            .response_cache(<span class="prelude-val">Some</span>(cache.clone()))
+<a href=#6244 id=6244 data-nosnippet>6244</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
+<a href=#6245 id=6245 data-nosnippet>6245</a>            .workspace_dir(ws_dir.clone())
+<a href=#6246 id=6246 data-nosnippet>6246</a>            .model_name(<span class="string">"test-model"</span>.into())
+<a href=#6247 id=6247 data-nosnippet>6247</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
+<a href=#6248 id=6248 data-nosnippet>6248</a>            .build()
+<a href=#6249 id=6249 data-nosnippet>6249</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
+<a href=#6250 id=6250 data-nosnippet>6250</a>
+<a href=#6251 id=6251 data-nosnippet>6251</a>        <span class="macro">assert_eq!</span>(agent_a.turn(<span class="string">"seed"</span>).<span class="kw">await</span>.unwrap(), <span class="string">"cached answer"</span>);
+<a href=#6252 id=6252 data-nosnippet>6252</a>
+<a href=#6253 id=6253 data-nosnippet>6253</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
+<a href=#6254 id=6254 data-nosnippet>6254</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
+<a href=#6255 id=6255 data-nosnippet>6255</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent_b = Agent::builder()
+<a href=#6256 id=6256 data-nosnippet>6256</a>            .model_provider(Box::new(MockModelProvider {
+<a href=#6257 id=6257 data-nosnippet>6257</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
+<a href=#6258 id=6258 data-nosnippet>6258</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"uncached answer"</span>.into()),
+<a href=#6259 id=6259 data-nosnippet>6259</a>                    tool_calls: <span class="macro">vec!</span>[],
+<a href=#6260 id=6260 data-nosnippet>6260</a>                    usage: <span class="prelude-val">None</span>,
+<a href=#6261 id=6261 data-nosnippet>6261</a>                    reasoning_content: <span class="prelude-val">None</span>,
+<a href=#6262 id=6262 data-nosnippet>6262</a>                }]),
+<a href=#6263 id=6263 data-nosnippet>6263</a>            }))
+<a href=#6264 id=6264 data-nosnippet>6264</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
+<a href=#6265 id=6265 data-nosnippet>6265</a>            .memory(mem_b)
+<a href=#6266 id=6266 data-nosnippet>6266</a>            .observer(observer)
+<a href=#6267 id=6267 data-nosnippet>6267</a>            .response_cache(<span class="prelude-val">Some</span>(cache))
+<a href=#6268 id=6268 data-nosnippet>6268</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
+<a href=#6269 id=6269 data-nosnippet>6269</a>            .workspace_dir(ws_dir)
+<a href=#6270 id=6270 data-nosnippet>6270</a>            .model_name(<span class="string">"test-model"</span>.into())
+<a href=#6271 id=6271 data-nosnippet>6271</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
+<a href=#6272 id=6272 data-nosnippet>6272</a>            .build()
+<a href=#6273 id=6273 data-nosnippet>6273</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
+<a href=#6274 id=6274 data-nosnippet>6274</a>
+<a href=#6275 id=6275 data-nosnippet>6275</a>        <span class="macro">assert_eq!</span>(agent_b.turn(<span class="string">"seed"</span>).<span class="kw">await</span>.unwrap(), <span class="string">"cached answer"</span>);
+<a href=#6276 id=6276 data-nosnippet>6276</a>
+<a href=#6277 id=6277 data-nosnippet>6277</a>        <span class="kw">let </span>events = capturing.events.lock();
+<a href=#6278 id=6278 data-nosnippet>6278</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
+<a href=#6279 id=6279 data-nosnippet>6279</a>        <span class="macro">assert!</span>(agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).is_none());
+<a href=#6280 id=6280 data-nosnippet>6280</a>        <span class="macro">assert!</span>(
+<a href=#6281 id=6281 data-nosnippet>6281</a>            !events
+<a href=#6282 id=6282 data-nosnippet>6282</a>                .iter()
+<a href=#6283 id=6283 data-nosnippet>6283</a>                .any(|event| <span class="macro">matches!</span>(event, ObserverEvent::LlmRequest { .. })),
+<a href=#6284 id=6284 data-nosnippet>6284</a>            <span class="string">"cache hit should not call the LLM"
+<a href=#6285 id=6285 data-nosnippet>6285</a>        </span>);
+<a href=#6286 id=6286 data-nosnippet>6286</a>    }
+<a href=#6287 id=6287 data-nosnippet>6287</a>
+<a href=#6288 id=6288 data-nosnippet>6288</a>    <span class="attr">#[tokio::test]
+<a href=#6289 id=6289 data-nosnippet>6289</a>    </span><span class="kw">async fn </span>turn_streamed_cancel_during_tool_execution_emits_agent_end_with_tokens() {
+<a href=#6290 id=6290 data-nosnippet>6290</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
+<a href=#6291 id=6291 data-nosnippet>6291</a>            backend: <span class="string">"none"</span>.into(),
+<a href=#6292 id=6292 data-nosnippet>6292</a>            ..zeroclaw_config::schema::MemoryConfig::default()
+<a href=#6293 id=6293 data-nosnippet>6293</a>        };
+<a href=#6294 id=6294 data-nosnippet>6294</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
+<a href=#6295 id=6295 data-nosnippet>6295</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
+<a href=#6296 id=6296 data-nosnippet>6296</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
+<a href=#6297 id=6297 data-nosnippet>6297</a>        );
+<a href=#6298 id=6298 data-nosnippet>6298</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
+<a href=#6299 id=6299 data-nosnippet>6299</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
+<a href=#6300 id=6300 data-nosnippet>6300</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
+<a href=#6301 id=6301 data-nosnippet>6301</a>            .model_provider(Box::new(MockModelProvider {
+<a href=#6302 id=6302 data-nosnippet>6302</a>                responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
+<a href=#6303 id=6303 data-nosnippet>6303</a>                    text: <span class="prelude-val">Some</span>(<span class="string">"I will echo."</span>.into()),
+<a href=#6304 id=6304 data-nosnippet>6304</a>                    tool_calls: <span class="macro">vec!</span>[zeroclaw_providers::ToolCall {
+<a href=#6305 id=6305 data-nosnippet>6305</a>                        id: <span class="string">"tc1"</span>.into(),
+<a href=#6306 id=6306 data-nosnippet>6306</a>                        name: <span class="string">"echo"</span>.into(),
+<a href=#6307 id=6307 data-nosnippet>6307</a>                        arguments: <span class="string">"{}"</span>.into(),
+<a href=#6308 id=6308 data-nosnippet>6308</a>                        extra_content: <span class="prelude-val">None</span>,
+<a href=#6309 id=6309 data-nosnippet>6309</a>                    }],
+<a href=#6310 id=6310 data-nosnippet>6310</a>                    usage: <span class="prelude-val">Some</span>(zeroclaw_providers::traits::TokenUsage {
+<a href=#6311 id=6311 data-nosnippet>6311</a>                        input_tokens: <span class="prelude-val">Some</span>(<span class="number">10</span>),
+<a href=#6312 id=6312 data-nosnippet>6312</a>                        cached_input_tokens: <span class="prelude-val">None</span>,
+<a href=#6313 id=6313 data-nosnippet>6313</a>                        output_tokens: <span class="prelude-val">Some</span>(<span class="number">5</span>),
+<a href=#6314 id=6314 data-nosnippet>6314</a>                    }),
+<a href=#6315 id=6315 data-nosnippet>6315</a>                    reasoning_content: <span class="prelude-val">None</span>,
+<a href=#6316 id=6316 data-nosnippet>6316</a>                }]),
+<a href=#6317 id=6317 data-nosnippet>6317</a>            }))
+<a href=#6318 id=6318 data-nosnippet>6318</a>            .tools(<span class="macro">vec!</span>[Box::new(SlowTool)])
+<a href=#6319 id=6319 data-nosnippet>6319</a>            .memory(mem)
+<a href=#6320 id=6320 data-nosnippet>6320</a>            .observer(observer)
+<a href=#6321 id=6321 data-nosnippet>6321</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
+<a href=#6322 id=6322 data-nosnippet>6322</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
+<a href=#6323 id=6323 data-nosnippet>6323</a>            .build()
+<a href=#6324 id=6324 data-nosnippet>6324</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
+<a href=#6325 id=6325 data-nosnippet>6325</a>
+<a href=#6326 id=6326 data-nosnippet>6326</a>        <span class="kw">let </span>(event_tx, <span class="kw-2">mut </span>event_rx) = tokio::sync::mpsc::channel::&lt;TurnEvent&gt;(<span class="number">64</span>);
+<a href=#6327 id=6327 data-nosnippet>6327</a>        <span class="kw">let </span>cancel_token = tokio_util::sync::CancellationToken::new();
+<a href=#6328 id=6328 data-nosnippet>6328</a>        <span class="kw">let </span>cancel_for_task = cancel_token.clone();
+<a href=#6329 id=6329 data-nosnippet>6329</a>        <span class="kw">let </span>handle = <span class="macro">zeroclaw_spawn::spawn!</span>(<span class="kw">async move </span>{
+<a href=#6330 id=6330 data-nosnippet>6330</a>            agent
+<a href=#6331 id=6331 data-nosnippet>6331</a>                .turn_streamed_with_steering_state(
+<a href=#6332 id=6332 data-nosnippet>6332</a>                    <span class="string">"use echo"</span>,
+<a href=#6333 id=6333 data-nosnippet>6333</a>                    event_tx,
+<a href=#6334 id=6334 data-nosnippet>6334</a>                    <span class="prelude-val">Some</span>(cancel_for_task),
+<a href=#6335 id=6335 data-nosnippet>6335</a>                    <span class="prelude-val">None</span>,
+<a href=#6336 id=6336 data-nosnippet>6336</a>                )
+<a href=#6337 id=6337 data-nosnippet>6337</a>                .<span class="kw">await
+<a href=#6338 id=6338 data-nosnippet>6338</a>        </span>});
+<a href=#6339 id=6339 data-nosnippet>6339</a>
+<a href=#6340 id=6340 data-nosnippet>6340</a>        <span class="kw">while let </span><span class="prelude-val">Some</span>(event) = event_rx.recv().<span class="kw">await </span>{
+<a href=#6341 id=6341 data-nosnippet>6341</a>            <span class="kw">if </span><span class="macro">matches!</span>(event, TurnEvent::Usage { .. }) {
+<a href=#6342 id=6342 data-nosnippet>6342</a>                cancel_token.cancel();
+<a href=#6343 id=6343 data-nosnippet>6343</a>                <span class="kw">break</span>;
+<a href=#6344 id=6344 data-nosnippet>6344</a>            }
+<a href=#6345 id=6345 data-nosnippet>6345</a>        }
+<a href=#6346 id=6346 data-nosnippet>6346</a>
+<a href=#6347 id=6347 data-nosnippet>6347</a>        handle
+<a href=#6348 id=6348 data-nosnippet>6348</a>            .<span class="kw">await
+<a href=#6349 id=6349 data-nosnippet>6349</a>            </span>.expect(<span class="string">"turn task should finish"</span>)
+<a href=#6350 id=6350 data-nosnippet>6350</a>            .expect_err(<span class="string">"turn should be cancelled before tool execution completes"</span>);
+<a href=#6351 id=6351 data-nosnippet>6351</a>
+<a href=#6352 id=6352 data-nosnippet>6352</a>        <span class="kw">let </span>events = capturing.events.lock();
+<a href=#6353 id=6353 data-nosnippet>6353</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
+<a href=#6354 id=6354 data-nosnippet>6354</a>        <span class="kw">let </span>tokens = agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).expect(<span class="string">"AgentEnd should include tokens"</span>);
+<a href=#6355 id=6355 data-nosnippet>6355</a>        <span class="macro">assert_eq!</span>(tokens.input_tokens, <span class="number">10</span>);
+<a href=#6356 id=6356 data-nosnippet>6356</a>        <span class="macro">assert_eq!</span>(tokens.output_tokens, <span class="number">5</span>);
+<a href=#6357 id=6357 data-nosnippet>6357</a>        <span class="kw">let </span>llm_response_idx = events
+<a href=#6358 id=6358 data-nosnippet>6358</a>            .iter()
+<a href=#6359 id=6359 data-nosnippet>6359</a>            .position(|event| <span class="macro">matches!</span>(event, ObserverEvent::LlmResponse { success: <span class="bool-val">true</span>, .. }))
+<a href=#6360 id=6360 data-nosnippet>6360</a>            .expect(<span class="string">"successful LlmResponse should be recorded"</span>);
+<a href=#6361 id=6361 data-nosnippet>6361</a>        <span class="macro">assert!</span>(
+<a href=#6362 id=6362 data-nosnippet>6362</a>            llm_response_idx &lt; end_idx,
+<a href=#6363 id=6363 data-nosnippet>6363</a>            <span class="string">"AgentEnd must follow LlmResponse"
+<a href=#6364 id=6364 data-nosnippet>6364</a>        </span>);
+<a href=#6365 id=6365 data-nosnippet>6365</a>    }
+<a href=#6366 id=6366 data-nosnippet>6366</a>
+<a href=#6367 id=6367 data-nosnippet>6367</a>    <span class="attr">#[tokio::test]
+<a href=#6368 id=6368 data-nosnippet>6368</a>    </span><span class="kw">async fn </span>turn_llm_error_emits_agent_end() {
+<a href=#6369 id=6369 data-nosnippet>6369</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
+<a href=#6370 id=6370 data-nosnippet>6370</a>            backend: <span class="string">"none"</span>.into(),
+<a href=#6371 id=6371 data-nosnippet>6371</a>            ..zeroclaw_config::schema::MemoryConfig::default()
+<a href=#6372 id=6372 data-nosnippet>6372</a>        };
+<a href=#6373 id=6373 data-nosnippet>6373</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
+<a href=#6374 id=6374 data-nosnippet>6374</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
+<a href=#6375 id=6375 data-nosnippet>6375</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
+<a href=#6376 id=6376 data-nosnippet>6376</a>        );
+<a href=#6377 id=6377 data-nosnippet>6377</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
+<a href=#6378 id=6378 data-nosnippet>6378</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
+<a href=#6379 id=6379 data-nosnippet>6379</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
+<a href=#6380 id=6380 data-nosnippet>6380</a>            .model_provider(Box::new(FailingModelProvider))
+<a href=#6381 id=6381 data-nosnippet>6381</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
+<a href=#6382 id=6382 data-nosnippet>6382</a>            .memory(mem)
+<a href=#6383 id=6383 data-nosnippet>6383</a>            .observer(observer)
+<a href=#6384 id=6384 data-nosnippet>6384</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
+<a href=#6385 id=6385 data-nosnippet>6385</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
+<a href=#6386 id=6386 data-nosnippet>6386</a>            .model_name(<span class="string">"test-model"</span>.into())
+<a href=#6387 id=6387 data-nosnippet>6387</a>            .temperature(<span class="prelude-val">Some</span>(<span class="number">0.0</span>))
+<a href=#6388 id=6388 data-nosnippet>6388</a>            .build()
+<a href=#6389 id=6389 data-nosnippet>6389</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
+<a href=#6390 id=6390 data-nosnippet>6390</a>
+<a href=#6391 id=6391 data-nosnippet>6391</a>        <span class="kw">let </span>result = agent.turn(<span class="string">"hello"</span>).<span class="kw">await</span>;
+<a href=#6392 id=6392 data-nosnippet>6392</a>        <span class="macro">assert!</span>(
+<a href=#6393 id=6393 data-nosnippet>6393</a>            result.is_err(),
+<a href=#6394 id=6394 data-nosnippet>6394</a>            <span class="string">"turn should fail when provider is unavailable"
+<a href=#6395 id=6395 data-nosnippet>6395</a>        </span>);
+<a href=#6396 id=6396 data-nosnippet>6396</a>
+<a href=#6397 id=6397 data-nosnippet>6397</a>        <span class="kw">let </span>events = capturing.events.lock();
+<a href=#6398 id=6398 data-nosnippet>6398</a>        <span class="kw">let </span>(<span class="kw">_</span>, end_idx) = assert_single_agent_lifecycle(<span class="kw-2">&amp;</span>events);
+<a href=#6399 id=6399 data-nosnippet>6399</a>        <span class="macro">assert!</span>(
+<a href=#6400 id=6400 data-nosnippet>6400</a>            agent_end_tokens(<span class="kw-2">&amp;</span>events[end_idx]).is_none(),
+<a href=#6401 id=6401 data-nosnippet>6401</a>            <span class="string">"AgentEnd should have tokens_used: None on LLM error"
+<a href=#6402 id=6402 data-nosnippet>6402</a>        </span>);
+<a href=#6403 id=6403 data-nosnippet>6403</a>    }
+<a href=#6404 id=6404 data-nosnippet>6404</a>
+<a href=#6405 id=6405 data-nosnippet>6405</a>    <span class="attr">#[tokio::test]
+<a href=#6406 id=6406 data-nosnippet>6406</a>    </span><span class="kw">async fn </span>turn_events_share_consistent_turn_id() {
+<a href=#6407 id=6407 data-nosnippet>6407</a>        <span class="kw">let </span>memory_cfg = zeroclaw_config::schema::MemoryConfig {
+<a href=#6408 id=6408 data-nosnippet>6408</a>            backend: <span class="string">"none"</span>.into(),
+<a href=#6409 id=6409 data-nosnippet>6409</a>            ..zeroclaw_config::schema::MemoryConfig::default()
+<a href=#6410 id=6410 data-nosnippet>6410</a>        };
+<a href=#6411 id=6411 data-nosnippet>6411</a>        <span class="kw">let </span>mem: Arc&lt;<span class="kw">dyn </span>Memory&gt; = Arc::from(
+<a href=#6412 id=6412 data-nosnippet>6412</a>            zeroclaw_memory::create_memory(<span class="kw-2">&amp;</span>memory_cfg, std::path::Path::new(<span class="string">"/tmp"</span>), <span class="prelude-val">None</span>)
+<a href=#6413 id=6413 data-nosnippet>6413</a>                .expect(<span class="string">"memory creation should succeed with valid config"</span>),
+<a href=#6414 id=6414 data-nosnippet>6414</a>        );
+<a href=#6415 id=6415 data-nosnippet>6415</a>
+<a href=#6416 id=6416 data-nosnippet>6416</a>        <span class="kw">let </span>model_provider = Box::new(MockModelProvider {
+<a href=#6417 id=6417 data-nosnippet>6417</a>            responses: Mutex::new(<span class="macro">vec!</span>[zeroclaw_providers::ChatResponse {
+<a href=#6418 id=6418 data-nosnippet>6418</a>                text: <span class="prelude-val">Some</span>(<span class="string">"done"</span>.into()),
+<a href=#6419 id=6419 data-nosnippet>6419</a>                tool_calls: <span class="macro">vec!</span>[],
+<a href=#6420 id=6420 data-nosnippet>6420</a>                usage: <span class="prelude-val">None</span>,
+<a href=#6421 id=6421 data-nosnippet>6421</a>                reasoning_content: <span class="prelude-val">None</span>,
+<a href=#6422 id=6422 data-nosnippet>6422</a>            }]),
+<a href=#6423 id=6423 data-nosnippet>6423</a>        });
+<a href=#6424 id=6424 data-nosnippet>6424</a>        <span class="kw">let </span>capturing = Arc::new(CapturingObserver::default());
+<a href=#6425 id=6425 data-nosnippet>6425</a>        <span class="kw">let </span>observer: Arc&lt;<span class="kw">dyn </span>Observer&gt; = capturing.clone();
+<a href=#6426 id=6426 data-nosnippet>6426</a>        <span class="kw">let </span><span class="kw-2">mut </span>agent = Agent::builder()
+<a href=#6427 id=6427 data-nosnippet>6427</a>            .model_provider(model_provider)
+<a href=#6428 id=6428 data-nosnippet>6428</a>            .tools(<span class="macro">vec!</span>[Box::new(MockTool)])
+<a href=#6429 id=6429 data-nosnippet>6429</a>            .memory(mem)
+<a href=#6430 id=6430 data-nosnippet>6430</a>            .observer(observer)
+<a href=#6431 id=6431 data-nosnippet>6431</a>            .tool_dispatcher(Box::new(NativeToolDispatcher))
+<a href=#6432 id=6432 data-nosnippet>6432</a>            .workspace_dir(std::path::PathBuf::from(<span class="string">"/tmp"</span>))
+<a href=#6433 id=6433 data-nosnippet>6433</a>            .build()
+<a href=#6434 id=6434 data-nosnippet>6434</a>            .expect(<span class="string">"agent builder should succeed with valid config"</span>);
+<a href=#6435 id=6435 data-nosnippet>6435</a>
+<a href=#6436 id=6436 data-nosnippet>6436</a>        <span class="kw">let _ </span>= agent.turn(<span class="string">"test"</span>).<span class="kw">await</span>.expect(<span class="string">"turn should succeed"</span>);
+<a href=#6437 id=6437 data-nosnippet>6437</a>
+<a href=#6438 id=6438 data-nosnippet>6438</a>        <span class="kw">let </span>events = capturing.events.lock();
+<a href=#6439 id=6439 data-nosnippet>6439</a>        <span class="kw">let </span>turn_ids: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = events.iter().filter_map(observer_event_turn_id).collect();
+<a href=#6440 id=6440 data-nosnippet>6440</a>        <span class="macro">assert!</span>(!turn_ids.is_empty(), <span class="string">"turn events should carry turn_id"</span>);
+<a href=#6441 id=6441 data-nosnippet>6441</a>        <span class="kw">let </span>first = turn_ids[<span class="number">0</span>];
+<a href=#6442 id=6442 data-nosnippet>6442</a>        <span class="macro">assert!</span>(
+<a href=#6443 id=6443 data-nosnippet>6443</a>            turn_ids.iter().all(|turn_id| <span class="kw-2">*</span>turn_id == first),
+<a href=#6444 id=6444 data-nosnippet>6444</a>            <span class="string">"all turn_ids should be consistent"
+<a href=#6445 id=6445 data-nosnippet>6445</a>        </span>);
+<a href=#6446 id=6446 data-nosnippet>6446</a>    }
+<a href=#6447 id=6447 data-nosnippet>6447</a>}
 </code></pre></div></section></main></body></html>
