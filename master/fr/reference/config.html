@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "../searchindex-a95bbed4.js";
+            window.path_to_searchindex_js = "../searchindex-ba7ba89c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-902aed4a.js"></script>
@@ -1412,11 +1412,11 @@
 <tr><th>Clé</th><th>Type</th><th>Par défaut</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>backend</code>*</td><td>chaîne</td><td><code>—</code></td><td>“aucun” | “journal” | “détaillé” | “prometheus” | “otel”</td></tr>
-<tr><td><code>log_persistence</code></td><td>chaîne</td><td><code>"rolling"</code></td><td>Mode de persistance des journaux : “none” | “rolling” | “full”.</td></tr>
+<tr><td><code>backend</code></td><td><code>none</code> | <code>log</code> | <code>verbose</code> | <code>prometheus</code> | <code>otel</code></td><td><code>—</code></td><td>Observability sink backend.</td></tr>
+<tr><td><code>log_persistence</code></td><td><code>none</code> | <code>rolling</code> | <code>full</code></td><td><code>—</code></td><td>JSONL log persistence mode.</td></tr>
 <tr><td><code>log_persistence_max_entries</code></td><td>entier</td><td><code>200</code></td><td>Nombre maximal d’entrées conservées lorsque <code>log_persistence = "rolling"</code>.</td></tr>
 <tr><td><code>log_persistence_path</code></td><td>chaîne</td><td><code>"state/runtime-trace.jsonl"</code></td><td>Chemin du fichier de persistance des logs. Les chemins relatifs sont résolus dans workspace_dir.</td></tr>
-<tr><td><code>log_tool_io</code></td><td>chaîne</td><td><code>"redacted"</code></td><td>Politique de capture des E/S de l’outil : “off” | “redacted” | “full”.</td></tr>
+<tr><td><code>log_tool_io</code></td><td><code>off</code> | <code>redacted</code> | <code>full</code></td><td><code>—</code></td><td>Tool I/O capture policy.</td></tr>
 <tr><td><code>log_tool_io_denylist</code></td><td>string[]</td><td><code>[]</code></td><td>Noms des outils dont les E/S ne sont jamais journalisées au-delà du nom + résultat + durée</td></tr>
 <tr><td><code>log_tool_io_truncate_bytes</code></td><td>entier</td><td><code>40960</code></td><td>Tronquer l’entrée et la sortie capturées de l’outil à ce nombre d’octets lorsque</td></tr>
 <tr><td><code>otel_endpoint</code></td><td>string?</td><td><code>null</code></td><td>Point de terminaison OTLP (par exemple, <code>"http://localhost:4318"</code>). Utilisé uniquement lorsque le backend est <code>"otel"</code>.</td></tr>
@@ -1652,7 +1652,7 @@ api_key = "..."
 </thead>
 <tbody>
 <tr><td><code>docker</code></td><td>objet</td><td><code>—</code></td><td>Configuration de l’exécution Docker (section <code>[runtime.docker]</code>).</td></tr>
-<tr><td><code>kind</code></td><td>chaîne</td><td><code>"natif"</code></td><td>Type d’exécution (<code>native</code> | <code>docker</code>).</td></tr>
+<tr><td><code>kind</code></td><td><code>native</code> | <code>docker</code> | <code>cloudflare</code></td><td><code>—</code></td><td>Runtime adapter kind.</td></tr>
 <tr><td><code>reasoning_effort</code></td><td>string?</td><td><code>null</code></td><td>Effort de raisonnement facultatif pour les model_providers qui exposent un contrôle de niveau.</td></tr>
 <tr><td><code>reasoning_enabled</code></td><td>bool?</td><td><code>null</code></td><td>Remplacement global du raisonnement pour les model_providers qui exposent des contrôles explicites.</td></tr>
 </tbody>

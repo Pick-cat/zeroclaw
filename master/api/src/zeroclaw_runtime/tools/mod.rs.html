@@ -498,7 +498,7 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../../" d
 <a href=#496 id=496 data-nosnippet>496</a>) -&gt; AllToolsResult {
 <a href=#497 id=497 data-nosnippet>497</a>    <span class="kw">let </span>has_shell_access = runtime.has_shell_access();
 <a href=#498 id=498 data-nosnippet>498</a>    <span class="kw">let </span>persistent_writes = runtime.has_filesystem_access();
-<a href=#499 id=499 data-nosnippet>499</a>    <span class="kw">let </span>runtime_kind = root_config.runtime.kind.as_str();
+<a href=#499 id=499 data-nosnippet>499</a>    <span class="kw">let </span>runtime_kind = root_config.runtime.kind.as_wire();
 <a href=#500 id=500 data-nosnippet>500</a>    <span class="kw">let </span>sandbox_cfg = risk_profile.sandbox_config();
 <a href=#501 id=501 data-nosnippet>501</a>    <span class="kw">let </span>sandbox = create_sandbox(<span class="kw-2">&amp;</span>sandbox_cfg, runtime_kind, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>security.workspace_dir));
 <a href=#502 id=502 data-nosnippet>502</a>    <span class="kw">let </span><span class="kw-2">mut </span>tool_arcs: Vec&lt;Arc&lt;<span class="kw">dyn </span>Tool&gt;&gt; = <span class="macro">vec!</span>[

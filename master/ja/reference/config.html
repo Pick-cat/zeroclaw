@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "../searchindex-05cba368.js";
+            window.path_to_searchindex_js = "../searchindex-189fd2cb.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-35fdbf2d.js"></script>
@@ -1412,11 +1412,11 @@
 <tr><th>キー</th><th>タイプ</th><th>デフォルト</th><th>説明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>backend</code>*</td><td>string</td><td>—</td><td>“none” | “log” | “verbose” | “prometheus” | “otel”</td></tr>
-<tr><td><code>log_persistence</code></td><td>string</td><td><code>"rolling"</code></td><td>ログ永続化モード: “none” | “rolling” | “full”。</td></tr>
+<tr><td><code>backend</code></td><td><code>none</code> | <code>log</code> | <code>verbose</code> | <code>prometheus</code> | <code>otel</code></td><td>—</td><td>Observability sink backend.</td></tr>
+<tr><td><code>log_persistence</code></td><td><code>none</code> | <code>rolling</code> | <code>full</code></td><td>—</td><td>JSONL log persistence mode.</td></tr>
 <tr><td><code>log_persistence_max_entries</code></td><td>整数</td><td><code>200</code></td><td><code>log_persistence = "rolling"</code> の場合に保持される最大エントリ数。</td></tr>
 <tr><td><code>log_persistence_path</code></td><td>string</td><td><code>"state/runtime-trace.jsonl"</code></td><td>ログ永続化ファイルのパス。相対パスは workspace_dir 配下で解決されます。</td></tr>
-<tr><td><code>log_tool_io</code></td><td>string</td><td><code>"redacted"</code></td><td>ツール I/O キャプチャポリシー: “off” | “redacted” | “full”。</td></tr>
+<tr><td><code>log_tool_io</code></td><td><code>off</code> | <code>redacted</code> | <code>full</code></td><td>—</td><td>Tool I/O capture policy.</td></tr>
 <tr><td><code>log_tool_io_denylist</code></td><td>string[]</td><td><code>[]</code></td><td>ツール名（I/O は名前 + 結果 + 実行時間のみ記録され、それ以上はログに残らない）</td></tr>
 <tr><td><code>log_tool_io_truncate_bytes</code></td><td>整数</td><td><code>40960</code></td><td>キャプチャしたツールの入力と出力をこのバイト数で切り詰めます</td></tr>
 <tr><td><code>otel_endpoint</code></td><td>string?</td><td><code>null</code></td><td>OTLPエンドポイント (例: <code>"http://localhost:4318"</code>)。backend = <code>"otel"</code> の場合のみ使用されます。</td></tr>
@@ -1652,7 +1652,7 @@ api_key = "..."
 </thead>
 <tbody>
 <tr><td><code>docker</code></td><td>オブジェクト</td><td>—</td><td>Docker ランタイム構成 (<code>[runtime.docker]</code> セクション)。</td></tr>
-<tr><td><code>kind</code></td><td>string</td><td><code>"native"</code></td><td>ランタイムの種類 (<code>native</code> | <code>docker</code>)。</td></tr>
+<tr><td><code>kind</code></td><td><code>native</code> | <code>docker</code> | <code>cloudflare</code></td><td>—</td><td>Runtime adapter kind.</td></tr>
 <tr><td><code>reasoning_effort</code></td><td>string?</td><td><code>null</code></td><td>レベル制御を公開する model_providers 向けのオプションの推論努力。</td></tr>
 <tr><td><code>reasoning_enabled</code></td><td>bool?</td><td><code>null</code></td><td>モデルプロバイダーが明示的な制御を公開している場合の、グローバルな推論のオーバーライド。</td></tr>
 </tbody>

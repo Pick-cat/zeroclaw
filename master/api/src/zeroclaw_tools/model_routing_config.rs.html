@@ -365,8 +365,8 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#363 id=363 data-nosnippet>363</a>
 <a href=#364 id=364 data-nosnippet>364</a>        <span class="kw">let </span><span class="kw-2">mut </span>agents: BTreeMap&lt;String, Value&gt; = BTreeMap::new();
 <a href=#365 id=365 data-nosnippet>365</a>        <span class="kw">for </span>(name, agent) <span class="kw">in </span><span class="kw-2">&amp;</span>cfg.agents {
-<a href=#366 id=366 data-nosnippet>366</a>            <span class="kw">let </span>risk = cfg.risk_profiles.get(<span class="kw-2">&amp;</span>agent.risk_profile);
-<a href=#367 id=367 data-nosnippet>367</a>            <span class="kw">let </span>runtime = cfg.runtime_profiles.get(<span class="kw-2">&amp;</span>agent.runtime_profile);
+<a href=#366 id=366 data-nosnippet>366</a>            <span class="kw">let </span>risk = cfg.risk_profiles.get(agent.risk_profile.as_str());
+<a href=#367 id=367 data-nosnippet>367</a>            <span class="kw">let </span>runtime = cfg.runtime_profiles.get(agent.runtime_profile.as_str());
 <a href=#368 id=368 data-nosnippet>368</a>            agents.insert(
 <a href=#369 id=369 data-nosnippet>369</a>                name.clone(),
 <a href=#370 id=370 data-nosnippet>370</a>                <span class="macro">json!</span>({
@@ -926,8 +926,8 @@ data-theme="ayu"></script><meta name="rustdoc-vars" data-root-path="../../" data
 <a href=#924 id=924 data-nosnippet>924</a>        <span class="comment">// Get or create the agent and wire up alias references.
 <a href=#925 id=925 data-nosnippet>925</a>        </span><span class="kw">let </span>next_agent = cfg.agents.entry(name.clone()).or_default();
 <a href=#926 id=926 data-nosnippet>926</a>        next_agent.model_provider = agent_model_provider_ref.into();
-<a href=#927 id=927 data-nosnippet>927</a>        next_agent.risk_profile = name.clone();
-<a href=#928 id=928 data-nosnippet>928</a>        next_agent.runtime_profile = name.clone();
+<a href=#927 id=927 data-nosnippet>927</a>        next_agent.risk_profile = name.clone().into();
+<a href=#928 id=928 data-nosnippet>928</a>        next_agent.runtime_profile = name.clone().into();
 <a href=#929 id=929 data-nosnippet>929</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(same_profile) = delegate_same_risk_profile_update {
 <a href=#930 id=930 data-nosnippet>930</a>            next_agent.delegate_same_risk_profile = same_profile;
 <a href=#931 id=931 data-nosnippet>931</a>        }

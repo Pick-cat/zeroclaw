@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "searchindex-fe0b0658.js";
+            window.path_to_searchindex_js = "searchindex-ed87d4d2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-fe037fc1.js"></script>
@@ -5858,11 +5858,11 @@ Requires <code>api_key</code> (or the <code>NOTION_API_KEY</code> env var) and <
 <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>backend</code>*</td><td>string</td><td><code>—</code></td><td>“none” | “log” | “verbose” | “prometheus” | “otel”</td></tr>
-<tr><td><code>log_persistence</code></td><td>string</td><td><code>"rolling"</code></td><td>Log persistence mode: “none” | “rolling” | “full”.</td></tr>
+<tr><td><code>backend</code></td><td><code>none</code> | <code>log</code> | <code>verbose</code> | <code>prometheus</code> | <code>otel</code></td><td><code>—</code></td><td>Observability sink backend.</td></tr>
+<tr><td><code>log_persistence</code></td><td><code>none</code> | <code>rolling</code> | <code>full</code></td><td><code>—</code></td><td>JSONL log persistence mode.</td></tr>
 <tr><td><code>log_persistence_max_entries</code></td><td>integer</td><td><code>200</code></td><td>Maximum entries retained when <code>log_persistence = "rolling"</code>.</td></tr>
 <tr><td><code>log_persistence_path</code></td><td>string</td><td><code>"state/runtime-trace.jsonl"</code></td><td>Log persistence file path. Relative paths resolve under workspace_dir.</td></tr>
-<tr><td><code>log_tool_io</code></td><td>string</td><td><code>"redacted"</code></td><td>Tool I/O capture policy: “off” | “redacted” | “full”.</td></tr>
+<tr><td><code>log_tool_io</code></td><td><code>off</code> | <code>redacted</code> | <code>full</code></td><td><code>—</code></td><td>Tool I/O capture policy.</td></tr>
 <tr><td><code>log_tool_io_denylist</code></td><td>string[]</td><td><code>[]</code></td><td>Tool names whose I/O is never logged beyond name + outcome + duration</td></tr>
 <tr><td><code>log_tool_io_truncate_bytes</code></td><td>integer</td><td><code>40960</code></td><td>Truncate the captured tool input and output at this many bytes when</td></tr>
 <tr><td><code>otel_endpoint</code></td><td>string?</td><td><code>null</code></td><td>OTLP endpoint (e.g. <code>"http://localhost:4318"</code>). Only used when backend = <code>"otel"</code>.</td></tr>
@@ -6129,7 +6129,7 @@ and routes to the appropriate model hint. Disabled by default.</p>
 </thead>
 <tbody>
 <tr><td><code>docker</code></td><td>object</td><td><code>—</code></td><td>Docker runtime configuration (<code>[runtime.docker]</code> section).</td></tr>
-<tr><td><code>kind</code></td><td>string</td><td><code>"native"</code></td><td>Runtime kind (<code>native</code> | <code>docker</code>).</td></tr>
+<tr><td><code>kind</code></td><td><code>native</code> | <code>docker</code> | <code>cloudflare</code></td><td><code>—</code></td><td>Runtime adapter kind.</td></tr>
 <tr><td><code>reasoning_effort</code></td><td>string?</td><td><code>null</code></td><td>Optional reasoning effort for model_providers that expose a level control.</td></tr>
 <tr><td><code>reasoning_enabled</code></td><td>bool?</td><td><code>null</code></td><td>Global reasoning override for model_providers that expose explicit controls.</td></tr>
 </tbody>
@@ -7504,7 +7504,7 @@ running build. Click a field to expand it; click again to see how to set it.</p>
 
 </details>
 <details class="cfg-field">
-<summary><code>risk_profile</code> <span class="cfg-field-meta"><code>string</code> · default <code>""</code></span></summary>
+<summary><code>risk_profile</code> <span class="cfg-field-meta"><code>RiskProfileRef</code> · default <code>""</code></span></summary>
 <p>Risk profile alias (e.g. <code>"default"</code>). Resolves delegation guardrails at runtime.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
@@ -7523,7 +7523,7 @@ running build. Click a field to expand it; click again to see how to set it.</p>
 
 </details>
 <details class="cfg-field">
-<summary><code>runtime_profile</code> <span class="cfg-field-meta"><code>string</code> · default <code>""</code></span></summary>
+<summary><code>runtime_profile</code> <span class="cfg-field-meta"><code>RuntimeProfileRef</code> · default <code>""</code></span></summary>
 <p>Runtime profile alias (e.g. <code>"default"</code>). Resolves agentic/iteration settings.</p>
 <p><strong>Set it on any surface:</strong></p>
 <div class="os-tabs-src">
