@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "default-dark";
             const default_dark_theme = "default-dark";
-            window.path_to_searchindex_js = "../searchindex-ea198e59.js";
+            window.path_to_searchindex_js = "../searchindex-f6ff701f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-e415489f.js"></script>
@@ -750,7 +750,7 @@
 <tr><th>键</th><th>类型</th><th>默认</th><th>描述</th></tr>
 </thead>
 <tbody>
-<tr><td><code>headers</code></td><td>映射</td><td><code>{}</code></td><td>附加到每个下载请求的静态 HTTP 标头——通常是一个</td></tr>
+<tr><td><code>headers</code> 🔑</td><td>映射</td><td><code>{}</code></td><td>附加到每个下载请求的静态 HTTP 标头——通常是一个</td></tr>
 <tr><td><code>max_file_size_bytes</code></td><td>整数</td><td><code>26214400</code></td><td>下载大小上限（字节）。在流式传输过程中强制执行：传输</td></tr>
 <tr><td><code>timeout_secs</code></td><td>整数</td><td><code>120</code></td><td>请求超时时间（秒）。默认值：120。</td></tr>
 <tr><td><code>url</code></td><td>字符串？</td><td><code>null</code></td><td>下载端点 URL。当此项为 <code>None</code> 或为空时，工具将被禁用。</td></tr>
@@ -787,7 +787,7 @@
 </thead>
 <tbody>
 <tr><td><code>field_name</code></td><td>字符串</td><td><code>"file"</code></td><td>在每个文件分段中重复使用的多部分表单字段名称。默认值：<code>file</code>。</td></tr>
-<tr><td><code>headers</code></td><td>映射</td><td><code>{}</code></td><td>附加到每个上传请求的静态 HTTP 标头。</td></tr>
+<tr><td><code>headers</code> 🔑</td><td>映射</td><td><code>{}</code></td><td>附加到每个上传请求的静态 HTTP 标头。</td></tr>
 <tr><td><code>max_file_size_bytes</code></td><td>整数</td><td>10485760</td><td>每个文件的最大大小（以字节为单位）。默认值：10 MiB。</td></tr>
 <tr><td><code>max_files</code></td><td>整数</td><td><code>16</code></td><td>每次调用的最大文件数。默认值：16。</td></tr>
 <tr><td><code>max_response_body_bytes</code></td><td>整数</td><td><code>4096</code></td><td>从上传端点读取的响应正文的最大字节数。</td></tr>
